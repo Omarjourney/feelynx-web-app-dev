@@ -5,21 +5,27 @@ import { Badge } from "@/components/ui/badge";
 
 interface TokenPackage {
   id: number;
+  /** Tokens awarded when purchasing on the web */
   tokens: number;
+  /** Tokens a user would receive in the mobile app */
+  appTokens: number;
+  /** Percentage increase of web tokens compared to the app */
+  percentMore: number;
   price: number;
-  bonus?: number;
   popular?: boolean;
-  savings?: string;
 }
 
 export const TokenPackages = () => {
   const packages: TokenPackage[] = [
-    { id: 1, tokens: 20, price: 1.99 },
-    { id: 2, tokens: 50, price: 4.99 },
-    { id: 3, tokens: 100, price: 9.99, bonus: 10 },
-    { id: 4, tokens: 500, price: 39.99, bonus: 75, popular: true, savings: "Save 20%" },
-    { id: 5, tokens: 1000, price: 74.99, bonus: 200, savings: "Save 25%" },
-    { id: 6, tokens: 2500, price: 149.99, bonus: 600, savings: "Save 35%" }
+    { id: 1, tokens: 75, appTokens: 50, percentMore: 50, price: 0.99 },
+    { id: 2, tokens: 400, appTokens: 275, percentMore: 45, price: 4.99 },
+    { id: 3, tokens: 900, appTokens: 650, percentMore: 38, price: 9.99 },
+    { id: 4, tokens: 1500, appTokens: 1100, percentMore: 36, price: 15.99 },
+    { id: 5, tokens: 2000, appTokens: 1400, percentMore: 43, price: 19.99 },
+    { id: 6, tokens: 2600, appTokens: 1800, percentMore: 44, price: 24.99 },
+    { id: 7, tokens: 5300, appTokens: 3750, percentMore: 41, price: 49.99, popular: true },
+    { id: 8, tokens: 11000, appTokens: 7800, percentMore: 41, price: 99.99 },
+    { id: 9, tokens: 14624, appTokens: 10400, percentMore: 40, price: 149.99 }
   ];
 
   return (
@@ -35,35 +41,25 @@ export const TokenPackages = () => {
                 Most Popular
               </Badge>
             )}
-            {pkg.savings && (
-              <Badge className="absolute -top-3 right-4 bg-live text-white px-3 py-1">
-                {pkg.savings}
-              </Badge>
-            )}
             
             <CardHeader className="text-center pb-4">
               <div className="text-6xl mb-4">💎</div>
               <CardTitle className="text-2xl font-bold">
                 {pkg.tokens.toLocaleString()} Tokens
               </CardTitle>
-              {pkg.bonus && (
-                <Badge variant="secondary" className="bg-primary/20 text-primary">
-                  +{pkg.bonus} Bonus Tokens!
-                </Badge>
-              )}
+              <div className="text-sm text-muted-foreground">
+                {pkg.appTokens.toLocaleString()} in app
+              </div>
+              <Badge variant="secondary" className="bg-primary/20 text-primary">
+                +{pkg.percentMore}% on web
+              </Badge>
             </CardHeader>
-            
+
             <CardContent className="text-center space-y-4">
               <div className="text-4xl font-bold text-primary">
                 ${pkg.price}
               </div>
-              
-              {pkg.bonus && (
-                <div className="text-sm text-muted-foreground">
-                  Total: {(pkg.tokens + pkg.bonus).toLocaleString()} tokens
-                </div>
-              )}
-              
+
               <div className="text-xs text-muted-foreground">
                 ${(pkg.price / pkg.tokens).toFixed(3)} per token
               </div>
