@@ -19,7 +19,7 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
     { id: "content", label: "Content" },
     { id: "calls", label: "Calls" },
     { id: "groups", label: "Groups" },
-    { id: "coins", label: "Tokens" }
+    { id: "coins", label: "VibeCoins" }
   ];
 
   return (
@@ -62,7 +62,7 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
               <ChevronDown className="w-3 h-3" />
             </Button>
             
-            {/* Tokens */}
+            {/* VibeCoins */}
             <Badge variant="secondary" className="bg-gradient-primary text-primary-foreground px-3 py-1">
               💎 {coins.toLocaleString()}
             </Badge>

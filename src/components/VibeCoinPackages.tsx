@@ -3,20 +3,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-interface TokenPackage {
+interface VibeCoinPackage {
   id: number;
-  /** Tokens awarded when purchasing on the web */
+  /** VibeCoins awarded when purchasing on the web */
   tokens: number;
-  /** Tokens a user would receive in the mobile app */
+  /** VibeCoins a user would receive in the mobile app */
   appTokens: number;
-  /** Percentage increase of web tokens compared to the app */
+  /** Percentage increase of web coins compared to the app */
   percentMore: number;
   price: number;
   popular?: boolean;
 }
 
-export const TokenPackages = () => {
-  const packages: TokenPackage[] = [
+export const VibeCoinPackages = () => {
+  const packages: VibeCoinPackage[] = [
     { id: 1, tokens: 75, appTokens: 50, percentMore: 50, price: 0.99 },
     { id: 2, tokens: 400, appTokens: 275, percentMore: 45, price: 4.99 },
     { id: 3, tokens: 900, appTokens: 650, percentMore: 38, price: 9.99 },
@@ -30,7 +30,7 @@ export const TokenPackages = () => {
 
   return (
     <div>
-      <h2 className="text-3xl font-bold mb-8 text-center">Token Packages</h2>
+      <h2 className="text-3xl font-bold mb-8 text-center">VibeCoin Packages</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {packages.map((pkg) => (
           <Card key={pkg.id} className={`relative bg-gradient-card transition-all hover:shadow-premium ${
@@ -45,7 +45,7 @@ export const TokenPackages = () => {
             <CardHeader className="text-center pb-4">
               <div className="text-6xl mb-4">💎</div>
               <CardTitle className="text-2xl font-bold">
-                {pkg.tokens.toLocaleString()} Tokens
+                {pkg.tokens.toLocaleString()} VibeCoins
               </CardTitle>
               <div className="text-sm text-muted-foreground">
                 {pkg.appTokens.toLocaleString()} in app
@@ -61,19 +61,22 @@ export const TokenPackages = () => {
               </div>
 
               <div className="text-xs text-muted-foreground">
-                ${(pkg.price / pkg.tokens).toFixed(3)} per token
+                ${(pkg.price / pkg.tokens).toFixed(3)} per VibeCoin
               </div>
               
-              <Button 
+              <Button
                 className={`w-full mt-4 ${
-                  pkg.popular 
-                    ? 'bg-gradient-primary text-primary-foreground hover:shadow-glow' 
+                  pkg.popular
+                    ? 'bg-gradient-primary text-primary-foreground hover:shadow-glow'
                     : 'bg-secondary hover:bg-secondary/80'
                 }`}
                 size="lg"
               >
                 Purchase Now
               </Button>
+              <div className="text-xs text-muted-foreground mt-2">
+                Get +{pkg.percentMore}% more VibeCoins on Feelynx.live!
+              </div>
             </CardContent>
           </Card>
         ))}

@@ -6,7 +6,7 @@ import { SearchFilters } from "@/components/SearchFilters";
 import { CreatorCard } from "@/components/CreatorCard";
 import { LiveStream } from "@/components/LiveStream";
 import { CoinsPanel } from "@/components/CoinsPanel";
-import { TokenPackages } from "@/components/TokenPackages";
+import { VibeCoinPackages } from "@/components/VibeCoinPackages";
 import { creators } from "@/data/creators";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -175,7 +175,7 @@ const Index = () => {
       case "coins":
         return (
           <div className="container mx-auto px-4">
-            <TokenPackages />
+            <VibeCoinPackages />
           </div>
         );
 
