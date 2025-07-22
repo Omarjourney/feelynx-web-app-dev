@@ -28,7 +28,7 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center space-x-2">
-            <img src={feelynxLogo} alt="eelynx" className="w-8 h-8" />
+            <img src={feelynxLogo} alt="Feelynx" className="w-8 h-8" />
             <span className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
               eelynx
             </span>
