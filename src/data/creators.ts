@@ -1,123 +1,115 @@
-export interface Creator {
-  id: number;
-  name: string;
-  username: string;
-  country: string;
-  age: number;
-  tier: string;
-  subscribers: string;
-  isLive: boolean;
-  viewers?: number;
-  lastSeen?: string;
-  toyConnected?: string;
-  videoRate: number;
-  voiceRate: number;
-  specialties: string[];
-  earnings: string;
-  status: string;
-  isNew?: boolean;
-}
 
-export const creators: Creator[] = [
+export const creators = [
   {
     id: 1,
-    name: "ArianaVex",
-    username: "@arianavex",
-    country: "United States",
+    name: "Aria Vex",
+    username: "@ariavex",
+    country: "USA",
     age: 24,
     tier: "Top 0.1%",
-    subscribers: "12.8k",
+    subscribers: "847k",
     isLive: true,
-    viewers: 2400,
+    viewers: 2847,
     toyConnected: "Lovense Lush",
-    videoRate: 35,
+    videoRate: 45,
     voiceRate: 25,
-    specialties: ["Interactive Shows", "Gaming"],
-    earnings: "$5,240",
-    status: "online"
+    specialties: ["Interactive", "Roleplay"],
+    earnings: "$125k",
+    status: "online",
+    initial: "A",
+    gradientColors: "bg-gradient-to-br from-pink-500 to-purple-600"
   },
   {
     id: 2,
-    name: "BlissfulBelle",
-    username: "@blissfulbelle",
-    country: "United Kingdom",
-    age: 28,
-    tier: "Premium",
-    subscribers: "11.5k",
-    isLive: false,
-    lastSeen: "2 hours ago",
+    name: "Mila Fox",
+    username: "@milafox",
+    country: "Canada",
+    age: 26,
+    tier: "VIP Creator",
+    subscribers: "543k",
+    isLive: true,
+    viewers: 1923,
+    toyConnected: "OhMiBod",
     videoRate: 40,
-    voiceRate: 30,
-    specialties: ["Luxury Content", "ASMR"],
-    earnings: "$4,890",
-    status: "online"
+    voiceRate: 20,
+    specialties: ["Fetish", "Domination"],
+    earnings: "$98k",
+    status: "online",
+    initial: "M",
+    gradientColors: "bg-gradient-to-br from-blue-500 to-cyan-400"
   },
   {
     id: 3,
-    name: "MilaFox",
-    username: "@milafox",
-    country: "Germany",
-    age: 26,
-    tier: "VIP Creator",
-    subscribers: "15.3k",
-    isLive: true,
-    viewers: 1200,
-    toyConnected: "OhMiBod",
-    videoRate: 45,
-    voiceRate: 35,
-    specialties: ["Premium Shows", "Fetish"],
-    earnings: "$6,150",
-    status: "online"
+    name: "Luna Star",
+    username: "@lunastar",
+    country: "UK",
+    age: 22,
+    tier: "Rising Star",
+    subscribers: "298k",
+    isLive: false,
+    toyConnected: "Lovense Domi",
+    videoRate: 35,
+    voiceRate: 18,
+    specialties: ["Girlfriend", "Vanilla"],
+    earnings: "$67k",
+    status: "offline",
+    initial: "L",
+    gradientColors: "bg-gradient-to-br from-orange-500 to-red-500"
   },
   {
     id: 4,
-    name: "SkylarNova",
-    username: "@skylarnova",
-    country: "Canada",
-    age: 22,
-    tier: "Rising Star",
-    subscribers: "8.2k",
+    name: "Zara Quinn",
+    username: "@zaraquinn",
+    country: "Australia",
+    age: 28,
+    tier: "Elite",
+    subscribers: "721k",
     isLive: true,
-    viewers: 890,
-    toyConnected: "Lovense Domi",
-    videoRate: 30,
-    voiceRate: 20,
-    specialties: ["Gaming", "Cosplay"],
-    earnings: "$3,420",
-    status: "online"
+    viewers: 3154,
+    toyConnected: "Lovense Lush",
+    videoRate: 50,
+    voiceRate: 30,
+    specialties: ["MILF", "Interactive"],
+    earnings: "$156k",
+    status: "online",
+    initial: "Z",
+    gradientColors: "bg-gradient-to-br from-green-500 to-emerald-400"
   },
   {
     id: 5,
-    name: "LunaRose",
-    username: "@lunarose",
-    country: "Australia",
+    name: "Bella Rose",
+    username: "@bellarose",
+    country: "Germany",
     age: 25,
-    tier: "Featured",
-    subscribers: "9.7k",
+    tier: "Premium",
+    subscribers: "412k",
     isLive: false,
-    lastSeen: "30 minutes ago",
+    toyConnected: "Kiiroo",
     videoRate: 38,
-    voiceRate: 28,
-    specialties: ["Intimate", "Roleplay"],
-    earnings: "$4,100",
-    status: "away"
+    voiceRate: 22,
+    specialties: ["Anal", "Squirt"],
+    earnings: "$89k",
+    status: "offline",
+    initial: "B",
+    gradientColors: "bg-gradient-to-br from-violet-500 to-purple-400"
   },
   {
     id: 6,
-    name: "VioletStorm",
-    username: "@violetstorm",
+    name: "Eva Moon",
+    username: "@evamoon",
     country: "France",
     age: 23,
-    tier: "New Model",
-    subscribers: "3.2k",
+    tier: "Featured",
+    subscribers: "365k",
     isLive: true,
-    viewers: 450,
-    toyConnected: "Lovense Edge",
-    videoRate: 25,
-    voiceRate: 18,
-    specialties: ["New Model", "Interactive"],
-    earnings: "$1,850",
+    viewers: 1456,
+    toyConnected: "Lovense Lush",
+    videoRate: 42,
+    voiceRate: 24,
+    specialties: ["French", "Lingerie"],
+    earnings: "$78k",
     status: "online",
-    isNew: true
+    initial: "E",
+    gradientColors: "bg-gradient-to-br from-rose-500 to-pink-400"
   }
 ];

@@ -1,12 +1,15 @@
+
 import { useState } from "react";
 import { Navigation } from "@/components/Navigation";
+import { HeroSection } from "@/components/HeroSection";
+import { SearchFilters } from "@/components/SearchFilters";
 import { CreatorCard } from "@/components/CreatorCard";
 import { LiveStream } from "@/components/LiveStream";
 import { CoinsPanel } from "@/components/CoinsPanel";
+import { TokenPackages } from "@/components/TokenPackages";
 import { creators } from "@/data/creators";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("explore");
@@ -44,32 +47,19 @@ const Index = () => {
     switch (activeTab) {
       case "explore":
         return (
-          <div className="space-y-6">
+          <div className="space-y-8">
             {/* Hero Section */}
-            <div className="bg-gradient-card p-8 rounded-lg text-center">
-              <h1 className="text-4xl font-bold mb-4 bg-gradient-primary bg-clip-text text-transparent">
-                Welcome to Feelynx
-              </h1>
-              <p className="text-xl text-muted-foreground mb-6">
-                Premium adult entertainment platform with interactive experiences
-              </p>
-              <div className="flex flex-wrap justify-center gap-4">
-                <Badge variant="secondary" className="text-lg py-2 px-4">
-                  🔴 {creators.filter(c => c.isLive).length} Live Now
-                </Badge>
-                <Badge variant="secondary" className="text-lg py-2 px-4">
-                  ⭐ {creators.length} Featured Creators
-                </Badge>
-                <Badge variant="secondary" className="text-lg py-2 px-4">
-                  🎮 Interactive Toys
-                </Badge>
-              </div>
+            <HeroSection />
+            
+            {/* Search and Filters */}
+            <div className="container mx-auto px-4">
+              <SearchFilters />
             </div>
 
             {/* Live Creators */}
-            <div>
-              <h2 className="text-2xl font-bold mb-4">🔴 Live Now</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="container mx-auto px-4">
+              <h2 className="text-3xl font-bold mb-6">🔴 Live Now</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {creators.filter(c => c.isLive).map((creator) => (
                   <CreatorCard 
                     key={creator.id} 
@@ -81,9 +71,9 @@ const Index = () => {
             </div>
 
             {/* All Creators */}
-            <div>
-              <h2 className="text-2xl font-bold mb-4">Featured Creators</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="container mx-auto px-4">
+              <h2 className="text-3xl font-bold mb-6">Featured Creators</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {creators.map((creator) => (
                   <CreatorCard 
                     key={creator.id} 
@@ -98,9 +88,10 @@ const Index = () => {
 
       case "creators":
         return (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold">All Creators</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="container mx-auto px-4 space-y-8">
+            <SearchFilters />
+            <h2 className="text-3xl font-bold">All Creators</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {creators.map((creator) => (
                 <CreatorCard 
                   key={creator.id} 
@@ -114,48 +105,79 @@ const Index = () => {
 
       case "content":
         return (
-          <Card className="bg-gradient-card">
-            <CardHeader>
-              <CardTitle>Premium Content</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-12">
-                <div className="text-6xl mb-4">🎬</div>
-                <h3 className="text-xl font-semibold mb-2">Premium Content Library</h3>
-                <p className="text-muted-foreground mb-4">
-                  Access exclusive photos, videos, and custom content from your favorite creators
-                </p>
-                <Button className="bg-gradient-primary text-primary-foreground">
-                  Browse Content
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="container mx-auto px-4">
+            <Card className="bg-gradient-card">
+              <CardHeader>
+                <CardTitle className="text-3xl text-center">Premium Content Library</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-12">
+                  <div className="text-6xl mb-4">🎬</div>
+                  <h3 className="text-xl font-semibold mb-2">Exclusive Photos & Videos</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Access premium content from your favorite creators with token purchases
+                  </p>
+                  <Button className="bg-gradient-primary text-primary-foreground">
+                    Browse Content
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         );
 
       case "calls":
         return (
-          <Card className="bg-gradient-card">
-            <CardHeader>
-              <CardTitle>Video Calls</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-12">
-                <div className="text-6xl mb-4">📹</div>
-                <h3 className="text-xl font-semibold mb-2">Private Video Calls</h3>
-                <p className="text-muted-foreground mb-4">
-                  Book private video calls with creators for personalized experiences
-                </p>
-                <Button className="bg-gradient-primary text-primary-foreground">
-                  Schedule Call
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="container mx-auto px-4">
+            <Card className="bg-gradient-card">
+              <CardHeader>
+                <CardTitle className="text-3xl text-center">Private Video Calls</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-12">
+                  <div className="text-6xl mb-4">📹</div>
+                  <h3 className="text-xl font-semibold mb-2">One-on-One Sessions</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Book private video calls with creators for personalized experiences
+                  </p>
+                  <Button className="bg-gradient-primary text-primary-foreground">
+                    Schedule Call
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        );
+
+      case "groups":
+        return (
+          <div className="container mx-auto px-4">
+            <Card className="bg-gradient-card">
+              <CardHeader>
+                <CardTitle className="text-3xl text-center">Private Groups</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-12">
+                  <div className="text-6xl mb-4">👥</div>
+                  <h3 className="text-xl font-semibold mb-2">Exclusive Communities</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Join private groups for exclusive content and direct creator interaction
+                  </p>
+                  <Button className="bg-gradient-primary text-primary-foreground">
+                    Explore Groups
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         );
 
       case "coins":
-        return <CoinsPanel />;
+        return (
+          <div className="container mx-auto px-4">
+            <TokenPackages />
+          </div>
+        );
 
       default:
         return <div>Content for {activeTab}</div>;
@@ -165,7 +187,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
-      <main className="container mx-auto p-4">
+      <main>
         {renderContent()}
       </main>
     </div>
