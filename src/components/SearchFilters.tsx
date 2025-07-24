@@ -13,7 +13,7 @@ export const SearchFilters = () => {
     <div className="bg-card/50 backdrop-blur-sm p-6 rounded-lg border border-border">
       <div className="flex flex-wrap items-center gap-4">
         {/* Search Bar */}
-        <div className="relative flex-1 min-w-64">
+        <div className="relative flex-1 min-w-[16rem]">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input 
             placeholder="Search creators..." 
