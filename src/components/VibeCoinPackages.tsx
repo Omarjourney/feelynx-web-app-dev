@@ -2,31 +2,19 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { vibeCoinPackages, VibeCoinPackage } from "@/data/vibecoinPackages";
 
-interface VibeCoinPackage {
-  id: number;
-  /** VibeCoins awarded when purchasing on the web */
-  tokens: number;
-  /** VibeCoins a user would receive in the mobile app */
-  appTokens: number;
-  /** Percentage increase of web coins compared to the app */
-  percentMore: number;
-  price: number;
-  popular?: boolean;
+interface VibeCoinPackagesProps {
+  /**
+   * Display mode for the component.
+   * - 'web'  : show web coin amounts and indicate app value
+   * - 'app'  : show app coin amounts and highlight web bonus
+   */
+  platform?: "web" | "app";
 }
 
-export const VibeCoinPackages = () => {
-  const packages: VibeCoinPackage[] = [
-    { id: 1, tokens: 75, appTokens: 50, percentMore: 50, price: 0.99 },
-    { id: 2, tokens: 400, appTokens: 275, percentMore: 45, price: 4.99 },
-    { id: 3, tokens: 900, appTokens: 650, percentMore: 38, price: 9.99 },
-    { id: 4, tokens: 1500, appTokens: 1100, percentMore: 36, price: 15.99 },
-    { id: 5, tokens: 2000, appTokens: 1400, percentMore: 43, price: 19.99 },
-    { id: 6, tokens: 2600, appTokens: 1800, percentMore: 44, price: 24.99 },
-    { id: 7, tokens: 5300, appTokens: 3750, percentMore: 41, price: 49.99, popular: true },
-    { id: 8, tokens: 11000, appTokens: 7800, percentMore: 41, price: 99.99 },
-    { id: 9, tokens: 14624, appTokens: 10400, percentMore: 40, price: 149.99 }
-  ];
+export const VibeCoinPackages = ({ platform = "web" }: VibeCoinPackagesProps) => {
+  const packages: VibeCoinPackage[] = vibeCoinPackages;
 
   return (
     <div>
@@ -45,14 +33,22 @@ export const VibeCoinPackages = () => {
             <CardHeader className="text-center pb-4">
               <div className="text-6xl mb-4">💎</div>
               <CardTitle className="text-2xl font-bold">
-                {pkg.tokens.toLocaleString()} VibeCoins
+                {(platform === 'app' ? pkg.appTokens : pkg.tokens).toLocaleString()} VibeCoins
               </CardTitle>
-              <div className="text-sm text-muted-foreground">
-                {pkg.appTokens.toLocaleString()} in app
-              </div>
-              <Badge variant="secondary" className="bg-primary/20 text-primary">
-                +{pkg.percentMore}% on web
-              </Badge>
+              {platform === 'web' ? (
+                <div className="text-sm text-muted-foreground">
+                  {pkg.appTokens.toLocaleString()} in app
+                </div>
+              ) : (
+                <div className="text-sm text-muted-foreground">
+                  Get +{pkg.percentMore}% more on Feelynx.live ({pkg.tokens.toLocaleString()} total)
+                </div>
+              )}
+              {platform === 'web' && (
+                <Badge variant="secondary" className="bg-primary/20 text-primary">
+                  +{pkg.percentMore}% on web
+                </Badge>
+              )}
             </CardHeader>
 
             <CardContent className="text-center space-y-4">
@@ -74,9 +70,11 @@ export const VibeCoinPackages = () => {
               >
                 Purchase Now
               </Button>
-              <div className="text-xs text-muted-foreground mt-2">
-                Get +{pkg.percentMore}% more VibeCoins on Feelynx.live!
-              </div>
+              {platform === 'app' && (
+                <div className="text-xs text-muted-foreground mt-2">
+                  Get +{pkg.percentMore}% more VibeCoins on Feelynx.live!
+                </div>
+              )}
             </CardContent>
           </Card>
         ))}
