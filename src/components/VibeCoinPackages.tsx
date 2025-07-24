@@ -11,9 +11,13 @@ interface VibeCoinPackagesProps {
    * - 'app'  : show app coin amounts and highlight web bonus
    */
   platform?: "web" | "app";
+  /**
+   * Callback fired when a package is purchased.
+   */
+  onPurchase?: (pkg: VibeCoinPackage) => void;
 }
 
-export const VibeCoinPackages = ({ platform = "web" }: VibeCoinPackagesProps) => {
+export const VibeCoinPackages = ({ platform = "web", onPurchase }: VibeCoinPackagesProps) => {
   const packages: VibeCoinPackage[] = vibeCoinPackages;
 
   return (
@@ -67,6 +71,7 @@ export const VibeCoinPackages = ({ platform = "web" }: VibeCoinPackagesProps) =>
                     : 'bg-secondary hover:bg-secondary/80'
                 }`}
                 size="lg"
+                onClick={() => onPurchase?.(pkg)}
               >
                 Purchase Now
               </Button>
