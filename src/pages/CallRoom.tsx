@@ -13,13 +13,18 @@ const CallRoom = () => {
   const startCall = async () => {
     setState('connecting');
     try {
+      // Request offer from backend. A real implementation would
+      // return an SDP offer from a WebRTC SFU like mediasoup.
+      await fetch('/api/stream/webrtc/start', {
+        method: 'POST',
+      });
+
       const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: true,
       });
       setStream(stream);
       setState('live');
-      // In a real app, WebRTC negotiation would happen here.
       toast({ title: 'Stream started' });
     } catch (err) {
       toast({ title: 'Camera permission denied' });

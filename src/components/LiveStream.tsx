@@ -22,6 +22,7 @@ interface ChatMessage {
 
 export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) => {
   const [isConnected, setIsConnected] = useState(false);
+  const [streamUrl, setStreamUrl] = useState<string | null>(null);
   const [chatMessage, setChatMessage] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -51,7 +52,11 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
 
   const handleConnect = async () => {
     try {
-      // Simulate WebRTC connection
+      const res = await fetch('/api/stream/rtmp/start', { method: 'POST' });
+      if (res.ok) {
+        const data = await res.json();
+        setStreamUrl(data.url);
+      }
       setIsConnected(true);
     } catch (error) {
       console.error('Connection failed:', error);
@@ -111,6 +116,7 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
               ) : (
                 <video
                   ref={videoRef}
+                  src={streamUrl ?? undefined}
                   className="w-full h-full object-cover"
                   controls={false}
                   autoPlay
