@@ -1,8 +1,7 @@
-
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { vibeCoinPackages, VibeCoinPackage } from "@/data/vibecoinPackages";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { vibeCoinPackages, VibeCoinPackage } from '@/data/vibecoinPackages';
 
 interface VibeCoinPackagesProps {
   /**
@@ -10,14 +9,14 @@ interface VibeCoinPackagesProps {
    * - 'web'  : show web coin amounts and indicate app value
    * - 'app'  : show app coin amounts and highlight web bonus
    */
-  platform?: "web" | "app";
+  platform?: 'web' | 'app';
   /**
    * Callback fired when a package is purchased.
    */
   onPurchase?: (pkg: VibeCoinPackage) => void;
 }
 
-export const VibeCoinPackages = ({ platform = "web", onPurchase }: VibeCoinPackagesProps) => {
+export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPackagesProps) => {
   const packages: VibeCoinPackage[] = vibeCoinPackages;
 
   return (
@@ -25,15 +24,18 @@ export const VibeCoinPackages = ({ platform = "web", onPurchase }: VibeCoinPacka
       <h2 className="text-3xl font-bold mb-8 text-center">VibeCoin Packages</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {packages.map((pkg) => (
-          <Card key={pkg.id} className={`relative bg-gradient-card transition-all hover:shadow-premium ${
-            pkg.popular ? 'ring-2 ring-primary shadow-premium scale-105' : ''
-          }`}>
+          <Card
+            key={pkg.id}
+            className={`relative bg-gradient-card transition-all hover:shadow-premium ${
+              pkg.popular ? 'ring-2 ring-primary shadow-premium scale-105' : ''
+            }`}
+          >
             {pkg.popular && (
               <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-primary text-primary-foreground px-4 py-1">
                 Most Popular
               </Badge>
             )}
-            
+
             <CardHeader className="text-center pb-4">
               <div className="text-6xl mb-4">💎</div>
               <CardTitle className="text-2xl font-bold">
@@ -56,14 +58,12 @@ export const VibeCoinPackages = ({ platform = "web", onPurchase }: VibeCoinPacka
             </CardHeader>
 
             <CardContent className="text-center space-y-4">
-              <div className="text-4xl font-bold text-primary">
-                ${pkg.price}
-              </div>
+              <div className="text-4xl font-bold text-primary">${pkg.price}</div>
 
               <div className="text-xs text-muted-foreground">
                 ${(pkg.price / pkg.tokens).toFixed(3)} per VibeCoin
               </div>
-              
+
               <Button
                 className={`w-full mt-4 ${
                   pkg.popular

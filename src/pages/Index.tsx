@@ -1,23 +1,22 @@
-
-import { useState } from "react";
-import { Navigation } from "@/components/Navigation";
-import { HeroSection } from "@/components/HeroSection";
-import { SearchFilters } from "@/components/SearchFilters";
-import { CreatorCard } from "@/components/CreatorCard";
-import { LiveStream } from "@/components/LiveStream";
-import { CoinsPanel } from "@/components/CoinsPanel";
-import { VibeCoinPackages } from "@/components/VibeCoinPackages";
-import { creators } from "@/data/creators";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useState } from 'react';
+import { Navigation } from '@/components/Navigation';
+import { HeroSection } from '@/components/HeroSection';
+import { SearchFilters } from '@/components/SearchFilters';
+import { CreatorCard } from '@/components/CreatorCard';
+import { LiveStream } from '@/components/LiveStream';
+import { CoinsPanel } from '@/components/CoinsPanel';
+import { VibeCoinPackages } from '@/components/VibeCoinPackages';
+import { creators } from '@/data/creators';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState("explore");
+  const [activeTab, setActiveTab] = useState('explore');
   const [selectedCreator, setSelectedCreator] = useState<number | null>(null);
   const [isInLiveStream, setIsInLiveStream] = useState(false);
 
   const handleViewProfile = (creatorId: number) => {
-    const creator = creators.find(c => c.id === creatorId);
+    const creator = creators.find((c) => c.id === creatorId);
     if (creator?.isLive) {
       setSelectedCreator(creatorId);
       setIsInLiveStream(true);
@@ -30,12 +29,12 @@ const Index = () => {
   };
 
   if (isInLiveStream && selectedCreator) {
-    const creator = creators.find(c => c.id === selectedCreator);
+    const creator = creators.find((c) => c.id === selectedCreator);
     return (
       <div className="min-h-screen bg-background">
         <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
-        <LiveStream 
-          creatorName={creator?.name || ""} 
+        <LiveStream
+          creatorName={creator?.name || ''}
           viewers={creator?.viewers || 0}
           onBack={handleBackFromStream}
         />
@@ -45,12 +44,12 @@ const Index = () => {
 
   const renderContent = () => {
     switch (activeTab) {
-      case "explore":
+      case 'explore':
         return (
           <div className="space-y-8">
             {/* Hero Section */}
             <HeroSection />
-            
+
             {/* Search and Filters */}
             <div className="container mx-auto px-4">
               <SearchFilters />
@@ -60,13 +59,15 @@ const Index = () => {
             <div className="container mx-auto px-4">
               <h2 className="text-3xl font-bold mb-6">🔴 Live Now</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {creators.filter(c => c.isLive).map((creator) => (
-                  <CreatorCard 
-                    key={creator.id} 
-                    creator={creator} 
-                    onViewProfile={handleViewProfile}
-                  />
-                ))}
+                {creators
+                  .filter((c) => c.isLive)
+                  .map((creator) => (
+                    <CreatorCard
+                      key={creator.id}
+                      creator={creator}
+                      onViewProfile={handleViewProfile}
+                    />
+                  ))}
               </div>
             </div>
 
@@ -75,9 +76,9 @@ const Index = () => {
               <h2 className="text-3xl font-bold mb-6">Featured Creators</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {creators.map((creator) => (
-                  <CreatorCard 
-                    key={creator.id} 
-                    creator={creator} 
+                  <CreatorCard
+                    key={creator.id}
+                    creator={creator}
                     onViewProfile={handleViewProfile}
                   />
                 ))}
@@ -86,24 +87,20 @@ const Index = () => {
           </div>
         );
 
-      case "creators":
+      case 'creators':
         return (
           <div className="container mx-auto px-4 space-y-8">
             <SearchFilters />
             <h2 className="text-3xl font-bold">All Creators</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {creators.map((creator) => (
-                <CreatorCard 
-                  key={creator.id} 
-                  creator={creator} 
-                  onViewProfile={handleViewProfile}
-                />
+                <CreatorCard key={creator.id} creator={creator} onViewProfile={handleViewProfile} />
               ))}
             </div>
           </div>
         );
 
-      case "content":
+      case 'content':
         return (
           <div className="container mx-auto px-4">
             <Card className="bg-gradient-card">
@@ -126,7 +123,7 @@ const Index = () => {
           </div>
         );
 
-      case "calls":
+      case 'calls':
         return (
           <div className="container mx-auto px-4">
             <Card className="bg-gradient-card">
@@ -149,7 +146,7 @@ const Index = () => {
           </div>
         );
 
-      case "groups":
+      case 'groups':
         return (
           <div className="container mx-auto px-4">
             <Card className="bg-gradient-card">
@@ -172,7 +169,7 @@ const Index = () => {
           </div>
         );
 
-      case "coins":
+      case 'coins':
         return (
           <div className="container mx-auto px-4">
             <VibeCoinPackages platform="web" />
@@ -187,9 +184,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
-      <main>
-        {renderContent()}
-      </main>
+      <main>{renderContent()}</main>
     </div>
   );
 };

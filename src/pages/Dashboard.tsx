@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const Dashboard = () => (
   <div className="container mx-auto p-4">
@@ -14,4 +14,3 @@ const Dashboard = () => (
 );
 
 export default Dashboard;
-

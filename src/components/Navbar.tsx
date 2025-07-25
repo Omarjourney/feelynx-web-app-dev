@@ -1,13 +1,13 @@
-import { Link, useLocation } from "react-router-dom";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import feelynxLogo from "@/assets/feelynx-logo.png";
+import { Link, useLocation } from 'react-router-dom';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import feelynxLogo from '@/assets/feelynx-logo.png';
 
 const links = [
-  { to: "/", label: "Home" },
-  { to: "/call-room", label: "Go Live" },
-  { to: "/token-shop", label: "Buy Coins" },
-  { to: "/dashboard", label: "Dashboard" },
+  { to: '/', label: 'Home' },
+  { to: '/call-room', label: 'Go Live' },
+  { to: '/token-shop', label: 'Buy Coins' },
+  { to: '/dashboard', label: 'Dashboard' },
 ];
 
 const Navbar = () => {
@@ -26,14 +26,17 @@ const Navbar = () => {
             <Button
               key={l.to}
               asChild
-              variant={location.pathname === l.to ? "default" : "ghost"}
+              variant={location.pathname === l.to ? 'default' : 'ghost'}
               className="rounded-full px-4"
             >
               <Link to={l.to}>{l.label}</Link>
             </Button>
           ))}
         </div>
-        <Badge variant="secondary" className="bg-gradient-primary text-primary-foreground px-3 py-1">
+        <Badge
+          variant="secondary"
+          className="bg-gradient-primary text-primary-foreground px-3 py-1"
+        >
           💎 0
         </Badge>
       </div>
@@ -42,4 +45,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-

@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { VibeCoinPackages } from "@/components/VibeCoinPackages";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "@/components/ui/use-toast";
+import { useState } from 'react';
+import { VibeCoinPackages } from '@/components/VibeCoinPackages';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { toast } from '@/components/ui/use-toast';
 
 const TokenShop = () => {
   const [coins, setCoins] = useState(500);
@@ -27,4 +27,3 @@ const TokenShop = () => {
 };
 
 export default TokenShop;
-
