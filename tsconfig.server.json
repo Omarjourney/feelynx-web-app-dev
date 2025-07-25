@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.node.json",
+  "compilerOptions": {
+    "rootDir": "./server",
+    "outDir": "./dist/server",
+    "module": "CommonJS",
+    "esModuleInterop": true
+  },
+  "include": ["server/**/*"]
+}
