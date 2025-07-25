@@ -8,7 +8,7 @@ import TokenShop from './pages/TokenShop';
 import CallRoom from './pages/CallRoom';
 import Dashboard from './pages/Dashboard';
 import NotFound from './pages/NotFound';
-import Navbar from '@/components/Navbar';
+import GoLiveButton from '@/components/GoLiveButton';
 
 const queryClient = new QueryClient();
 
@@ -18,7 +18,6 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Navbar />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/token-shop" element={<TokenShop />} />
@@ -27,6 +26,7 @@ const App = () => (
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <GoLiveButton />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
