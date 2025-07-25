@@ -8,7 +8,7 @@ const CallRoom = () => {
   const [state, setState] = useState<'idle' | 'connecting' | 'live' | 'ended'>('idle');
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
-  const streamRef = useRef<MediaStream | null>(null);
+  const [stream, setStream] = useState<MediaStream | null>(null);
 
   const startCall = async () => {
     setState('connecting');
@@ -17,15 +17,9 @@ const CallRoom = () => {
         video: true,
         audio: true,
       });
-      streamRef.current = stream;
-      if (localVideoRef.current) {
-        localVideoRef.current.srcObject = stream;
-      }
-      // In a real app, WebRTC negotiation would happen here.
-      if (remoteVideoRef.current) {
-        remoteVideoRef.current.srcObject = stream;
-      }
+      setStream(stream);
       setState('live');
+      // In a real app, WebRTC negotiation would happen here.
       toast({ title: 'Stream started' });
     } catch (err) {
       toast({ title: 'Camera permission denied' });
@@ -34,16 +28,25 @@ const CallRoom = () => {
   };
 
   const endCall = () => {
-    streamRef.current?.getTracks().forEach((t) => t.stop());
-    streamRef.current = null;
+    stream?.getTracks().forEach((t) => t.stop());
+    setStream(null);
     setState('ended');
   };
 
   useEffect(() => {
+    if (localVideoRef.current && stream) {
+      localVideoRef.current.srcObject = stream;
+    }
+    if (remoteVideoRef.current && stream) {
+      remoteVideoRef.current.srcObject = stream;
+    }
+  }, [stream]);
+
+  useEffect(() => {
     return () => {
-      streamRef.current?.getTracks().forEach((t) => t.stop());
+      stream?.getTracks().forEach((t) => t.stop());
     };
-  }, []);
+  }, [stream]);
 
   return (
     <div className="container mx-auto p-4 space-y-4">
@@ -62,8 +65,19 @@ const CallRoom = () => {
           {state === 'connecting' && <p className="text-center">Connecting...</p>}
           {(state === 'live' || state === 'ended') && (
             <div className="grid md:grid-cols-2 gap-4">
-              <video ref={localVideoRef} autoPlay muted className="w-full rounded-lg bg-black" />
-              <video ref={remoteVideoRef} autoPlay className="w-full rounded-lg bg-black" />
+              <video
+                ref={localVideoRef}
+                autoPlay
+                playsInline
+                muted
+                className="w-full h-auto rounded-lg bg-black"
+              />
+              <video
+                ref={remoteVideoRef}
+                autoPlay
+                playsInline
+                className="w-full h-auto rounded-lg bg-black"
+              />
             </div>
           )}
           {state === 'live' && (
