@@ -11,11 +11,13 @@ import authRoutes from './routes/auth';
 import usersRoutes from './routes/users';
 import postsRoutes from './routes/posts';
 import paymentsRoutes from './routes/payments';
+import livekitRoutes from './routes/livekit';
 
 app.use('/auth', authRoutes);
 app.use('/users', usersRoutes);
 app.use('/posts', postsRoutes);
 app.use('/payments', paymentsRoutes);
+app.use('/livekit', livekitRoutes);
 
 const port = process.env.PORT || 3001;
 

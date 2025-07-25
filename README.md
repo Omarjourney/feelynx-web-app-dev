@@ -78,6 +78,16 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
+## LiveKit
+
+This project includes a [LiveKit](https://livekit.io) server for real-time video and audio. The service is defined in `docker-compose.yml` and runs on ports `7880` and `7881`.
+
+To enable LiveKit locally:
+
+1. Copy `.env.example` to `.env` and set `LIVEKIT_API_KEY` and `LIVEKIT_API_SECRET`.
+2. Run `docker-compose up` to start the `livekit` container alongside the app.
+3. The frontend will connect to `VITE_LIVEKIT_WS_URL` (default `ws://localhost:7880`).
+
 ## How can I deploy this project?
 
 Simply open [Lovable](https://lovable.dev/projects/74f85079-0010-42ba-8b2a-06332941ffd9) and click on Share -> Publish.
