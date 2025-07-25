@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
-import { PostCard } from '@/components/PostCard';
+import SubscriptionPost from '@/components/SubscriptionPost';
 import { posts } from '@/data/posts';
 
 const Content = () => {
@@ -12,7 +12,14 @@ const Content = () => {
       <div className="container mx-auto p-4 space-y-6">
         <div className="space-y-4">
           {posts.map((p) => (
-            <PostCard key={p.id} post={p} />
+            <SubscriptionPost
+              key={p.id}
+              avatarUrl={`https://source.unsplash.com/random/100x100?sig=${p.id}`}
+              contentUrl={p.src}
+              isLocked={Boolean(p.locked)}
+              caption={p.username}
+              price={p.price}
+            />
           ))}
         </div>
       </div>
