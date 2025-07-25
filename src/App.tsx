@@ -7,6 +7,12 @@ import Index from './pages/Index';
 import TokenShop from './pages/TokenShop';
 import CallRoom from './pages/CallRoom';
 import Dashboard from './pages/Dashboard';
+import Explore from './pages/Explore';
+import Creators from './pages/Creators';
+import Content from './pages/Content';
+import Calls from './pages/Calls';
+import Groups from './pages/Groups';
+import Live from './pages/Live';
 import NotFound from './pages/NotFound';
 import GoLiveButton from '@/components/GoLiveButton';
 
@@ -20,6 +26,12 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/explore" element={<Explore />} />
+          <Route path="/creators" element={<Creators />} />
+          <Route path="/content" element={<Content />} />
+          <Route path="/calls" element={<Calls />} />
+          <Route path="/groups" element={<Groups />} />
+          <Route path="/live/:username" element={<Live />} />
           <Route path="/token-shop" element={<TokenShop />} />
           <Route path="/call-room" element={<CallRoom />} />
           <Route path="/dashboard" element={<Dashboard />} />
