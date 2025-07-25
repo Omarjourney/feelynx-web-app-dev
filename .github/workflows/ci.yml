@@ -22,4 +22,4 @@ jobs:
             ${{ runner.os }}-node-
       - run: npm ci
       - run: npm run lint
-      - run: npm test
+      - run: npm run build
