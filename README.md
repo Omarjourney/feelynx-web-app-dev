@@ -36,6 +36,24 @@ npm i
 npm run dev
 ```
 
+To check the codebase for linting issues, run:
+
+```sh
+npm run lint
+```
+
+To create a production build, execute:
+
+```sh
+npm run build
+```
+
+Tests are not yet configured, but once available you can run them with:
+
+```sh
+npm test
+```
+
 **Edit a file directly in GitHub**
 
 - Navigate to the desired file(s).
