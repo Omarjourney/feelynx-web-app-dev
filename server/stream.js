@@ -1,21 +1,34 @@
 import { Router } from 'express';
+import { AccessToken } from 'livekit-server-sdk';
 
 const router = Router();
 
-// Endpoint to start a WebRTC session. A real implementation would
-// integrate with a mediasoup or LiveKit server.
-router.post('/webrtc/start', (_req, res) => {
-  res.json({ offer: 'dummy-offer-sdp' });
+const {
+  LIVEKIT_URL = 'http://localhost:7880',
+  LIVEKIT_API_KEY = 'devkey',
+  LIVEKIT_API_SECRET = 'secret',
+  RTMP_BASE_URL = 'rtmp://localhost/live',
+} = process.env;
+
+// Generate a LiveKit access token for joining a WebRTC room
+router.post('/webrtc/token', (req, res) => {
+  const { identity, room } = req.body ?? {};
+  if (!identity || !room) {
+    return res.status(400).json({ error: 'identity and room required' });
+  }
+
+  const at = new AccessToken(LIVEKIT_API_KEY, LIVEKIT_API_SECRET, {
+    identity,
+  });
+  at.addGrant({ room, roomJoin: true, canPublish: true, canSubscribe: true });
+
+  res.json({ token: at.toJwt(), url: LIVEKIT_URL });
 });
 
-// Endpoint to accept a WebRTC answer from the client.
-router.post('/webrtc/answer', (_req, res) => {
-  res.json({ success: true });
-});
-
-// Endpoint to request an RTMP relay URL for broadcasting.
+// Return an RTMP URL that the client can push to
 router.post('/rtmp/start', (_req, res) => {
-  res.json({ url: 'rtmp://localhost/live/stream' });
+  const streamKey = Math.random().toString(36).substring(2);
+  res.json({ url: `${RTMP_BASE_URL}/${streamKey}` });
 });
 
 export default router;

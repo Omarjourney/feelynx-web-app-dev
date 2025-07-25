@@ -9,15 +9,20 @@ const CallRoom = () => {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
+  const [livekitInfo, setLivekitInfo] = useState<{ token: string; url: string } | null>(null);
 
   const startCall = async () => {
     setState('connecting');
     try {
-      // Request offer from backend. A real implementation would
-      // return an SDP offer from a WebRTC SFU like mediasoup.
-      await fetch('/api/stream/webrtc/start', {
+      const res = await fetch('/api/stream/webrtc/token', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identity: 'host', room: 'call-room' }),
       });
+      if (res.ok) {
+        const data = await res.json();
+        setLivekitInfo(data);
+      }
 
       const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
