@@ -1,7 +1,6 @@
-
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface Creator {
   id: number;
@@ -39,22 +38,20 @@ export const CreatorCard = ({ creator, onViewProfile }: CreatorCardProps) => {
               🔴 LIVE {creator.viewers?.toLocaleString()}
             </Badge>
           )}
-          
+
           {creator.tier && (
             <Badge className="absolute top-2 right-2 bg-gradient-primary text-primary-foreground text-xs">
               {creator.tier}
             </Badge>
           )}
-          
+
           {creator.toyConnected && (
             <Badge className="absolute bottom-2 left-2 bg-black/50 text-white text-xs">
               🎮 {creator.toyConnected}
             </Badge>
           )}
-          
-          <div className="text-8xl font-bold text-white opacity-90">
-            {creator.initial}
-          </div>
+
+          <div className="text-8xl font-bold text-white opacity-90">{creator.initial}</div>
         </div>
 
         {/* Creator Info */}
@@ -72,9 +69,7 @@ export const CreatorCard = ({ creator, onViewProfile }: CreatorCardProps) => {
             </div>
           </div>
 
-          <div className="text-sm text-muted-foreground">
-            👥 {creator.subscribers}
-          </div>
+          <div className="text-sm text-muted-foreground">👥 {creator.subscribers}</div>
 
           {/* Specialties */}
           <div className="flex flex-wrap gap-1">
@@ -99,12 +94,12 @@ export const CreatorCard = ({ creator, onViewProfile }: CreatorCardProps) => {
 
           {/* Action Buttons */}
           <div className="flex space-x-2 pt-2">
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               className="flex-1 bg-gradient-primary text-primary-foreground hover:shadow-glow"
               onClick={() => onViewProfile(creator.id)}
             >
-              {creator.isLive ? "Watch" : "Tip"}
+              {creator.isLive ? 'Watch' : 'Tip'}
             </Button>
             <Button variant="outline" size="sm" className="px-3">
               💬

@@ -1,9 +1,9 @@
-import { useState, useRef, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { useState, useRef, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface LiveStreamProps {
   creatorName: string;
@@ -21,27 +21,27 @@ interface ChatMessage {
 
 export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) => {
   const [isConnected, setIsConnected] = useState(false);
-  const [chatMessage, setChatMessage] = useState("");
+  const [chatMessage, setChatMessage] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 1,
-      username: "User123",
-      message: "Amazing show! 🔥",
-      timestamp: "2:34 PM",
-      isHighlight: true
+      username: 'User123',
+      message: 'Amazing show! 🔥',
+      timestamp: '2:34 PM',
+      isHighlight: true,
     },
     {
       id: 2,
-      username: "VIPMember",
-      message: "Love the setup!",
-      timestamp: "2:35 PM"
+      username: 'VIPMember',
+      message: 'Love the setup!',
+      timestamp: '2:35 PM',
     },
     {
       id: 3,
-      username: "RegularFan",
-      message: "Can you do that thing again?",
-      timestamp: "2:36 PM"
-    }
+      username: 'RegularFan',
+      message: 'Can you do that thing again?',
+      timestamp: '2:36 PM',
+    },
   ]);
 
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -51,22 +51,22 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
       // Simulate WebRTC connection
       setIsConnected(true);
     } catch (error) {
-      console.error("Connection failed:", error);
+      console.error('Connection failed:', error);
     }
   };
 
   const sendMessage = () => {
     if (!chatMessage.trim()) return;
-    
+
     const newMessage: ChatMessage = {
       id: Date.now(),
-      username: "You",
+      username: 'You',
       message: chatMessage,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
-    
-    setMessages(prev => [...prev, newMessage]);
-    setChatMessage("");
+
+    setMessages((prev) => [...prev, newMessage]);
+    setChatMessage('');
   };
 
   return (
@@ -94,7 +94,7 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
                 <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary-glow/10">
                   <div className="text-center space-y-4">
                     <div className="text-6xl opacity-50">📹</div>
-                    <Button 
+                    <Button
                       onClick={handleConnect}
                       className="bg-gradient-primary text-primary-foreground hover:shadow-glow"
                     >
@@ -106,15 +106,15 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
                   </div>
                 </div>
               ) : (
-                <video 
-                  ref={videoRef} 
+                <video
+                  ref={videoRef}
                   className="w-full h-full object-cover"
                   controls={false}
                   autoPlay
                   muted
                 />
               )}
-              
+
               {/* Stream Controls */}
               {isConnected && (
                 <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
@@ -149,12 +149,12 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
             <ScrollArea className="h-64">
               <div className="space-y-2">
                 {messages.map((msg) => (
-                  <div 
-                    key={msg.id} 
+                  <div
+                    key={msg.id}
                     className={`p-2 rounded-lg text-sm ${
-                      msg.isHighlight 
-                        ? "bg-gradient-primary text-primary-foreground" 
-                        : "bg-secondary"
+                      msg.isHighlight
+                        ? 'bg-gradient-primary text-primary-foreground'
+                        : 'bg-secondary'
                     }`}
                   >
                     <div className="font-medium">{msg.username}</div>
@@ -170,7 +170,7 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
                 value={chatMessage}
                 onChange={(e) => setChatMessage(e.target.value)}
                 placeholder="Type a message..."
-                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
               />
               <Button onClick={sendMessage} size="sm">
                 Send
@@ -188,16 +188,23 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Button variant="outline" className="h-20">
-              💝<br />Tip 50💎
+              💝
+              <br />
+              Tip 50💎
             </Button>
             <Button variant="outline" className="h-20">
-              🌹<br />Send Rose
+              🌹
+              <br />
+              Send Rose
             </Button>
             <Button variant="outline" className="h-20">
-              🎮<br />Control Toy
+              🎮
+              <br />
+              Control Toy
             </Button>
             <Button variant="outline" className="h-20">
-              ⭐<br />Super Like
+              ⭐<br />
+              Super Like
             </Button>
           </div>
         </CardContent>
