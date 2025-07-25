@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 
 /** Simple Lovense toy pairing toggle. This does not implement the real API
  *  but mimics the user experience with a pulsing icon when active.
