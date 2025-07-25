@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import TipModal from './TipModal';
 
 interface LiveStreamProps {
   creatorName: string;
@@ -43,6 +44,8 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
       timestamp: '2:36 PM',
     },
   ]);
+
+  const [tipOpen, setTipOpen] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -127,7 +130,7 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
                     </Button>
                   </div>
                   <div className="flex space-x-2">
-                    <Button variant="secondary" size="sm">
+                    <Button variant="secondary" size="sm" onClick={() => setTipOpen(true)}>
                       💝 Tip
                     </Button>
                     <Button variant="secondary" size="sm">
@@ -187,7 +190,7 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Button variant="outline" className="h-20">
+            <Button variant="outline" className="h-20" onClick={() => setTipOpen(true)}>
               💝
               <br />
               Tip 50💎
@@ -209,6 +212,11 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
           </div>
         </CardContent>
       </Card>
+      <TipModal
+        isVisible={tipOpen}
+        onClose={() => setTipOpen(false)}
+        onSubmit={(amt) => console.log('tip', amt)}
+      />
     </div>
   );
 };
