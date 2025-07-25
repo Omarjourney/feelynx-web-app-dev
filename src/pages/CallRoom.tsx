@@ -1,4 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
+import {
+  Room,
+  Track,
+  createLocalTracks,
+  LocalTrackPublication,
+} from 'livekit-client';
 import LovenseToggle from '@/components/LovenseToggle';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,45 +14,55 @@ const CallRoom = () => {
   const [state, setState] = useState<'idle' | 'connecting' | 'live' | 'ended'>('idle');
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
-  const [stream, setStream] = useState<MediaStream | null>(null);
+  const roomRef = useRef<Room>();
 
   const startCall = async () => {
     setState('connecting');
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
+      const identity = `user-${Math.floor(Math.random() * 10000)}`;
+      const res = await fetch(`/livekit/token?identity=${identity}`);
+      if (!res.ok) throw new Error('token request failed');
+      const { token, url } = await res.json();
+
+      const room = new Room();
+      roomRef.current = room;
+
+      room.on('trackSubscribed', (track) => {
+        if (track.kind === Track.Kind.Video && remoteVideoRef.current) {
+          track.attach(remoteVideoRef.current);
+        }
       });
-      setStream(stream);
+
+      const tracks = await createLocalTracks({ audio: true, video: true });
+      tracks.forEach((t) => {
+        if (t.kind === Track.Kind.Video && localVideoRef.current) {
+          t.attach(localVideoRef.current);
+        }
+      });
+
+      await room.connect(url, token, { tracks });
       setState('live');
-      // In a real app, WebRTC negotiation would happen here.
-      toast({ title: 'Stream started' });
+      toast({ title: 'Connected to room' });
     } catch (err) {
-      toast({ title: 'Camera permission denied' });
+      console.error(err);
+      toast({ title: 'Connection failed' });
       setState('idle');
     }
   };
 
   const endCall = () => {
-    stream?.getTracks().forEach((t) => t.stop());
-    setStream(null);
+    roomRef.current?.disconnect();
+    roomRef.current = undefined;
+    if (localVideoRef.current) localVideoRef.current.srcObject = null;
+    if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
     setState('ended');
   };
 
   useEffect(() => {
-    if (localVideoRef.current && stream) {
-      localVideoRef.current.srcObject = stream;
-    }
-    if (remoteVideoRef.current && stream) {
-      remoteVideoRef.current.srcObject = stream;
-    }
-  }, [stream]);
-
-  useEffect(() => {
     return () => {
-      stream?.getTracks().forEach((t) => t.stop());
+      endCall();
     };
-  }, [stream]);
+  }, []);
 
   return (
     <div className="container mx-auto p-4 space-y-4">
