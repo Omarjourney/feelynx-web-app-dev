@@ -78,6 +78,31 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
+## Backend Architecture
+
+The repository already contained a small Express server written in TypeScript.
+Instead of introducing a separate FastAPI project we decided to expand this
+existing server. Keeping everything in Node.js simplifies the tooling and keeps
+the backend code in one place.
+
+The API is located in the `server/` directory. Run it during development with:
+
+```sh
+npm run dev:server
+```
+
+For a production build, compile the server and the frontend:
+
+```sh
+npm run build
+```
+
+Start the compiled server with:
+
+```sh
+npm start
+```
+
 ## LiveKit
 
 This project includes a [LiveKit](https://livekit.io) server for real-time video and audio. The service is defined in `docker-compose.yml` and runs on ports `7880` and `7881`.
