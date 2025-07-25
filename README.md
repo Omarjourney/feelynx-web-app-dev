@@ -81,7 +81,7 @@ This project is built with:
 ## Backend Architecture
 
 The repository already contained a small Express server written in TypeScript.
-Instead of introducing a separate FastAPI project we decided to expand this
+Instead of introducing a separate FastAPI project, we decided to expand this
 existing server. Keeping everything in Node.js simplifies the tooling and keeps
 the backend code in one place.
 
