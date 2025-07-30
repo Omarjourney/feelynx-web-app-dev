@@ -78,20 +78,6 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
-## Environment configuration
-
-Sensitive settings such as API keys should be placed in a local `.env` file or
-exported in your shell environment. The repository includes a `.env.example`
-file with placeholders.
-
-1. Copy `.env.example` to `.env` and replace the placeholder values with your
-   own credentials.
-2. Alternatively, set the variables directly in your shell or CI environment
-   using `export` commands.
-
-The `.env` file is listed in `.gitignore`, so your secrets remain local and will
-not be committed to version control.
-
 ## LiveKit
 
 This project includes a [LiveKit](https://livekit.io) server for real-time video and audio. The service is defined in `docker-compose.yml` and runs on ports `7880` and `7881`.
