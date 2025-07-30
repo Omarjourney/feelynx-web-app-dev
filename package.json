@@ -5,7 +5,6 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && npm run build:server",
     "build:server": "tsc -p tsconfig.server.json",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
@@ -13,6 +12,7 @@
     "start": "node dist/server/index.js",
     "format": "prettier --write .",
     "dev:server": "ts-node server/index.ts",
+    "start": "node dist/server/index.js",
     "migrate": "ts-node server/db/migrate.ts",
     "prisma:generate": "prisma generate"
   },

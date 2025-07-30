@@ -48,6 +48,12 @@ To create a production build, execute:
 npm run build
 ```
 
+Start the compiled backend using:
+
+```sh
+npm start
+```
+
 Tests are not yet configured, but once available you can run them with:
 
 ```sh
