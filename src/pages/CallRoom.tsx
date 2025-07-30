@@ -33,7 +33,8 @@ const CallRoom = () => {
         }
       });
 
-      const localTrack = room.localParticipant.videoTracks[0]?.track;
+      const localTrackPublications = Array.from(room.localParticipant.videoTrackPublications.values());
+      const localTrack = localTrackPublications[0]?.track;
       if (localTrack && localVideoRef.current) {
         localVideoRef.current.srcObject = new MediaStream([
           localTrack.mediaStreamTrack,

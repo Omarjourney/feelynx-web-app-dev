@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import {
   SearchFilters,
-  type SearchFiltersValues,
+
 } from '@/components/SearchFilters';
 import { CreatorCard } from '@/components/CreatorCard';
 
@@ -21,24 +21,14 @@ const Creators = () => {
   const handleTab = (t: string) =>
     navigate(t === 'creators' ? '/creators' : `/${t}`);
 
-  const [creators, setCreators] = useState<Creator[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [filters, setFilters] = useState<SearchFiltersValues>({
     search: '',
     country: '',
     specialty: '',
     isLive: false,
-    sort: 'trending',
-  });
-
-  const handleFiltersChange = (values: Partial<SearchFiltersValues>) => {
-    setFilters((prev) => ({ ...prev, ...values }));
-  };
 
   const handleView = (id: number) => {
     const c = creators.find((cc) => cc.id === id);
-    if (c?.isLive) navigate(`/live/${c.username.replace('@', '')}`);
+    if (c?.isLive) navigate(`/live/${c.username}`);
   };
 
   useEffect(() => {
@@ -70,13 +60,20 @@ const Creators = () => {
     <div className="min-h-screen bg-background">
       <Navigation activeTab="creators" onTabChange={handleTab} />
       <div className="container mx-auto p-4 space-y-6">
-        <SearchFilters {...filters} onChange={handleFiltersChange} />
-        {loading && <p className="text-center">Loading...</p>}
-        {error && <p className="text-center text-destructive">{error}</p>}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {creators.map((c) => (
-            <CreatorCard key={c.id} creator={c} onViewProfile={handleView} />
-          ))}
+          {loading && (
+            <div className="col-span-full text-center py-6">Loading...</div>
+          )}
+          {error && (
+            <div className="col-span-full text-center text-destructive py-6">
+              {error}
+            </div>
+          )}
+          {!loading &&
+            !error &&
+            creators.map((c) => (
+              <CreatorCard key={c.id} creator={c} onViewProfile={handleView} />
+            ))}
         </div>
       </div>
     </div>

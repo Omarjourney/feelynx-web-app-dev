@@ -48,6 +48,12 @@ To create a production build, execute:
 npm run build
 ```
 
+Start the compiled backend using:
+
+```sh
+npm start
+```
+
 Tests are not yet configured, but once available you can run them with:
 
 ```sh
@@ -77,14 +83,6 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
-
-## Environment configuration
-
-Sensitive settings such as API keys should be placed in a local `.env` file or
-exported in your shell environment. The repository includes a `.env.example`
-file with placeholders. Copy this file to `.env` and replace the values with
-your own credentials, or set the variables directly using `export` commands.
-The `.env` file is listed in `.gitignore` so your secrets remain local.
 
 ## LiveKit
 
