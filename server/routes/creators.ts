@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { creators as frontendCreators } from '../../src/data/creators';
 import { prisma } from '../db/prisma.js';
-import type { Prisma } from '@prisma/client';
+import { type Prisma } from '@prisma/client';
 
 const usePrisma = process.env.USE_PRISMA_CREATORS === 'true';
 
@@ -50,7 +50,7 @@ router.get('/', async (req, res) => {
   const { country, specialty, isLive, search, sort } = req.query;
 
   if (usePrisma) {
-    const where: Prisma.CreatorWhereInput = {};
+    const where: any = {};
     if (country) where.country = String(country);
     if (specialty) where.specialty = String(specialty);
     if (typeof isLive !== 'undefined')

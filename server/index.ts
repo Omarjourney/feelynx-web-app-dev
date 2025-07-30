@@ -1,5 +1,14 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors';
+import { createServer } from 'http';
+import { WebSocketServer } from 'ws';
+import authRoutes from './routes/auth.js';
+import usersRoutes from './routes/users.js';
+import postsRoutes from './routes/posts.js';
+import paymentsRoutes from './routes/payments.js';
+import livekitRoutes from './routes/livekit.js';
+import creatorsRoutes from './routes/creators.js';
 
 dotenv.config();
 
@@ -32,7 +41,7 @@ const creatorStatus: Record<string, boolean> = {};
 
 function broadcastStatus(data: StatusMessage) {
   const payload = JSON.stringify({ type: 'creatorStatus', ...data });
-  wss.clients.forEach((client) => {
+  wss.clients.forEach((client: any) => {
     if (client.readyState === client.OPEN) {
       client.send(payload);
     }
