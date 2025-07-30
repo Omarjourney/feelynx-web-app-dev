@@ -48,6 +48,12 @@ To create a production build, execute:
 npm run build
 ```
 
+Start the compiled backend using:
+
+```sh
+npm start
+```
+
 Tests are not yet configured, but once available you can run them with:
 
 ```sh
@@ -77,6 +83,19 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
+
+## Backend Architecture
+
+The repository includes an Express server written in TypeScript under the `server/` directory.
+All API routes, including LiveKit integrations, are handled by this server. After reviewing
+alternatives we decided to expand this existing Express backend rather than introduce a
+separate FastAPI project so the whole stack stays on Node.js.
+
+### Useful scripts
+
+- `npm run dev:server` – run the Express server with hot reload via `ts-node`.
+- `npm run build` – compile the backend and frontend for production.
+- `npm start` – launch the compiled server from `dist/server`.
 
 ## Environment configuration
 

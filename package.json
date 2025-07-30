@@ -5,12 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run build:server && vite build",
+    "build:server": "tsc -p tsconfig.server.json",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
     "format": "prettier --write .",
     "dev:server": "ts-node server/index.ts",
+    "start": "node dist/server/index.js",
     "migrate": "ts-node server/db/migrate.ts",
     "prisma:generate": "prisma generate"
   },
