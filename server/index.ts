@@ -1,20 +1,10 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import { createServer } from 'http';
-import { WebSocketServer } from 'ws';
-import { pool } from './db';
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
-
-import authRoutes from './routes/auth';
-import usersRoutes from './routes/users';
-import postsRoutes from './routes/posts';
-import paymentsRoutes from './routes/payments';
-import livekitRoutes from './routes/livekit';
-import creatorsRoutes from './routes/creators';
 
 app.use('/auth', authRoutes);
 app.use('/users', usersRoutes);
