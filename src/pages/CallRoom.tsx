@@ -1,10 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import {
-  Room,
-  Track,
-  createLocalTracks,
-  LocalTrackPublication,
-} from 'livekit-client';
+
 import LovenseToggle from '@/components/LovenseToggle';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,36 +8,11 @@ import { toast } from '@/hooks/use-toast';
 const CallRoom = () => {
   const [state, setState] = useState<'idle' | 'connecting' | 'live' | 'ended'>('idle');
   const localVideoRef = useRef<HTMLVideoElement>(null);
-  const remoteVideoRef = useRef<HTMLVideoElement>(null);
-  const roomRef = useRef<Room>();
 
   const startCall = async () => {
     setState('connecting');
     try {
-      const identity = `user-${Math.floor(Math.random() * 10000)}`;
-      const res = await fetch(`/livekit/token?identity=${identity}`);
-      if (!res.ok) throw new Error('token request failed');
-      const { token, url } = await res.json();
 
-      const room = new Room();
-      roomRef.current = room;
-
-      room.on('trackSubscribed', (track) => {
-        if (track.kind === Track.Kind.Video && remoteVideoRef.current) {
-          track.attach(remoteVideoRef.current);
-        }
-      });
-
-      const tracks = await createLocalTracks({ audio: true, video: true });
-      tracks.forEach((t) => {
-        if (t.kind === Track.Kind.Video && localVideoRef.current) {
-          t.attach(localVideoRef.current);
-        }
-      });
-
-      await room.connect(url, token, { tracks });
-      setState('live');
-      toast({ title: 'Connected to room' });
     } catch (err) {
       console.error(err);
       toast({ title: 'Connection failed' });
@@ -52,15 +22,13 @@ const CallRoom = () => {
 
   const endCall = () => {
     roomRef.current?.disconnect();
-    roomRef.current = undefined;
-    if (localVideoRef.current) localVideoRef.current.srcObject = null;
-    if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
+
     setState('ended');
   };
 
   useEffect(() => {
     return () => {
-      endCall();
+
     };
   }, []);
 
@@ -88,10 +56,8 @@ const CallRoom = () => {
                 muted
                 className="w-full h-auto rounded-lg bg-black"
               />
-              <video
+              <div
                 ref={remoteVideoRef}
-                autoPlay
-                playsInline
                 className="w-full h-auto rounded-lg bg-black"
               />
             </div>
