@@ -33,6 +33,7 @@ const Creators = () => {
   }
 
   interface Creator extends ApiCreator {
+    name: string;
     country: string;
     specialty: string;
     age: number;
@@ -72,6 +73,7 @@ const Creators = () => {
         setCreators(
           data.map((c) => ({
             ...c,
+            name: c.displayName,
             country: c.country,
             specialty: c.specialty,
             age: 0,
