@@ -84,27 +84,6 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
-## Backend Architecture
-
-The repository includes an Express server written in TypeScript under the `server/` directory.
-All API routes, including LiveKit integrations, are handled by this server. After reviewing
-alternatives we decided to expand this existing Express backend rather than introduce a
-separate FastAPI project so the whole stack stays on Node.js.
-
-### Useful scripts
-
-- `npm run dev:server` – run the Express server with hot reload via `ts-node`.
-- `npm run build` – compile the backend and frontend for production.
-- `npm start` – launch the compiled server from `dist/server`.
-
-## Environment configuration
-
-Sensitive settings such as API keys should be placed in a local `.env` file or
-exported in your shell environment. The repository includes a `.env.example`
-file with placeholders. Copy this file to `.env` and replace the values with
-your own credentials, or set the variables directly using `export` commands.
-The `.env` file is listed in `.gitignore` so your secrets remain local.
-
 ## LiveKit
 
 This project includes a [LiveKit](https://livekit.io) server for real-time video and audio. The service is defined in `docker-compose.yml` and runs on ports `7880` and `7881`.
