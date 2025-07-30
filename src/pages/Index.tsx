@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { HeroSection } from '@/components/HeroSection';
-import { SearchFilters } from '@/components/SearchFilters';
+import { SearchFilters, SearchFiltersState } from '@/components/SearchFilters';
 import { CreatorCard } from '@/components/CreatorCard';
 import { LiveStream } from '@/components/LiveStream';
 import { CoinsPanel } from '@/components/CoinsPanel';
@@ -15,6 +15,17 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState('explore');
   const [selectedCreator, setSelectedCreator] = useState<number | null>(null);
   const [isInLiveStream, setIsInLiveStream] = useState(false);
+  const [filters, setFilters] = useState<SearchFiltersState>({
+    search: '',
+    country: 'all',
+    specialty: 'all',
+    isLive: false,
+    sort: 'trendingScore'
+  });
+
+  const handleFiltersChange = (newFilters: Partial<SearchFiltersState>) => {
+    setFilters(prev => ({ ...prev, ...newFilters }));
+  };
 
   const handleViewProfile = (creatorId: number) => {
     const creator = creators.find((c) => c.id === creatorId);
@@ -53,7 +64,7 @@ const Index = () => {
 
             {/* Search and Filters */}
             <div className="container mx-auto px-4">
-              <SearchFilters />
+              <SearchFilters {...filters} onChange={handleFiltersChange} />
             </div>
 
             {/* Live Creators */}
@@ -91,7 +102,7 @@ const Index = () => {
       case 'creators':
         return (
           <div className="container mx-auto px-4 space-y-8">
-            <SearchFilters />
+            <SearchFilters {...filters} onChange={handleFiltersChange} />
             <h2 className="text-3xl font-bold">All Creators</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {creators.map((creator) => (

@@ -51,7 +51,7 @@ export const SearchFilters = ({
             <SelectValue placeholder="All Countries" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Countries</SelectItem>
+            <SelectItem value="all">All Countries</SelectItem>
             <SelectItem value="usa">USA</SelectItem>
             <SelectItem value="canada">Canada</SelectItem>
             <SelectItem value="uk">UK</SelectItem>
@@ -67,7 +67,7 @@ export const SearchFilters = ({
             <SelectValue placeholder="All Specialties" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Specialties</SelectItem>
+            <SelectItem value="all">All Specialties</SelectItem>
             <SelectItem value="interactive">Interactive</SelectItem>
             <SelectItem value="roleplay">Roleplay</SelectItem>
             <SelectItem value="fetish">Fetish</SelectItem>
