@@ -55,6 +55,7 @@
     "dotenv": "^16.4.5",
     "embla-carousel-react": "^8.3.0",
     "express": "^4.19.2",
+    "cors": "^2.8.5",
     "input-otp": "^1.2.4",
     "livekit-client": "^2.15.3",
     "livekit-server-sdk": "^2.13.1",
@@ -71,12 +72,13 @@
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
-    "vaul": "^0.9.3",
+    "vaul": "^0.9.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
     "@tailwindcss/typography": "^0.5.15",
     "@types/express": "^4.17.21",
+    "@types/cors": "^2.8.17",
     "@types/node": "^22.5.5",
     "@types/pg": "^8.15.4",
     "@types/react": "^18.3.3",
