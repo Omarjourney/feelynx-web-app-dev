@@ -82,9 +82,15 @@ This project is built with:
 
 Sensitive settings such as API keys should be placed in a local `.env` file or
 exported in your shell environment. The repository includes a `.env.example`
-file with placeholders. Copy this file to `.env` and replace the values with
-your own credentials, or set the variables directly using `export` commands.
-The `.env` file is listed in `.gitignore` so your secrets remain local.
+file with placeholders.
+
+1. Copy `.env.example` to `.env` and replace the placeholder values with your
+   own credentials.
+2. Alternatively, set the variables directly in your shell or CI environment
+   using `export` commands.
+
+The `.env` file is listed in `.gitignore`, so your secrets remain local and will
+not be committed to version control.
 
 ## LiveKit
 
