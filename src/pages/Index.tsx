@@ -6,11 +6,12 @@ import { CreatorCard } from '@/components/CreatorCard';
 import { LiveStream } from '@/components/LiveStream';
 import { CoinsPanel } from '@/components/CoinsPanel';
 import { VibeCoinPackages } from '@/components/VibeCoinPackages';
-import { creators } from '@/data/creators';
+import { useCreatorLive } from '@/hooks/useCreatorLive';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
 const Index = () => {
+  const creators = useCreatorLive();
   const [activeTab, setActiveTab] = useState('explore');
   const [selectedCreator, setSelectedCreator] = useState<number | null>(null);
   const [isInLiveStream, setIsInLiveStream] = useState(false);

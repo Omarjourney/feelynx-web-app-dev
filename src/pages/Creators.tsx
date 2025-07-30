@@ -1,10 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { SearchFilters } from '@/components/SearchFilters';
-import { creators } from '@/data/creators';
+import { useCreatorLive } from '@/hooks/useCreatorLive';
 import { CreatorCard } from '@/components/CreatorCard';
 
 const Creators = () => {
+  const creators = useCreatorLive();
   const navigate = useNavigate();
   const handleTab = (t: string) => navigate(t === 'creators' ? '/creators' : `/${t}`);
 
