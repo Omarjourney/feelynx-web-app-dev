@@ -20,7 +20,7 @@ const Index = () => {
     country: 'all',
     specialty: 'all',
     isLive: false,
-    sort: 'trendingScore'
+    sort: 'trending'
   });
 
   const handleFiltersChange = (newFilters: Partial<SearchFiltersState>) => {
