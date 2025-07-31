@@ -48,6 +48,23 @@ To create a production build, execute:
 npm run build
 ```
 
+## Streaming Server
+
+This project includes a minimal Express backend that negotiates WebRTC sessions
+and returns RTMP relay URLs. Start it during development with:
+
+```sh
+npm run server
+```
+
+Configuration is provided via the following environment variables (defaults work
+for local testing):
+
+- `LIVEKIT_URL`
+- `LIVEKIT_API_KEY`
+- `LIVEKIT_API_SECRET`
+- `RTMP_BASE_URL`
+
 Tests are not yet configured, but once available you can run them with:
 
 ```sh
