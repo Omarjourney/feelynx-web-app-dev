@@ -35,7 +35,7 @@ export const LivePreviewCard = ({ creator }: { creator: Creator }) => {
         <Button
           size="sm"
           className="w-full mt-2 bg-gradient-primary text-primary-foreground"
-          onClick={() => navigate(`/live/${creator.username.replace('@', '')}`)}
+          onClick={() => navigate(`/live/${creator.username}`)}
         >
           Join
         </Button>

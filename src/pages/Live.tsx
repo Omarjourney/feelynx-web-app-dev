@@ -6,7 +6,7 @@ import { Navigation } from '@/components/Navigation';
 const Live = () => {
   const { username } = useParams();
   const navigate = useNavigate();
-  const creator = creators.find((c) => c.username.replace('@', '') === username);
+  const creator = creators.find((c) => c.username === username);
   const handleTab = (t: string) => navigate(`/${t}`);
 
   if (!creator) return <div className="p-4">Creator not found</div>;

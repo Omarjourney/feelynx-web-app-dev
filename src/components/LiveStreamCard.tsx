@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 
 export interface LiveStreamCardProps {
   username: string;
-  avatarUrl: string;
+  avatar: string;
   viewerCount: number;
   isFeatured?: boolean;
   streamPreviewUrl: string;
@@ -11,7 +11,7 @@ export interface LiveStreamCardProps {
 
 const LiveStreamCard = ({
   username,
-  avatarUrl,
+  avatar,
   viewerCount,
   isFeatured,
   streamPreviewUrl,
@@ -20,7 +20,7 @@ const LiveStreamCard = ({
   return (
     <div
       className="relative rounded-lg overflow-hidden border bg-card hover:shadow-glow transition cursor-pointer"
-      onClick={() => navigate(`/live/${username.replace('@', '')}`)}
+      onClick={() => navigate(`/live/${username}`)}
     >
       <img src={streamPreviewUrl} alt="preview" className="w-full h-32 object-cover" />
       <div className="absolute top-2 left-2 flex items-center space-x-1">
@@ -31,12 +31,12 @@ const LiveStreamCard = ({
       </div>
       <div className="flex items-center p-3 space-x-3">
         <img
-          src={avatarUrl}
-          alt={username}
+          src={avatar}
+          alt={`@${username}`}
           className="w-10 h-10 rounded-full object-cover"
         />
         <div className="flex-1">
-          <p className="font-medium leading-none">{username}</p>
+          <p className="font-medium leading-none">@{username}</p>
           <p className="text-sm text-muted-foreground">{viewerCount.toLocaleString()} watching</p>
         </div>
       </div>

@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
 export interface SubscriptionPostProps {
-  avatarUrl: string;
+  avatar: string;
   contentUrl: string;
   isLocked: boolean;
   caption?: string;
@@ -12,7 +12,7 @@ export interface SubscriptionPostProps {
 }
 
 const SubscriptionPost = ({
-  avatarUrl,
+  avatar,
   contentUrl,
   isLocked,
   caption,
@@ -42,7 +42,7 @@ const SubscriptionPost = ({
       </Dialog>
       <div className="p-3 space-y-2">
         <div className="flex items-center space-x-2">
-          <img src={avatarUrl} alt="avatar" className="w-8 h-8 rounded-full" />
+          <img src={avatar} alt="avatar" className="w-8 h-8 rounded-full" />
           {caption && <p className="text-sm flex-1">{caption}</p>}
         </div>
         <div className="flex space-x-2">

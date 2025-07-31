@@ -1,10 +1,9 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { HeroSection } from '@/components/HeroSection';
 import { SearchFilters, SearchFiltersState } from '@/components/SearchFilters';
 import { CreatorCard } from '@/components/CreatorCard';
-import { LiveStream } from '@/components/LiveStream';
-import { CoinsPanel } from '@/components/CoinsPanel';
 import { VibeCoinPackages } from '@/components/VibeCoinPackages';
 import { useCreatorLive } from '@/hooks/useCreatorLive';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,8 +12,7 @@ import { Button } from '@/components/ui/button';
 const Index = () => {
   const creators = useCreatorLive();
   const [activeTab, setActiveTab] = useState('explore');
-  const [selectedCreator, setSelectedCreator] = useState<number | null>(null);
-  const [isInLiveStream, setIsInLiveStream] = useState(false);
+  const navigate = useNavigate();
   const [filters, setFilters] = useState<SearchFiltersState>({
     search: '',
     country: 'all',
@@ -30,29 +28,9 @@ const Index = () => {
   const handleViewProfile = (creatorId: number) => {
     const creator = creators.find((c) => c.id === creatorId);
     if (creator?.isLive) {
-      setSelectedCreator(creatorId);
-      setIsInLiveStream(true);
+      navigate(`/live/${creator.username}`);
     }
   };
-
-  const handleBackFromStream = () => {
-    setIsInLiveStream(false);
-    setSelectedCreator(null);
-  };
-
-  if (isInLiveStream && selectedCreator) {
-    const creator = creators.find((c) => c.id === selectedCreator);
-    return (
-      <div className="min-h-screen bg-background">
-        <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
-        <LiveStream
-          creatorName={creator?.name || ''}
-          viewers={creator?.viewers || 0}
-          onBack={handleBackFromStream}
-        />
-      </div>
-    );
-  }
 
   const renderContent = () => {
     switch (activeTab) {

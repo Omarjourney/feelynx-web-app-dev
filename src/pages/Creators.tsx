@@ -10,7 +10,7 @@ import { CreatorCard } from '@/components/CreatorCard';
 interface Creator {
   id: number;
   username: string;
-  avatarUrl: string;
+  avatar: string;
   viewers?: number;
   isFeatured?: boolean;
   isLive?: boolean;
@@ -45,10 +45,10 @@ const Creators = () => {
       try {
         const params = new URLSearchParams({
           search: filters.search,
-          country: filters.country,
-          specialty: filters.specialty,
           sort: filters.sort,
         });
+        if (filters.country !== 'all') params.set('country', filters.country);
+        if (filters.specialty !== 'all') params.set('specialty', filters.specialty);
         if (filters.isLive) params.set('isLive', '1');
         const res = await fetch(`/api/creators?${params.toString()}`);
         if (!res.ok) throw new Error('Failed to fetch creators');
@@ -84,7 +84,7 @@ const Creators = () => {
                 key={c.id}
                 creator={{
                   id: c.id,
-                  name: c.username,
+                  name: c.name,
                   username: c.username,
                   country: 'Unknown',
                   age: 25,

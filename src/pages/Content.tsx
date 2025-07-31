@@ -14,7 +14,7 @@ const Content = () => {
           {posts.map((p) => (
             <SubscriptionPost
               key={p.id}
-              avatarUrl={`https://source.unsplash.com/random/100x100?sig=${p.id}`}
+              avatar={`https://source.unsplash.com/random/100x100?sig=${p.id}`}
               contentUrl={p.src}
               isLocked={Boolean(p.locked)}
               caption={p.username}
