@@ -8,28 +8,45 @@ import { toast } from '@/hooks/use-toast';
 const CallRoom = () => {
   const [state, setState] = useState<'idle' | 'connecting' | 'live' | 'ended'>('idle');
   const localVideoRef = useRef<HTMLVideoElement>(null);
+  const remoteVideoRef = useRef<HTMLDivElement>(null);
+  const roomRef = useRef<Room | null>(null);
 
-  const startCall = async () => {
-    setState('connecting');
-    try {
-      });
+    const startCall = async () => {
+      setState('connecting');
+      try {
+        const tokenRes = await fetch('/livekit/token');
+        const { token } = (await tokenRes.json()) as { token: string };
+        const room = new Room();
+        await room.connect('wss://example.com', token);
+        room.on(RoomEvent.TrackSubscribed, (track) => {
+          if (track.kind === Track.Kind.Video && remoteVideoRef.current) {
+            const element = document.createElement('video');
+            element.srcObject = new MediaStream([track.mediaStreamTrack]);
+            element.autoplay = true;
+            element.playsInline = true;
+            remoteVideoRef.current.innerHTML = '';
+            remoteVideoRef.current.appendChild(element);
+          }
+        });
 
-      const localTrackPublications = Array.from(room.localParticipant.videoTrackPublications.values());
-      const localTrack = localTrackPublications[0]?.track;
-      if (localTrack && localVideoRef.current) {
-        localVideoRef.current.srcObject = new MediaStream([
-          localTrack.mediaStreamTrack,
-        ]);
+        const localTrackPublications = Array.from(
+          room.localParticipant.videoTrackPublications.values(),
+        );
+        const localTrack = localTrackPublications[0]?.track;
+        if (localTrack && localVideoRef.current) {
+          localVideoRef.current.srcObject = new MediaStream([
+            localTrack.mediaStreamTrack,
+          ]);
+        }
+
+        roomRef.current = room;
+        setState('live');
+      } catch (err) {
+        console.error(err);
+        toast({ title: 'Connection failed' });
+        setState('idle');
       }
-
-      roomRef.current = room;
-      setState('live');
-    } catch (err) {
-      console.error(err);
-      toast({ title: 'Connection failed' });
-      setState('idle');
-    }
-  };
+    };
 
   const endCall = () => {
     roomRef.current?.disconnect();

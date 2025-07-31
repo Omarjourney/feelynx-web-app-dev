@@ -1,7 +1,6 @@
-import { Router } from 'express';
+import { Router, type Request, type Response } from 'express';
 import { creators as frontendCreators } from '../../src/data/creators';
-import { prisma } from '../db/prisma.js';
-import { type Prisma } from '@prisma/client';
+import { prisma } from '../db/prisma';
 
 const usePrisma = process.env.USE_PRISMA_CREATORS === 'true';
 
@@ -46,11 +45,11 @@ const creators: Creator[] = !usePrisma
 
 const router = Router();
 
-router.get('/', async (req, res) => {
+router.get('/', async (req: Request, res: Response) => {
   const { country, specialty, isLive, search, sort } = req.query;
 
   if (usePrisma) {
-    const where: any = {};
+      const where: Record<string, unknown> = {};
     if (country) where.country = String(country);
     if (specialty) where.specialty = String(specialty);
     if (typeof isLive !== 'undefined')
@@ -116,8 +115,8 @@ router.get('/', async (req, res) => {
   res.json(result);
 });
 
-router.post('/', async (req, res) => {
-  const creator = req.body as Creator;
+  router.post('/', async (req: Request, res: Response) => {
+    const creator = req.body as Creator;
 
   if (usePrisma) {
     const created = await prisma.creator.create({ data: creator });

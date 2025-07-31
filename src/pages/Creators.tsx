@@ -6,14 +6,17 @@ import {
   SearchFiltersState,
 } from '@/components/SearchFilters';
 import { CreatorCard } from '@/components/CreatorCard';
+import type { Creator as FrontendCreator } from '@/types/creator';
 
-interface Creator {
+interface ApiCreator {
   id: number;
   username: string;
+  name: string;
   avatar: string;
-  viewers?: number;
-  isFeatured?: boolean;
-  isLive?: boolean;
+  country: string;
+  specialty: string;
+  isLive: boolean;
+  followers: number;
 }
 
 const Creators = () => {
@@ -29,7 +32,7 @@ const Creators = () => {
     sort: 'trending'
   });
 
-  const [creators, setCreators] = useState<Creator[]>([]);
+  const [creators, setCreators] = useState<FrontendCreator[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -52,8 +55,29 @@ const Creators = () => {
         if (filters.isLive) params.set('isLive', '1');
         const res = await fetch(`/api/creators?${params.toString()}`);
         if (!res.ok) throw new Error('Failed to fetch creators');
-        const data = await res.json();
-        setCreators(data);
+        const data = (await res.json()) as ApiCreator[];
+        const mapped = data.map((c) => ({
+          id: c.id,
+          name: c.name,
+          username: c.username,
+          avatar: c.avatar,
+          country: c.country,
+          age: 25,
+          tier: 'Premium',
+          subscribers: c.followers.toLocaleString(),
+          isLive: c.isLive,
+          viewers: c.isLive ? Math.floor(Math.random() * 500) : undefined,
+          toyConnected: 'Connected',
+          videoRate: 2.5,
+          voiceRate: 1.5,
+          specialties: [c.specialty],
+          earnings: '$5,000',
+          status: c.isLive ? 'Online' : 'Offline',
+          initial: c.username.charAt(0).toUpperCase(),
+          gradientColors: 'bg-gradient-to-br from-pink-500 to-purple-600',
+          isFeatured: false,
+        }));
+        setCreators(mapped);
       } catch (err) {
         setError((err as Error).message);
       } finally {
@@ -80,29 +104,7 @@ const Creators = () => {
           {!loading &&
             !error &&
             creators.map((c) => (
-              <CreatorCard
-                key={c.id}
-                creator={{
-                  id: c.id,
-                  name: c.name,
-                  username: c.username,
-                  country: 'Unknown',
-                  age: 25,
-                  tier: 'Premium',
-                  subscribers: '1.2K',
-                  isLive: c.isLive || false,
-                  viewers: c.viewers,
-                  toyConnected: 'Connected',
-                  videoRate: 2.5,
-                  voiceRate: 1.5,
-                  specialties: ['Chat', 'Entertainment'],
-                  earnings: '$5,000',
-                  status: c.isLive ? 'Online' : 'Offline',
-                  initial: c.username.charAt(0).toUpperCase(),
-                  gradientColors: 'bg-gradient-to-br from-pink-500 to-purple-600',
-                }}
-                onViewProfile={handleView}
-              />
+              <CreatorCard key={c.id} creator={c} onViewProfile={handleView} />
             ))}
         </div>
       </div>

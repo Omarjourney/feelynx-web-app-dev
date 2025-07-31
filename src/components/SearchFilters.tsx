@@ -50,7 +50,10 @@ export const SearchFilters = ({
         </div>
 
         {/* Country Filter */}
-        <Select value={country} onValueChange={(value) => handleChange({ country: value })}>
+        <Select
+          value={country || 'all'}
+          onValueChange={(value) => handleChange({ country: value })}
+        >
           <SelectTrigger className="w-[140px] bg-background/50">
             <SelectValue placeholder="Country" />
           </SelectTrigger>
@@ -64,7 +67,10 @@ export const SearchFilters = ({
         </Select>
 
         {/* Specialty Filter */}
-        <Select value={specialty} onValueChange={(value) => handleChange({ specialty: value })}>
+        <Select
+          value={specialty || 'all'}
+          onValueChange={(value) => handleChange({ specialty: value })}
+        >
           <SelectTrigger className="w-[140px] bg-background/50">
             <SelectValue placeholder="Category" />
           </SelectTrigger>

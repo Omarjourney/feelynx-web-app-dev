@@ -1,14 +1,15 @@
 import express from 'express';
+import type { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import { createServer } from 'http';
-import { WebSocketServer } from 'ws';
-import authRoutes from './routes/auth.js';
-import usersRoutes from './routes/users.js';
-import postsRoutes from './routes/posts.js';
-import paymentsRoutes from './routes/payments.js';
-import livekitRoutes from './routes/livekit.js';
-import creatorsRoutes from './routes/creators.js';
+import { WebSocketServer, WebSocket } from 'ws';
+import authRoutes from './routes/auth';
+import usersRoutes from './routes/users';
+import postsRoutes from './routes/posts';
+import paymentsRoutes from './routes/payments';
+import livekitRoutes from './routes/livekit';
+import creatorsRoutes from './routes/creators';
 
 dotenv.config();
 
@@ -41,14 +42,14 @@ const creatorStatus: Record<string, boolean> = {};
 
 function broadcastStatus(data: StatusMessage) {
   const payload = JSON.stringify({ type: 'creatorStatus', ...data });
-  wss.clients.forEach((client: any) => {
-    if (client.readyState === client.OPEN) {
+  wss.clients.forEach((client: WebSocket) => {
+    if (client.readyState === WebSocket.OPEN) {
       client.send(payload);
     }
   });
 }
 
-app.post('/creators/:username/status', (req, res) => {
+app.post('/creators/:username/status', (req: Request, res: Response) => {
   const { username } = req.params;
   const { isLive } = req.body as { isLive: boolean };
   creatorStatus[username] = isLive;
