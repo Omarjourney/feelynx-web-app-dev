@@ -8,29 +8,10 @@ import { toast } from '@/hooks/use-toast';
 const CallRoom = () => {
   const [state, setState] = useState<'idle' | 'connecting' | 'live' | 'ended'>('idle');
   const localVideoRef = useRef<HTMLVideoElement>(null);
-  const remoteVideoRef = useRef<HTMLDivElement>(null);
-  const roomRef = useRef<Room | null>(null);
 
   const startCall = async () => {
     setState('connecting');
     try {
-      const resp = await fetch(`/livekit/token?room=demo&identity=web`);
-      const { token } = await resp.json();
-      const room = new Room({ adaptiveStream: true, dynacast: true });
-      await room.connect(
-        import.meta.env.VITE_LIVEKIT_WS_URL || 'ws://localhost:7880',
-        token,
-      );
-      await room.localParticipant.enableCameraAndMicrophone();
-
-      room.on(RoomEvent.TrackSubscribed, (track) => {
-        if (track.kind === Track.Kind.Video) {
-          const el = track.attach();
-          remoteVideoRef.current?.appendChild(el);
-        }
-        if (track.kind === Track.Kind.Audio) {
-          track.attach();
-        }
       });
 
       const localTrackPublications = Array.from(room.localParticipant.videoTrackPublications.values());

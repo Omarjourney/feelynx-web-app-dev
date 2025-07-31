@@ -22,6 +22,8 @@ interface ChatMessage {
 
 export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) => {
   const [isConnected, setIsConnected] = useState(false);
+  const [streamUrl, setStreamUrl] = useState<string | null>(null);
+  const [viewerInfo, setViewerInfo] = useState<{ token: string; url: string } | null>(null);
   const [chatMessage, setChatMessage] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -51,7 +53,25 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
 
   const handleConnect = async () => {
     try {
-      // Simulate WebRTC connection
+      const [rtmpRes, tokenRes] = await Promise.all([
+        fetch('/api/stream/rtmp/start', { method: 'POST' }),
+        fetch('/api/stream/webrtc/token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ identity: 'viewer', room: 'call-room' }),
+        }),
+      ]);
+
+      if (rtmpRes.ok) {
+        const data = await rtmpRes.json();
+        setStreamUrl(data.url);
+      }
+
+      if (tokenRes.ok) {
+        const info = await tokenRes.json();
+        setViewerInfo(info);
+      }
+
       setIsConnected(true);
     } catch (error) {
       console.error('Connection failed:', error);
@@ -111,6 +131,7 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
               ) : (
                 <video
                   ref={videoRef}
+                  src={streamUrl ?? undefined}
                   className="w-full h-full object-cover"
                   controls={false}
                   autoPlay
