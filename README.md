@@ -89,6 +89,16 @@ To enable LiveKit locally:
 2. Run `docker-compose up` to start the `livekit` container alongside the app.
 3. The frontend will connect to `VITE_LIVEKIT_WS_URL` (default `ws://localhost:7880`).
 
+### Room management
+
+The backend exposes endpoints for managing LiveKit rooms:
+
+- `POST /livekit/rooms` with JSON `{ name, emptyTimeout?, maxParticipants? }` to create a room.
+- `GET /livekit/rooms` to list active rooms.
+- `DELETE /livekit/rooms/:room` to remove a room and disconnect participants.
+
+Set `LIVEKIT_HOST`, `LIVEKIT_API_KEY`, and `LIVEKIT_API_SECRET` in your environment for these routes to work.
+
 ## How can I deploy this project?
 
 Simply open [Lovable](https://lovable.dev/projects/74f85079-0010-42ba-8b2a-06332941ffd9) and click on Share -> Publish.
