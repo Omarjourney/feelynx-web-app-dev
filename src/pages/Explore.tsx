@@ -10,7 +10,6 @@ import LiveStreamCard from '@/components/LiveStreamCard';
 interface Creator {
   id: number;
   username: string;
-  avatarUrl: string;
   avatar: string;
   viewers?: number;
   followers: number;
@@ -59,8 +58,8 @@ const Explore = () => {
             creators.map((c) => (
               <LiveStreamCard
                 key={c.id}
-                username={`@${c.username}`}
-                avatarUrl={c.avatar}
+                username={c.username}
+                avatar={c.avatar}
                 viewerCount={c.followers}
                 isFeatured={c.trendingScore > 70}
                 streamPreviewUrl={`https://source.unsplash.com/random/400x300?sig=${c.id}`}

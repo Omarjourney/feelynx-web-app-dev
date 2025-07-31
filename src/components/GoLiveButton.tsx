@@ -21,6 +21,19 @@ import { Switch } from '@/components/ui/switch';
 const GoLiveButton = () => {
   const [open, setOpen] = useState(false);
   const [mediaEnabled, setMediaEnabled] = useState(true);
+  const [category, setCategory] = useState('chat');
+  const [mediaError, setMediaError] = useState('');
+
+  const handleStart = async () => {
+    try {
+      await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      setMediaError('');
+      // start stream logic placeholder
+      setOpen(false);
+    } catch (err) {
+      setMediaError('Unable to access camera/microphone. Please check permissions.');
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -47,9 +60,9 @@ const GoLiveButton = () => {
             <label htmlFor="category" className="block text-sm font-medium">
               Category
             </label>
-            <Select>
+            <Select value={category} onValueChange={setCategory}>
               <SelectTrigger id="category">
-                <SelectValue placeholder="Select a category" />
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="chat">Just Chatting</SelectItem>
@@ -68,7 +81,13 @@ const GoLiveButton = () => {
               Enable Camera &amp; Mic
             </label>
           </div>
-          <Button className="w-full bg-gradient-primary text-primary-foreground">
+          {mediaError && (
+            <p className="text-sm text-destructive">{mediaError}</p>
+          )}
+          <Button
+            className="w-full bg-gradient-primary text-primary-foreground"
+            onClick={handleStart}
+          >
             Start Stream
           </Button>
         </div>

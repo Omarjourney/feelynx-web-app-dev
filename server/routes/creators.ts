@@ -8,7 +8,7 @@ const usePrisma = process.env.USE_PRISMA_CREATORS === 'true';
 export interface Creator {
   id: number;
   username: string;
-  displayName: string;
+  name: string;
   avatar: string;
   country: string;
   specialty: string;
@@ -31,9 +31,9 @@ const parseFollowers = (followers: string): number => {
 const creators: Creator[] = !usePrisma
   ? frontendCreators.map((c, idx) => ({
       id: c.id,
-      username: c.username.replace('@', ''),
-      displayName: c.name,
-      avatar: c.avatarUrl,
+      username: c.username,
+      name: c.name,
+      avatar: c.avatar,
       country: c.country,
       specialty: Array.isArray(c.specialties) ? c.specialties[0] : c.specialties,
       isLive: c.isLive,
@@ -58,7 +58,7 @@ router.get('/', async (req, res) => {
     if (search) {
       where.OR = [
         { username: { contains: String(search), mode: 'insensitive' } },
-        { displayName: { contains: String(search), mode: 'insensitive' } },
+        { name: { contains: String(search), mode: 'insensitive' } },
       ];
     }
     const orderBy = sort
@@ -76,12 +76,12 @@ router.get('/', async (req, res) => {
 
   let result = [...creators];
 
-  if (country) {
+  if (country && String(country).toLowerCase() !== 'all') {
     const value = String(country).toLowerCase();
     result = result.filter((c) => c.country.toLowerCase() === value);
   }
 
-  if (specialty) {
+  if (specialty && String(specialty).toLowerCase() !== 'all') {
     const value = String(specialty).toLowerCase();
     result = result.filter((c) => c.specialty.toLowerCase() === value);
   }
@@ -96,7 +96,7 @@ router.get('/', async (req, res) => {
     result = result.filter(
       (c) =>
         c.username.toLowerCase().includes(value) ||
-        c.displayName.toLowerCase().includes(value)
+        c.name.toLowerCase().includes(value)
     );
   }
 

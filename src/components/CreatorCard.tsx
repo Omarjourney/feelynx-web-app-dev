@@ -1,26 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-
-interface Creator {
-  id: number;
-  name: string;
-  username: string;
-  country: string;
-  age: number;
-  tier: string;
-  subscribers: string;
-  isLive: boolean;
-  viewers?: number;
-  toyConnected?: string;
-  videoRate: number;
-  voiceRate: number;
-  specialties: string[];
-  earnings: string;
-  status: string;
-  initial: string;
-  gradientColors: string;
-}
+import type { Creator } from '@/types/creator';
 
 interface CreatorCardProps {
   creator: Creator;
@@ -61,7 +42,7 @@ export const CreatorCard = ({ creator, onViewProfile }: CreatorCardProps) => {
               <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
                 {creator.name}
               </h3>
-              <p className="text-sm text-muted-foreground">{creator.username}</p>
+              <p className="text-sm text-muted-foreground">@{creator.username}</p>
             </div>
             <div className="text-right">
               <div className="text-sm text-muted-foreground">📍 {creator.country}</div>
