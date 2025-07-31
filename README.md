@@ -48,22 +48,6 @@ To create a production build, execute:
 npm run build
 ```
 
-## Streaming Server
-
-This project includes a minimal Express backend that negotiates WebRTC sessions
-and returns RTMP relay URLs. Start it during development with:
-
-```sh
-npm run server
-```
-
-Configuration is provided via the following environment variables (defaults work
-for local testing):
-
-- `LIVEKIT_URL`
-- `LIVEKIT_API_KEY`
-- `LIVEKIT_API_SECRET`
-- `RTMP_BASE_URL`
 
 Tests are not yet configured, but once available you can run them with:
 
@@ -94,6 +78,16 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
+
+## LiveKit
+
+This project includes a [LiveKit](https://livekit.io) server for real-time video and audio. The service is defined in `docker-compose.yml` and runs on ports `7880` and `7881`.
+
+To enable LiveKit locally:
+
+1. Copy `.env.example` to `.env` and replace the placeholder values with your LiveKit credentials.
+2. Run `docker-compose up` to start the `livekit` container alongside the app.
+3. The frontend will connect to `VITE_LIVEKIT_WS_URL` (default `ws://localhost:7880`).
 
 ## How can I deploy this project?
 

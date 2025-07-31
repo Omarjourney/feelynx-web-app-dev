@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Room, RoomEvent, Track } from 'livekit-client';
 import LovenseToggle from '@/components/LovenseToggle';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,56 +8,40 @@ import { toast } from '@/hooks/use-toast';
 const CallRoom = () => {
   const [state, setState] = useState<'idle' | 'connecting' | 'live' | 'ended'>('idle');
   const localVideoRef = useRef<HTMLVideoElement>(null);
-  const remoteVideoRef = useRef<HTMLVideoElement>(null);
-  const [stream, setStream] = useState<MediaStream | null>(null);
-  const [livekitInfo, setLivekitInfo] = useState<{ token: string; url: string } | null>(null);
 
   const startCall = async () => {
     setState('connecting');
     try {
-      const res = await fetch('/api/stream/webrtc/token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identity: 'host', room: 'call-room' }),
       });
-      if (res.ok) {
-        const data = await res.json();
-        setLivekitInfo(data);
+
+      const localTrackPublications = Array.from(room.localParticipant.videoTrackPublications.values());
+      const localTrack = localTrackPublications[0]?.track;
+      if (localTrack && localVideoRef.current) {
+        localVideoRef.current.srcObject = new MediaStream([
+          localTrack.mediaStreamTrack,
+        ]);
       }
 
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-      });
-      setStream(stream);
+      roomRef.current = room;
       setState('live');
-      toast({ title: 'Stream started' });
     } catch (err) {
-      toast({ title: 'Camera permission denied' });
+      console.error(err);
+      toast({ title: 'Connection failed' });
       setState('idle');
     }
   };
 
   const endCall = () => {
-    stream?.getTracks().forEach((t) => t.stop());
-    setStream(null);
+    roomRef.current?.disconnect();
+    roomRef.current = null;
     setState('ended');
   };
 
   useEffect(() => {
-    if (localVideoRef.current && stream) {
-      localVideoRef.current.srcObject = stream;
-    }
-    if (remoteVideoRef.current && stream) {
-      remoteVideoRef.current.srcObject = stream;
-    }
-  }, [stream]);
-
-  useEffect(() => {
     return () => {
-      stream?.getTracks().forEach((t) => t.stop());
+      roomRef.current?.disconnect();
     };
-  }, [stream]);
+  }, []);
 
   return (
     <div className="container mx-auto p-4 space-y-4">
@@ -82,10 +67,8 @@ const CallRoom = () => {
                 muted
                 className="w-full h-auto rounded-lg bg-black"
               />
-              <video
+              <div
                 ref={remoteVideoRef}
-                autoPlay
-                playsInline
                 className="w-full h-auto rounded-lg bg-black"
               />
             </div>
