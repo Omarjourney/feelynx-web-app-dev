@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { Room, RoomEvent, Track } from 'livekit-client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -24,6 +25,8 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
   const [isConnected, setIsConnected] = useState(false);
   const [streamUrl, setStreamUrl] = useState<string | null>(null);
   const [viewerInfo, setViewerInfo] = useState<{ token: string; url: string } | null>(null);
+  const roomRef = useRef<Room | null>(null);
+  const remoteVideoRef = useRef<HTMLDivElement>(null);
   const [chatMessage, setChatMessage] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -53,30 +56,48 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
 
   const handleConnect = async () => {
     try {
-      const [rtmpRes, tokenRes] = await Promise.all([
-        fetch('/api/stream/rtmp/start', { method: 'POST' }),
-        fetch('/api/stream/webrtc/token', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ identity: 'viewer', room: 'call-room' }),
-        }),
-      ]);
+      // Get token for viewer to join creator's room
+      const roomName = `live_${creatorName.replace(/\s+/g, '_')}`;
+      const tokenRes = await fetch(`/livekit/token?room=${encodeURIComponent(roomName)}&identity=viewer_${Date.now()}`);
+      
+      if (!tokenRes.ok) throw new Error('Failed to get LiveKit token');
+      
+      const { token } = await tokenRes.json();
+      const room = new Room();
+      
+      // Connect to LiveKit room
+      const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL || 'ws://localhost:7880';
+      await room.connect(wsUrl, token);
 
-      if (rtmpRes.ok) {
-        const data = await rtmpRes.json();
-        setStreamUrl(data.url);
-      }
+      // Listen for remote video tracks
+      room.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {
+        if (track.kind === Track.Kind.Video && remoteVideoRef.current) {
+          const element = document.createElement('video');
+          element.srcObject = new MediaStream([track.mediaStreamTrack]);
+          element.autoplay = true;
+          element.playsInline = true;
+          element.className = 'w-full h-full object-cover';
+          
+          // Clear existing video and add new one
+          remoteVideoRef.current.innerHTML = '';
+          remoteVideoRef.current.appendChild(element);
+        }
+      });
 
-      if (tokenRes.ok) {
-        const info = await tokenRes.json();
-        setViewerInfo(info);
-      }
-
+      roomRef.current = room;
       setIsConnected(true);
     } catch (error) {
       console.error('Connection failed:', error);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (roomRef.current) {
+        roomRef.current.disconnect();
+      }
+    };
+  }, []);
 
   const sendMessage = () => {
     if (!chatMessage.trim()) return;
@@ -129,14 +150,7 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
                   </div>
                 </div>
               ) : (
-                <video
-                  ref={videoRef}
-                  src={streamUrl ?? undefined}
-                  className="w-full h-full object-cover"
-                  controls={false}
-                  autoPlay
-                  muted
-                />
+                <div ref={remoteVideoRef} className="w-full h-full" />
               )}
 
               {/* Stream Controls */}

@@ -26,12 +26,48 @@ const GoLiveButton = () => {
 
   const handleStart = async () => {
     try {
-      await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      // Get media permissions first
+      await navigator.mediaDevices.getUserMedia({ video: mediaEnabled, audio: mediaEnabled });
       setMediaError('');
-      // start stream logic placeholder
+      
+      // Create a live room for the creator
+      const roomName = `live_creator_${Date.now()}`;
+      
+      // Create room first
+      const roomRes = await fetch('/livekit/rooms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          name: roomName,
+          emptyTimeout: 300, // 5 minutes
+          maxParticipants: 1000 
+        })
+      });
+      
+      if (!roomRes.ok) {
+        throw new Error('Failed to create room');
+      }
+      
+      // Get token for creator
+      const tokenRes = await fetch(`/livekit/token?room=${roomName}&identity=creator_${Date.now()}`);
+      if (!tokenRes.ok) {
+        throw new Error('Failed to get LiveKit token');
+      }
+      
+      // Update creator status to live
+      await fetch('/creators/creator_username/status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isLive: true })
+      });
+      
       setOpen(false);
+      // Navigate to live streaming interface with room info
+      window.location.href = `/live-creator?room=${roomName}`;
+      
     } catch (err) {
-      setMediaError('Unable to access camera/microphone. Please check permissions.');
+      console.error('Failed to start stream:', err);
+      setMediaError('Unable to start stream. Please check permissions and try again.');
     }
   };
 

@@ -1,0 +1,257 @@
+import { useState, useRef, useEffect } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { Room, RoomEvent, Track, LocalVideoTrack, LocalAudioTrack } from 'livekit-client';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { toast } from '@/hooks/use-toast';
+
+interface ChatMessage {
+  id: number;
+  username: string;
+  message: string;
+  timestamp: string;
+  isHighlight?: boolean;
+}
+
+const LiveCreator = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const [isLive, setIsLive] = useState(false);
+  const [viewers, setViewers] = useState(0);
+  const [chatMessage, setChatMessage] = useState('');
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [earnings, setEarnings] = useState(0);
+
+  const roomRef = useRef<Room | null>(null);
+  const localVideoRef = useRef<HTMLVideoElement>(null);
+  const roomName = searchParams.get('room') || 'default_room';
+
+  useEffect(() => {
+    startLiveStream();
+    return () => {
+      endStream();
+    };
+  }, []);
+
+  const startLiveStream = async () => {
+    try {
+      // Get token for creator
+      const tokenRes = await fetch(`/livekit/token?room=${roomName}&identity=creator_${Date.now()}`);
+      if (!tokenRes.ok) throw new Error('Failed to get token');
+      
+      const { token } = await tokenRes.json();
+      const room = new Room();
+      
+      // Connect to LiveKit room
+      const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL || 'ws://localhost:7880';
+      await room.connect(wsUrl, token);
+
+      // Enable camera and microphone
+      await room.localParticipant.enableCameraAndMicrophone();
+      const localVideoTrack = room.localParticipant.videoTrackPublications.values().next().value?.track as LocalVideoTrack;
+      
+      if (localVideoTrack && localVideoRef.current) {
+        localVideoRef.current.srcObject = new MediaStream([localVideoTrack.mediaStreamTrack]);
+      }
+
+      // Listen for participant changes to update viewer count
+      room.on(RoomEvent.ParticipantConnected, () => {
+        setViewers(room.remoteParticipants.size);
+      });
+
+      room.on(RoomEvent.ParticipantDisconnected, () => {
+        setViewers(room.remoteParticipants.size);
+      });
+
+      roomRef.current = room;
+      setIsLive(true);
+      toast({ title: 'You are now live!', description: 'Viewers can now join your stream' });
+
+    } catch (error) {
+      console.error('Failed to start live stream:', error);
+      toast({ 
+        title: 'Stream failed to start', 
+        description: 'Please check your connection and try again',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const endStream = async () => {
+    if (roomRef.current) {
+      roomRef.current.disconnect();
+      roomRef.current = null;
+    }
+    
+    // Update creator status to offline
+    try {
+      await fetch('/creators/creator_username/status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isLive: false })
+      });
+    } catch (error) {
+      console.error('Failed to update status:', error);
+    }
+    
+    setIsLive(false);
+    toast({ title: 'Stream ended', description: 'You are now offline' });
+    navigate('/');
+  };
+
+  const sendMessage = () => {
+    if (!chatMessage.trim()) return;
+
+    const newMessage: ChatMessage = {
+      id: Date.now(),
+      username: 'Creator',
+      message: chatMessage,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      isHighlight: true,
+    };
+
+    setMessages(prev => [...prev, newMessage]);
+    setChatMessage('');
+  };
+
+  return (
+    <div className="container mx-auto p-4 space-y-4">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <Button variant="outline" onClick={() => navigate('/')}>
+          ← Back to Home
+        </Button>
+        <div className="text-center">
+          <h1 className="text-2xl font-bold">Creator Dashboard</h1>
+          <div className="flex items-center gap-2 justify-center">
+            <Badge className={isLive ? "bg-live text-white animate-pulse" : "bg-muted"}>
+              {isLive ? `🔴 LIVE • ${viewers} viewers` : '⚫ Offline'}
+            </Badge>
+            <Badge className="bg-gradient-primary text-primary-foreground">
+              💎 ${earnings.toFixed(2)} earned
+            </Badge>
+          </div>
+        </div>
+        <Button 
+          variant={isLive ? "destructive" : "outline"} 
+          onClick={isLive ? endStream : startLiveStream}
+        >
+          {isLive ? 'End Stream' : 'Start Stream'}
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        {/* Video Preview */}
+        <Card className="lg:col-span-3 bg-gradient-card">
+          <CardHeader>
+            <CardTitle>Your Stream Preview</CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
+              <video
+                ref={localVideoRef}
+                className="w-full h-full object-cover"
+                autoPlay
+                muted
+                playsInline
+              />
+              {!isLive && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/60">
+                  <div className="text-center space-y-4">
+                    <div className="text-6xl opacity-50">📹</div>
+                    <p className="text-white">Click "Start Stream" to go live</p>
+                  </div>
+                </div>
+              )}
+              
+              {/* Stream Controls */}
+              {isLive && (
+                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                  <div className="flex space-x-2">
+                    <Button variant="secondary" size="sm">🎤 Mute</Button>
+                    <Button variant="secondary" size="sm">📹 Camera Off</Button>
+                  </div>
+                  <div className="flex space-x-2">
+                    <Button variant="secondary" size="sm">📱 Mobile View</Button>
+                    <Button variant="secondary" size="sm">🎛️ Settings</Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Chat */}
+        <Card className="bg-gradient-card">
+          <CardHeader>
+            <CardTitle className="text-lg">Live Chat</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <ScrollArea className="h-64">
+              <div className="space-y-2">
+                {messages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={`p-2 rounded-lg text-sm ${
+                      msg.isHighlight
+                        ? 'bg-gradient-primary text-primary-foreground'
+                        : 'bg-secondary'
+                    }`}
+                  >
+                    <div className="font-medium">{msg.username}</div>
+                    <div className="opacity-90">{msg.message}</div>
+                    <div className="text-xs opacity-70">{msg.timestamp}</div>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+
+            <div className="flex space-x-2">
+              <Input
+                value={chatMessage}
+                onChange={(e) => setChatMessage(e.target.value)}
+                placeholder="Chat with viewers..."
+                onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+              />
+              <Button onClick={sendMessage} size="sm">Send</Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Analytics Dashboard */}
+      <Card className="bg-gradient-card">
+        <CardHeader>
+          <CardTitle>Stream Analytics</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="text-center p-4 bg-secondary rounded-lg">
+              <div className="text-2xl font-bold text-primary">{viewers}</div>
+              <div className="text-sm text-muted-foreground">Current Viewers</div>
+            </div>
+            <div className="text-center p-4 bg-secondary rounded-lg">
+              <div className="text-2xl font-bold text-primary">${earnings.toFixed(2)}</div>
+              <div className="text-sm text-muted-foreground">Session Earnings</div>
+            </div>
+            <div className="text-center p-4 bg-secondary rounded-lg">
+              <div className="text-2xl font-bold text-primary">{messages.length}</div>
+              <div className="text-sm text-muted-foreground">Chat Messages</div>
+            </div>
+            <div className="text-center p-4 bg-secondary rounded-lg">
+              <div className="text-2xl font-bold text-primary">
+                {isLive ? '🟢 LIVE' : '🔴 OFFLINE'}
+              </div>
+              <div className="text-sm text-muted-foreground">Status</div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default LiveCreator;

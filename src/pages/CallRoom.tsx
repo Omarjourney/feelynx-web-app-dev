@@ -14,10 +14,13 @@ const CallRoom = () => {
     const startCall = async () => {
       setState('connecting');
       try {
-        const tokenRes = await fetch('/livekit/token');
+        const tokenRes = await fetch('/livekit/token?room=call-room&identity=user_' + Date.now());
+        if (!tokenRes.ok) throw new Error('Failed to get token');
         const { token } = (await tokenRes.json()) as { token: string };
+        
         const room = new Room();
-        await room.connect('wss://example.com', token);
+        const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL || 'ws://localhost:7880';
+        await room.connect(wsUrl, token);
         room.on(RoomEvent.TrackSubscribed, (track) => {
           if (track.kind === Track.Kind.Video && remoteVideoRef.current) {
             const element = document.createElement('video');

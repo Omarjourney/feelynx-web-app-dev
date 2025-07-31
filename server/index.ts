@@ -10,6 +10,7 @@ import postsRoutes from './routes/posts';
 import paymentsRoutes from './routes/payments';
 import livekitRoutes from './routes/livekit';
 import creatorsRoutes from './routes/creators';
+import streamRoutes from './routes/stream';
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use('/posts', postsRoutes);
 app.use('/payments', paymentsRoutes);
 app.use('/livekit', livekitRoutes);
 app.use('/api/creators', creatorsRoutes);
+app.use('/api/stream', streamRoutes);
 
 const port = process.env.PORT || 3001;
 
