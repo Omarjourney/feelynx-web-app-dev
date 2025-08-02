@@ -5,9 +5,11 @@ A modern, full-stack web application for live streaming, creator monetization, a
 ## 🚀 Features
 
 - **Live Streaming**: Real-time video streaming with LiveKit WebRTC
-- **Creator Dashboard**: Stream management, analytics, and earnings tracking  
+- **Group Streaming**: Multiple hosts and viewer lists per room
+- **Creator Dashboard**: Stream management, analytics, and earnings tracking
 - **Interactive Chat**: Real-time messaging during streams
 - **Monetization**: VibeCoin purchases and creator tipping system
+- **Virtual Gifts**: Token-based gifts with leaderboards
 - **Responsive Design**: Mobile-first responsive UI with dark theme
 - **Real-time Updates**: WebSocket-based live status updates
 
@@ -117,6 +119,12 @@ docker-compose up -d
 ### Payment Endpoints
 - `POST /api/payments/create-session` - Create payment session
 - `GET /api/payments/balance/:userId` - Get user balance
+
+### Gift Endpoints
+- `GET /api/gifts/catalog` - List available gifts
+- `POST /api/gifts/balance/:userId/purchase` - Add tokens to a user's balance
+- `POST /api/gifts/send` - Send a gift to a creator
+- `GET /api/gifts/leaderboard/:creatorId` - Top fans for a creator
 
 ## 🔐 Security Notes
 
