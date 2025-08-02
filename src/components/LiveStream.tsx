@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import TipModal from './TipModal';
+import ParticipantsList from './ParticipantsList';
 
 interface LiveStreamProps {
   creatorName: string;
@@ -27,6 +28,8 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
   const [viewerInfo, setViewerInfo] = useState<{ token: string; url: string } | null>(null);
   const roomRef = useRef<Room | null>(null);
   const remoteVideoRef = useRef<HTMLDivElement>(null);
+  const participantIdRef = useRef<string>('');
+  const roomName = `live_${creatorName.replace(/\s+/g, '_')}`;
   const [chatMessage, setChatMessage] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -57,8 +60,9 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
   const handleConnect = async () => {
     try {
       // Get token for viewer to join creator's room
-      const roomName = `live_${creatorName.replace(/\s+/g, '_')}`;
-      const tokenRes = await fetch(`/livekit/token?room=${encodeURIComponent(roomName)}&identity=viewer_${Date.now()}`);
+      const identity = `viewer_${Date.now()}`;
+      participantIdRef.current = identity;
+      const tokenRes = await fetch(`/livekit/token?room=${encodeURIComponent(roomName)}&identity=${identity}`);
       
       if (!tokenRes.ok) throw new Error('Failed to get LiveKit token');
       
@@ -85,6 +89,11 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
       });
 
       roomRef.current = room;
+      await fetch(`/rooms/${roomName}/join`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: 'viewer', identity })
+      });
       setIsConnected(true);
     } catch (error) {
       console.error('Connection failed:', error);
@@ -94,10 +103,16 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
   useEffect(() => {
     return () => {
       if (roomRef.current) {
+        const identity = participantIdRef.current;
+        fetch(`/rooms/${roomName}/leave`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ role: 'viewer', identity })
+        }).catch(() => {});
         roomRef.current.disconnect();
       }
     };
-  }, []);
+  }, [roomName]);
 
   const sendMessage = () => {
     if (!chatMessage.trim()) return;
@@ -214,6 +229,16 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
                 Send
               </Button>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Participants */}
+        <Card className="bg-gradient-card h-fit">
+          <CardHeader>
+            <CardTitle className="text-lg">Participants</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ParticipantsList room={roomName} />
           </CardContent>
         </Card>
       </div>
