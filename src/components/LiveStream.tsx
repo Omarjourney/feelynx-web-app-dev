@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Room, RoomEvent, Track } from 'livekit-client';
+// import { Room, RoomEvent, Track } from 'livekit-client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -51,6 +51,9 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
   const [tipOpen, setTipOpen] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
+  const roomRef = useRef<any>(null);
+  const participantIdRef = useRef<string>(`viewer_${Date.now()}`);
+  const roomName = `live_${creatorName.toLowerCase().replace(/\s+/g, '_')}`;
 
   const handleConnect = async () => {
     try {
@@ -124,8 +127,7 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
                     </p>
                   </div>
                 </div>
-              ) : (
-              )}
+              ) : null}
 
               {/* Stream Controls */}
               {isConnected && (

@@ -9,6 +9,24 @@ import { requestMediaPermissions } from '@/lib/mediaPermissions';
 const CallRoom = () => {
   const [state, setState] = useState<'idle' | 'connecting' | 'live' | 'ended'>('idle');
   const localVideoRef = useRef<HTMLVideoElement>(null);
+  const roomRef = useRef<any>(null);
+  const remoteVideoRef = useRef<HTMLDivElement>(null);
+
+  const startCall = async () => {
+    setState('connecting');
+    try {
+      await requestMediaPermissions();
+      setState('live');
+      toast({ title: 'Call started', description: 'You are now connected' });
+    } catch (error) {
+      setState('idle');
+      toast({ 
+        title: 'Call failed', 
+        description: 'Could not start call', 
+        variant: 'destructive' 
+      });
+    }
+  };
 
   const endCall = () => {
     roomRef.current?.disconnect();

@@ -3,7 +3,37 @@ import { AccessToken, RoomServiceClient } from 'livekit-server-sdk';
 
 const router = Router();
 
+const apiKey = process.env.LIVEKIT_API_KEY;
+const apiSecret = process.env.LIVEKIT_API_SECRET;
+const wsUrl = process.env.LIVEKIT_URL;
 
+let roomService: RoomServiceClient | null = null;
+
+if (apiKey && apiSecret && wsUrl) {
+  roomService = new RoomServiceClient(wsUrl, apiKey, apiSecret);
+}
+
+// Generate access token for a user to join a room
+router.get('/token', async (req, res) => {
+  if (!apiKey || !apiSecret) {
+    return res.status(500).json({ error: 'LiveKit credentials not configured' });
+  }
+
+  const { room, identity } = req.query as { room?: string; identity?: string };
+  
+  if (!room || !identity) {
+    return res.status(400).json({ error: 'room and identity are required' });
+  }
+
+  try {
+    const at = new AccessToken(apiKey, apiSecret, { identity });
+    at.addGrant({ room, roomJoin: true, canPublish: true, canSubscribe: true });
+
+    const token = at.toJwt();
+    res.json({ token });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
 });
 
 router.post('/rooms', async (req, res) => {

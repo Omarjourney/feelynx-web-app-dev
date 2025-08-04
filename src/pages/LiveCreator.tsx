@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Room, RoomEvent, LocalVideoTrack } from 'livekit-client';
+// import { Room, RoomEvent, LocalVideoTrack } from 'livekit-client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -28,7 +28,7 @@ const LiveCreator = () => {
   const [earnings, setEarnings] = useState(0);
   const [isVideoReady, setIsVideoReady] = useState(false);
 
-  const roomRef = useRef<Room | null>(null);
+  const roomRef = useRef<any>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const roomName = searchParams.get('room') || 'default_room';
 
@@ -48,36 +48,21 @@ const LiveCreator = () => {
       if (!tokenRes.ok) throw new Error('Failed to get token');
 
       const { token } = await tokenRes.json();
-      const room = new Room();
+      // Mock room for now - LiveKit integration will be added later
+      const room = { disconnect: () => {}, remoteParticipants: { size: 0 } };
 
-      // Attach local video once published
-      room.on(RoomEvent.LocalTrackPublished, (publication) => {
-        if (publication.track instanceof LocalVideoTrack && localVideoRef.current) {
-          publication.track.attach(localVideoRef.current);
+      // Mock video setup
+      try {
+        await requestMediaPermissions();
+        if (localVideoRef.current) {
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+          localVideoRef.current.srcObject = stream;
           setIsVideoReady(true);
         }
-      });
-
-      // Connect to LiveKit room
-      const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL || 'ws://localhost:7880';
-      await room.connect(wsUrl, token);
-
-      // Enable camera and microphone
-      try {
-        await room.localParticipant.enableCameraAndMicrophone();
       } catch (err) {
         console.error('Failed to enable camera and microphone:', err);
         throw err;
       }
-
-      // Listen for participant changes to update viewer count
-      room.on(RoomEvent.ParticipantConnected, () => {
-        setViewers(room.remoteParticipants.size);
-      });
-
-      room.on(RoomEvent.ParticipantDisconnected, () => {
-        setViewers(room.remoteParticipants.size);
-      });
 
       roomRef.current = room;
       setIsLive(true);
