@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Room, RoomEvent, Track } from 'livekit-client';
+
 import LovenseToggle from '@/components/LovenseToggle';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,61 +9,16 @@ import { requestMediaPermissions } from '@/lib/mediaPermissions';
 const CallRoom = () => {
   const [state, setState] = useState<'idle' | 'connecting' | 'live' | 'ended'>('idle');
   const localVideoRef = useRef<HTMLVideoElement>(null);
-  const remoteVideoRef = useRef<HTMLDivElement>(null);
-  const roomRef = useRef<Room | null>(null);
-
-    const startCall = async () => {
-      setState('connecting');
-      try {
-        await requestMediaPermissions();
-
-        const tokenRes = await fetch('/livekit/token?room=call-room&identity=user_' + Date.now());
-        if (!tokenRes.ok) throw new Error('Failed to get token');
-        const { token } = (await tokenRes.json()) as { token: string };
-
-        const room = new Room();
-        const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL || 'ws://localhost:7880';
-        await room.connect(wsUrl, token);
-        await room.localParticipant.enableCameraAndMicrophone();
-        room.on(RoomEvent.TrackSubscribed, (track) => {
-          if (track.kind === Track.Kind.Video && remoteVideoRef.current) {
-            const element = document.createElement('video');
-            element.srcObject = new MediaStream([track.mediaStreamTrack]);
-            element.autoplay = true;
-            element.playsInline = true;
-            remoteVideoRef.current.innerHTML = '';
-            remoteVideoRef.current.appendChild(element);
-          }
-        });
-
-        const localTrackPublications = Array.from(
-          room.localParticipant.videoTrackPublications.values(),
-        );
-        const localTrack = localTrackPublications[0]?.track;
-        if (localTrack && localVideoRef.current) {
-          localVideoRef.current.srcObject = new MediaStream([
-            localTrack.mediaStreamTrack,
-          ]);
-        }
-
-        roomRef.current = room;
-        setState('live');
-      } catch (err) {
-        console.error(err);
-        toast({ title: 'Connection failed', description: err instanceof Error ? err.message : undefined, variant: 'destructive' });
-        setState('idle');
-      }
-    };
 
   const endCall = () => {
     roomRef.current?.disconnect();
-    roomRef.current = null;
+
     setState('ended');
   };
 
   useEffect(() => {
     return () => {
-      roomRef.current?.disconnect();
+
     };
   }, []);
 

@@ -37,14 +37,12 @@ app.use(
   })
 );
 
+
 app.use('/auth', authRoutes);
 app.use('/users', usersRoutes);
 app.use('/posts', postsRoutes);
 app.use('/payments', paymentsRoutes);
 app.use('/livekit', livekitRoutes);
-app.use('/api/creators', creatorsRoutes);
-app.use('/api/stream', streamRoutes);
-app.use('/api/gifts', giftsRoutes);
 
 const port = process.env.PORT || 3001;
 
