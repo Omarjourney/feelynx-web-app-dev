@@ -70,12 +70,12 @@ npm run dev         # Frontend on :8080
 
 ### Environment Variables
 
-Key environment variables (see `.env.example`):
+Key environment variables (see `.env.example` for sample values):
 
 ```env
-# LiveKit Configuration
-LIVEKIT_API_KEY=your_api_key
-LIVEKIT_API_SECRET=your_secret
+# LiveKit configuration
+LIVEKIT_API_KEY=example_livekit_api_key
+LIVEKIT_API_SECRET=example_livekit_api_secret
 LIVEKIT_HOST=http://localhost:7880
 VITE_LIVEKIT_WS_URL=ws://localhost:7880
 
@@ -85,6 +85,8 @@ DATABASE_URL=postgresql://postgres:password@localhost:5432/feelynx
 # Payment Processing
 STRIPE_SECRET_KEY=sk_test_...
 ```
+
+> **Note:** `LIVEKIT_API_SECRET` is for backend use only and must never be exposed to the frontend.
 
 ## 🏗 Production Deployment
 
