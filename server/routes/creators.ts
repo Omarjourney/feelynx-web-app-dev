@@ -1,17 +1,20 @@
 import { Router } from 'express';
+import { prisma } from '../db/prisma';
 
 const router = Router();
 
 // Get all creators
-router.get('/', async (req, res) => {
+router.get('/', async (_req, res) => {
   try {
-    // TODO: Replace with actual database query
-    const creators = [
-      { id: 1, username: 'creator1', name: 'Creator One', isLive: false },
-      { id: 2, username: 'creator2', name: 'Creator Two', isLive: true }
-    ];
+    const creators = await prisma.user.findMany({
+      select: {
+        id: true,
+        email: true
+      }
+    });
     res.json(creators);
   } catch (error) {
+    console.error('Failed to fetch creators', error);
     res.status(500).json({ error: 'Failed to fetch creators' });
   }
 });
