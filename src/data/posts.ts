@@ -9,6 +9,9 @@ export interface Post {
   tier?: string;
   likes: number;
   comments: number;
+  title?: string;
+  description?: string;
+  tags?: string[];
 }
 
 export const posts: Post[] = [
@@ -20,6 +23,9 @@ export const posts: Post[] = [
     src: 'https://source.unsplash.com/random/800x600?sig=1',
     likes: 234,
     comments: 12,
+    title: 'Sunset Tease',
+    description: 'A dreamy sunset shot to start your evening.',
+    tags: ['sunset', 'outdoor'],
   },
   {
     id: 2,
@@ -31,6 +37,9 @@ export const posts: Post[] = [
     price: 15,
     likes: 188,
     comments: 20,
+    title: 'Behind the Scenes',
+    description: 'Sneak peek from my latest shoot.',
+    tags: ['bts', 'teaser'],
   },
   {
     id: 3,
@@ -42,5 +51,8 @@ export const posts: Post[] = [
     tier: 'Gold',
     likes: 321,
     comments: 45,
+    title: 'Golden Hour',
+    description: 'Exclusive golden-hour portrait for Gold members.',
+    tags: ['exclusive', 'portrait'],
   },
 ];
