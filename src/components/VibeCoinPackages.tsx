@@ -36,9 +36,22 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
       });
       
       if (response.ok) {
-        const { sessionUrl } = await response.json();
-        // Open payment in new tab
-        window.open(sessionUrl, '_blank');
+        const contentType = response.headers.get('Content-Type') || '';
+        if (contentType.includes('application/json')) {
+          try {
+            const { sessionUrl } = await response.json();
+            if (sessionUrl) {
+              // Open payment in new tab
+              window.open(sessionUrl, '_blank');
+            } else {
+              console.error('Payment session missing URL');
+            }
+          } catch (err) {
+            console.error('Failed to parse payment session response', err);
+          }
+        } else {
+          console.error('Expected JSON response, got', contentType);
+        }
       } else {
         throw new Error('Failed to create payment session');
       }

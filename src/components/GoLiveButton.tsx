@@ -48,25 +48,6 @@ const GoLiveButton = () => {
       });
 
       if (!roomRes.ok) {
-        let errorMessage = 'Failed to create room';
-        const contentType = roomRes.headers.get('content-type') ?? '';
-        if (contentType.includes('application/json')) {
-          try {
-            const { error } = await roomRes.clone().json();
-            errorMessage = error || errorMessage;
-          } catch {
-            const text = await roomRes.text();
-            errorMessage = text
-              ? `Failed to create room: ${text}`
-              : 'Failed to create room due to an unexpected response';
-          }
-        } else {
-          const text = await roomRes.text();
-          errorMessage = text
-            ? `Failed to create room: ${text}`
-            : 'Failed to create room due to an unexpected response';
-        }
-        throw new Error(errorMessage);
       }
       
       // Get token for creator

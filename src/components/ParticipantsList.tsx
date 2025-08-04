@@ -16,9 +16,19 @@ export const ParticipantsList = ({ room }: ParticipantsListProps) => {
   useEffect(() => {
     const load = async () => {
       const res = await fetch(`/rooms/${room}/participants`);
-      const data: ParticipantsResponse = await res.json();
-      setHosts(data.hosts);
-      setViewers(data.viewers);
+      let data: ParticipantsResponse = { hosts: [], viewers: [] };
+      const contentType = res.headers.get('Content-Type') || '';
+      if (contentType.includes('application/json')) {
+        try {
+          data = await res.json();
+        } catch (err) {
+          console.error('Failed to parse participants response', err);
+        }
+      } else {
+        console.error('Expected JSON response, got', contentType);
+      }
+      setHosts(data.hosts || []);
+      setViewers(data.viewers || []);
     };
     load();
     const ws = new WebSocket(`ws://${window.location.host}`);
