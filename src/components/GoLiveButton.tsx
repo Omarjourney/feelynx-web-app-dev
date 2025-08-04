@@ -17,10 +17,63 @@ import {
   SelectItem,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { requestMediaPermissions } from '@/lib/mediaPermissions';
 
 const GoLiveButton = () => {
   const [open, setOpen] = useState(false);
   const [mediaEnabled, setMediaEnabled] = useState(true);
+  const [category, setCategory] = useState('chat');
+  const [mediaError, setMediaError] = useState('');
+
+  const handleStart = async () => {
+    try {
+      // Get media permissions first
+      if (mediaEnabled) {
+        await requestMediaPermissions();
+      }
+      setMediaError('');
+      
+      // Create a live room for the creator
+      const roomName = `live_creator_${Date.now()}`;
+      
+      // Create room first
+      const roomRes = await fetch('/livekit/rooms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          name: roomName,
+          emptyTimeout: 300, // 5 minutes
+          maxParticipants: 1000 
+        })
+      });
+
+      if (!roomRes.ok) {
+        const { error } = await roomRes.json();
+        throw new Error(error || 'Failed to create room');
+      }
+      
+      // Get token for creator
+      const tokenRes = await fetch(`/livekit/token?room=${roomName}&identity=creator_${Date.now()}`);
+      if (!tokenRes.ok) {
+        throw new Error('Failed to get LiveKit token');
+      }
+      
+      // Update creator status to live
+      await fetch('/creators/creator_username/status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isLive: true })
+      });
+      
+      setOpen(false);
+      // Navigate to live streaming interface with room info
+      window.location.href = `/live-creator?room=${roomName}`;
+      
+    } catch (err) {
+      console.error('Failed to start stream:', err);
+      setMediaError(err instanceof Error ? err.message : String(err));
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -47,9 +100,9 @@ const GoLiveButton = () => {
             <label htmlFor="category" className="block text-sm font-medium">
               Category
             </label>
-            <Select>
+            <Select value={category} onValueChange={setCategory}>
               <SelectTrigger id="category">
-                <SelectValue placeholder="Select a category" />
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="chat">Just Chatting</SelectItem>
@@ -68,7 +121,13 @@ const GoLiveButton = () => {
               Enable Camera &amp; Mic
             </label>
           </div>
-          <Button className="w-full bg-gradient-primary text-primary-foreground">
+          {mediaError && (
+            <p className="text-sm text-destructive">{mediaError}</p>
+          )}
+          <Button
+            className="w-full bg-gradient-primary text-primary-foreground"
+            onClick={handleStart}
+          >
             Start Stream
           </Button>
         </div>

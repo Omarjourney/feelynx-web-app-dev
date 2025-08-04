@@ -1,57 +1,26 @@
 import { useEffect, useRef, useState } from 'react';
+
 import LovenseToggle from '@/components/LovenseToggle';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
+import { requestMediaPermissions } from '@/lib/mediaPermissions';
 
 const CallRoom = () => {
   const [state, setState] = useState<'idle' | 'connecting' | 'live' | 'ended'>('idle');
   const localVideoRef = useRef<HTMLVideoElement>(null);
-  const remoteVideoRef = useRef<HTMLVideoElement>(null);
-  const [stream, setStream] = useState<MediaStream | null>(null);
-
-  const startCall = async () => {
-    setState('connecting');
-    try {
-      // Request offer from backend. A real implementation would
-      // return an SDP offer from a WebRTC SFU like mediasoup.
-      await fetch('/api/stream/webrtc/start', {
-        method: 'POST',
-      });
-
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-      });
-      setStream(stream);
-      setState('live');
-      toast({ title: 'Stream started' });
-    } catch (err) {
-      toast({ title: 'Camera permission denied' });
-      setState('idle');
-    }
-  };
 
   const endCall = () => {
-    stream?.getTracks().forEach((t) => t.stop());
-    setStream(null);
+    roomRef.current?.disconnect();
+
     setState('ended');
   };
 
   useEffect(() => {
-    if (localVideoRef.current && stream) {
-      localVideoRef.current.srcObject = stream;
-    }
-    if (remoteVideoRef.current && stream) {
-      remoteVideoRef.current.srcObject = stream;
-    }
-  }, [stream]);
-
-  useEffect(() => {
     return () => {
-      stream?.getTracks().forEach((t) => t.stop());
+
     };
-  }, [stream]);
+  }, []);
 
   return (
     <div className="container mx-auto p-4 space-y-4">
@@ -77,10 +46,8 @@ const CallRoom = () => {
                 muted
                 className="w-full h-auto rounded-lg bg-black"
               />
-              <video
+              <div
                 ref={remoteVideoRef}
-                autoPlay
-                playsInline
                 className="w-full h-auto rounded-lg bg-black"
               />
             </div>

@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
+import { Room, RoomEvent, Track } from 'livekit-client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import TipModal from './TipModal';
+import ParticipantsList from './ParticipantsList';
 
 interface LiveStreamProps {
   creatorName: string;
@@ -52,16 +54,25 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
 
   const handleConnect = async () => {
     try {
-      const res = await fetch('/api/stream/rtmp/start', { method: 'POST' });
-      if (res.ok) {
-        const data = await res.json();
-        setStreamUrl(data.url);
-      }
       setIsConnected(true);
     } catch (error) {
       console.error('Connection failed:', error);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (roomRef.current) {
+        const identity = participantIdRef.current;
+        fetch(`/rooms/${roomName}/leave`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ role: 'viewer', identity })
+        }).catch(() => {});
+        roomRef.current.disconnect();
+      }
+    };
+  }, [roomName]);
 
   const sendMessage = () => {
     if (!chatMessage.trim()) return;
@@ -114,14 +125,6 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
                   </div>
                 </div>
               ) : (
-                <video
-                  ref={videoRef}
-                  src={streamUrl ?? undefined}
-                  className="w-full h-full object-cover"
-                  controls={false}
-                  autoPlay
-                  muted
-                />
               )}
 
               {/* Stream Controls */}
@@ -185,6 +188,16 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
                 Send
               </Button>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Participants */}
+        <Card className="bg-gradient-card h-fit">
+          <CardHeader>
+            <CardTitle className="text-lg">Participants</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ParticipantsList room={roomName} />
           </CardContent>
         </Card>
       </div>
