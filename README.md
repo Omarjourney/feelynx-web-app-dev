@@ -76,6 +76,7 @@ Key environment variables (see `.env.example`):
 # LiveKit Configuration
 LIVEKIT_API_KEY=your_api_key
 LIVEKIT_API_SECRET=your_secret
+LIVEKIT_HOST=http://localhost:7880
 VITE_LIVEKIT_WS_URL=ws://localhost:7880
 
 # Database
