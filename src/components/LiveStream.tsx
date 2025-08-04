@@ -25,11 +25,6 @@ interface ChatMessage {
 export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) => {
   const [isConnected, setIsConnected] = useState(false);
   const [streamUrl, setStreamUrl] = useState<string | null>(null);
-  const [viewerInfo, setViewerInfo] = useState<{ token: string; url: string } | null>(null);
-  const roomRef = useRef<Room | null>(null);
-  const remoteVideoRef = useRef<HTMLDivElement>(null);
-  const participantIdRef = useRef<string>('');
-  const roomName = `live_${creatorName.replace(/\s+/g, '_')}`;
   const [chatMessage, setChatMessage] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -59,41 +54,6 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
 
   const handleConnect = async () => {
     try {
-      // Get token for viewer to join creator's room
-      const identity = `viewer_${Date.now()}`;
-      participantIdRef.current = identity;
-      const tokenRes = await fetch(`/livekit/token?room=${encodeURIComponent(roomName)}&identity=${identity}`);
-      
-      if (!tokenRes.ok) throw new Error('Failed to get LiveKit token');
-      
-      const { token } = await tokenRes.json();
-      const room = new Room();
-      
-      // Connect to LiveKit room
-      const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL || 'ws://localhost:7880';
-      await room.connect(wsUrl, token);
-
-      // Listen for remote video tracks
-      room.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {
-        if (track.kind === Track.Kind.Video && remoteVideoRef.current) {
-          const element = document.createElement('video');
-          element.srcObject = new MediaStream([track.mediaStreamTrack]);
-          element.autoplay = true;
-          element.playsInline = true;
-          element.className = 'w-full h-full object-cover';
-          
-          // Clear existing video and add new one
-          remoteVideoRef.current.innerHTML = '';
-          remoteVideoRef.current.appendChild(element);
-        }
-      });
-
-      roomRef.current = room;
-      await fetch(`/rooms/${roomName}/join`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ role: 'viewer', identity })
-      });
       setIsConnected(true);
     } catch (error) {
       console.error('Connection failed:', error);
@@ -165,7 +125,6 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
                   </div>
                 </div>
               ) : (
-                <div ref={remoteVideoRef} className="w-full h-full" />
               )}
 
               {/* Stream Controls */}
