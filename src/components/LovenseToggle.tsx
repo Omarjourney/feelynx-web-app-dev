@@ -1,29 +1,56 @@
 import { useState } from 'react';
+
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
+import { LovenseToy } from '@/lib/lovense';
 
-/** Simple Lovense toy pairing toggle. This does not implement the real API
- *  but mimics the user experience with a pulsing icon when active.
+/**
+ * Toggle for pairing and vibrating a Lovense toy using the Web Bluetooth API.
+ * Falls back gracefully if the API or device is unavailable.
  */
 const LovenseToggle = () => {
   const [paired, setPaired] = useState(false);
   const [active, setActive] = useState(false);
+  const toyRef = useState(() => new LovenseToy())[0];
 
-  const handlePair = () => {
+  const handlePair = async () => {
     if (paired) {
+      await toyRef.disconnect();
       setPaired(false);
       setActive(false);
       toast({ title: 'Toy disconnected' });
-    } else {
+      return;
+    }
+    try {
+      await toyRef.pair();
       setPaired(true);
       toast({ title: 'Toy paired' });
+    } catch (error: any) {
+      toast({
+        title: 'Pairing failed',
+        description: error.message || 'Could not pair with toy',
+        variant: 'destructive'
+      });
     }
   };
 
-  const toggleActive = () => {
+  const toggleActive = async () => {
     if (!paired) return;
-    setActive((prev) => !prev);
-    toast({ title: active ? 'Toy stopped' : 'Toy activated' });
+    try {
+      if (active) {
+        await toyRef.vibrate(0);
+      } else {
+        await toyRef.vibrate(20);
+      }
+      setActive((prev) => !prev);
+      toast({ title: active ? 'Toy stopped' : 'Toy activated' });
+    } catch (error: any) {
+      toast({
+        title: 'Command failed',
+        description: error.message || 'Could not control toy',
+        variant: 'destructive'
+      });
+    }
   };
 
   return (
