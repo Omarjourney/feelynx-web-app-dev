@@ -46,9 +46,10 @@ const GoLiveButton = () => {
           maxParticipants: 1000 
         })
       });
-      
+
       if (!roomRes.ok) {
-        throw new Error('Failed to create room');
+        const { error } = await roomRes.json();
+        throw new Error(error || 'Failed to create room');
       }
       
       // Get token for creator
