@@ -44,6 +44,8 @@ app.use('/posts', postsRoutes);
 app.use('/payments', paymentsRoutes);
 app.use('/livekit', livekitRoutes);
 app.use('/creators', creatorsRoutes);
+app.use('/stream', streamRoutes);
+app.use('/gifts', giftsRoutes);
 
 const port = process.env.PORT || 3001;
 

@@ -151,6 +151,7 @@ npm run lint  # Code linting
 - If the browser denies access, enable camera/mic permissions in both your browser and operating system settings and reload the page.
 - On unsupported devices or browsers, try the latest versions of Chrome, Firefox, or Safari.
 - To test locally, run the app on `https://` or `http://localhost` and verify that permission prompts appear.
+- If testing on a non-HTTPS host, add it to `VITE_MEDIA_HOST_WHITELIST` in `.env` to allow camera access.
 
 ## 📱 Features Overview
 
