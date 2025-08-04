@@ -30,7 +30,6 @@ const Navbar = () => {
               key={l.to}
               asChild
               variant={location.pathname === l.to ? 'default' : 'ghost'}
-              className="rounded-full px-4 min-h-11 min-w-11"
             >
               <Link to={l.to}>{l.label}</Link>
             </Button>
