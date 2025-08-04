@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from '@/hooks/use-toast';
+import { requestMediaPermissions } from '@/lib/mediaPermissions';
 
 interface ChatMessage {
   id: number;
@@ -38,13 +39,15 @@ const LiveCreator = () => {
 
   const startLiveStream = async () => {
     try {
+      await requestMediaPermissions();
+
       // Get token for creator
       const tokenRes = await fetch(`/livekit/token?room=${roomName}&identity=creator_${Date.now()}`);
       if (!tokenRes.ok) throw new Error('Failed to get token');
-      
+
       const { token } = await tokenRes.json();
       const room = new Room();
-      
+
       // Connect to LiveKit room
       const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL || 'ws://localhost:7880';
       await room.connect(wsUrl, token);
@@ -90,9 +93,9 @@ const LiveCreator = () => {
 
     } catch (error) {
       console.error('Failed to start live stream:', error);
-      toast({ 
-        title: 'Stream failed to start', 
-        description: 'Please check your connection and try again',
+      toast({
+        title: 'Stream failed to start',
+        description: error instanceof Error ? error.message : 'Please check your connection and try again',
         variant: 'destructive'
       });
     }

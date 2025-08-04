@@ -140,6 +140,13 @@ npm test  # Unit and integration tests
 npm run lint  # Code linting
 ```
 
+## 🎥 Camera & Microphone Troubleshooting
+
+- The app only accesses camera and microphone from secure origins (HTTPS) or `localhost`.
+- If the browser denies access, enable camera/mic permissions in both your browser and operating system settings and reload the page.
+- On unsupported devices or browsers, try the latest versions of Chrome, Firefox, or Safari.
+- To test locally, run the app on `https://` or `http://localhost` and verify that permission prompts appear.
+
 ## 📱 Features Overview
 
 ### For Viewers
