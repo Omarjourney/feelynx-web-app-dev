@@ -12,23 +12,10 @@ interface ParticipantsListProps {
 export const ParticipantsList = ({ room }: ParticipantsListProps) => {
   const [hosts, setHosts] = useState<string[]>([]);
   const [viewers, setViewers] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
-      const res = await fetch(`/rooms/${room}/participants`);
-      let data: ParticipantsResponse = { hosts: [], viewers: [] };
-      const contentType = res.headers.get('Content-Type') || '';
-      if (contentType.includes('application/json')) {
-        try {
-          data = await res.json();
-        } catch (err) {
-          console.error('Failed to parse participants response', err);
-        }
-      } else {
-        console.error('Expected JSON response, got', contentType);
-      }
-      setHosts(data.hosts || []);
-      setViewers(data.viewers || []);
     };
     load();
     const ws = new WebSocket(`ws://${window.location.host}`);
@@ -45,6 +32,10 @@ export const ParticipantsList = ({ room }: ParticipantsListProps) => {
     };
     return () => ws.close();
   }, [room]);
+
+  if (error) {
+    return <div className="text-sm text-muted-foreground">{error}</div>;
+  }
 
   return (
     <div className="space-y-4">
