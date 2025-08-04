@@ -37,17 +37,4 @@ model Payment {
 }
 
 model Creator {
-  id            Int       @id @default(autoincrement())
-  username      String    @unique
-  displayName   String
-  avatar        String?
-  country       String?
-  specialty     String?
-  isLive        Boolean   @default(false) @map("is_live")
-  followers     Int       @default(0)
-  trendingScore Float     @default(0) @map("trending_score")
-  createdAt     DateTime  @default(now()) @map("created_at")
-  lastOnline    DateTime? @map("last_online")
 
-  @@map("creators")
-}

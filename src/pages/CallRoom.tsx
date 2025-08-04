@@ -1,63 +1,24 @@
 import { useEffect, useRef, useState } from 'react';
-import { Room, RoomEvent, Track } from 'livekit-client';
+
 import LovenseToggle from '@/components/LovenseToggle';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
+import { requestMediaPermissions } from '@/lib/mediaPermissions';
 
 const CallRoom = () => {
   const [state, setState] = useState<'idle' | 'connecting' | 'live' | 'ended'>('idle');
   const localVideoRef = useRef<HTMLVideoElement>(null);
-  const remoteVideoRef = useRef<HTMLDivElement>(null);
-  const roomRef = useRef<Room | null>(null);
-
-  const startCall = async () => {
-    setState('connecting');
-    try {
-      const resp = await fetch(`/livekit/token?room=demo&identity=web`);
-      const { token } = await resp.json();
-      const room = new Room({ adaptiveStream: true, dynacast: true });
-      await room.connect(
-        import.meta.env.VITE_LIVEKIT_WS_URL || 'ws://localhost:7880',
-        token,
-      );
-      await room.localParticipant.enableCameraAndMicrophone();
-
-      room.on(RoomEvent.TrackSubscribed, (track) => {
-        if (track.kind === Track.Kind.Video) {
-          const el = track.attach();
-          remoteVideoRef.current?.appendChild(el);
-        }
-        if (track.kind === Track.Kind.Audio) {
-          track.attach();
-        }
-      });
-
-      const localTrack = room.localParticipant.videoTracks[0]?.track;
-      if (localTrack && localVideoRef.current) {
-        localVideoRef.current.srcObject = new MediaStream([
-          localTrack.mediaStreamTrack,
-        ]);
-      }
-
-      roomRef.current = room;
-      setState('live');
-    } catch (err) {
-      console.error(err);
-      toast({ title: 'Connection failed' });
-      setState('idle');
-    }
-  };
 
   const endCall = () => {
     roomRef.current?.disconnect();
-    roomRef.current = null;
+
     setState('ended');
   };
 
   useEffect(() => {
     return () => {
-      roomRef.current?.disconnect();
+
     };
   }, []);
 

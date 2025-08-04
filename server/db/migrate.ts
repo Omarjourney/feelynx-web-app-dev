@@ -1,4 +1,4 @@
-import { pool } from './index';
+import { pool } from './index.js';
 
 async function migrate() {
   const client = await pool.connect();
@@ -22,14 +22,6 @@ async function migrate() {
     )`);
     await client.query(`CREATE TABLE IF NOT EXISTS creators (
       id SERIAL PRIMARY KEY,
-      username TEXT UNIQUE NOT NULL,
-      display_name TEXT NOT NULL,
-      avatar TEXT,
-      country TEXT,
-      specialty TEXT,
-      is_live BOOLEAN DEFAULT FALSE,
-      followers INTEGER DEFAULT 0,
-      trending_score REAL DEFAULT 0,
       created_at TIMESTAMP DEFAULT NOW(),
       last_online TIMESTAMP
     )`);

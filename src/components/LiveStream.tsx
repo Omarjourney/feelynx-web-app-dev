@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
+import { Room, RoomEvent, Track } from 'livekit-client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import TipModal from './TipModal';
+import ParticipantsList from './ParticipantsList';
 
 interface LiveStreamProps {
   creatorName: string;
@@ -22,6 +24,12 @@ interface ChatMessage {
 
 export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) => {
   const [isConnected, setIsConnected] = useState(false);
+  const [streamUrl, setStreamUrl] = useState<string | null>(null);
+  const [viewerInfo, setViewerInfo] = useState<{ token: string; url: string } | null>(null);
+  const roomRef = useRef<Room | null>(null);
+  const remoteVideoRef = useRef<HTMLDivElement>(null);
+  const participantIdRef = useRef<string>('');
+  const roomName = `live_${creatorName.replace(/\s+/g, '_')}`;
   const [chatMessage, setChatMessage] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -51,12 +59,60 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
 
   const handleConnect = async () => {
     try {
-      // Simulate WebRTC connection
+      // Get token for viewer to join creator's room
+      const identity = `viewer_${Date.now()}`;
+      participantIdRef.current = identity;
+      const tokenRes = await fetch(`/livekit/token?room=${encodeURIComponent(roomName)}&identity=${identity}`);
+      
+      if (!tokenRes.ok) throw new Error('Failed to get LiveKit token');
+      
+      const { token } = await tokenRes.json();
+      const room = new Room();
+      
+      // Connect to LiveKit room
+      const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL || 'ws://localhost:7880';
+      await room.connect(wsUrl, token);
+
+      // Listen for remote video tracks
+      room.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {
+        if (track.kind === Track.Kind.Video && remoteVideoRef.current) {
+          const element = document.createElement('video');
+          element.srcObject = new MediaStream([track.mediaStreamTrack]);
+          element.autoplay = true;
+          element.playsInline = true;
+          element.className = 'w-full h-full object-cover';
+          
+          // Clear existing video and add new one
+          remoteVideoRef.current.innerHTML = '';
+          remoteVideoRef.current.appendChild(element);
+        }
+      });
+
+      roomRef.current = room;
+      await fetch(`/rooms/${roomName}/join`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: 'viewer', identity })
+      });
       setIsConnected(true);
     } catch (error) {
       console.error('Connection failed:', error);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (roomRef.current) {
+        const identity = participantIdRef.current;
+        fetch(`/rooms/${roomName}/leave`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ role: 'viewer', identity })
+        }).catch(() => {});
+        roomRef.current.disconnect();
+      }
+    };
+  }, [roomName]);
 
   const sendMessage = () => {
     if (!chatMessage.trim()) return;
@@ -109,13 +165,7 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
                   </div>
                 </div>
               ) : (
-                <video
-                  ref={videoRef}
-                  className="w-full h-full object-cover"
-                  controls={false}
-                  autoPlay
-                  muted
-                />
+                <div ref={remoteVideoRef} className="w-full h-full" />
               )}
 
               {/* Stream Controls */}
@@ -179,6 +229,16 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
                 Send
               </Button>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Participants */}
+        <Card className="bg-gradient-card h-fit">
+          <CardHeader>
+            <CardTitle className="text-lg">Participants</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ParticipantsList room={roomName} />
           </CardContent>
         </Card>
       </div>
