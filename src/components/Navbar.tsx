@@ -16,7 +16,14 @@ const Navbar = () => {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   return (
-    <nav className="bg-background/95 backdrop-blur-sm border-b border-border sticky top-0 z-50">
+    <nav
+      className="bg-background/95 backdrop-blur-sm border-b border-border sticky top-0 z-50"
+      style={{
+        paddingTop: 'env(safe-area-inset-top)',
+        paddingLeft: 'env(safe-area-inset-left)',
+        paddingRight: 'env(safe-area-inset-right)',
+      }}
+    >
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <img src={feelynxLogo} alt="Feelynx" className="w-8 h-8" />
@@ -26,11 +33,7 @@ const Navbar = () => {
         </div>
         <div className="hidden md:flex items-center space-x-2">
           {links.map((l) => (
-            <Button
-              key={l.to}
-              asChild
-              variant={location.pathname === l.to ? 'default' : 'ghost'}
-            >
+            <Button key={l.to} asChild variant={location.pathname === l.to ? 'default' : 'ghost'}>
               <Link to={l.to}>{l.label}</Link>
             </Button>
           ))}
