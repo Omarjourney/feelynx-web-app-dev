@@ -12,6 +12,8 @@ import livekitRoutes from './routes/livekit';
 import creatorsRoutes from './routes/creators';
 import streamRoutes from './routes/stream';
 import giftsRoutes from './routes/gifts';
+import roomsRoutes from './routes/rooms';
+import { roomParticipants } from './roomParticipants';
 
 dotenv.config();
 
@@ -46,6 +48,7 @@ app.use('/livekit', livekitRoutes);
 app.use('/creators', creatorsRoutes);
 app.use('/stream', streamRoutes);
 app.use('/gifts', giftsRoutes);
+app.use('/rooms', roomsRoutes);
 
 const port = process.env.PORT || 3001;
 
@@ -58,13 +61,6 @@ interface StatusMessage {
 }
 
 const creatorStatus: Record<string, boolean> = {};
-
-interface RoomParticipants {
-  hosts: Set<string>;
-  viewers: Set<string>;
-}
-
-const roomParticipants: Record<string, RoomParticipants> = {};
 
 function broadcastStatus(data: StatusMessage) {
   const payload = JSON.stringify({ type: 'creatorStatus', ...data });
@@ -124,12 +120,6 @@ app.post('/rooms/:room/leave', (req: Request, res: Response) => {
   }
   broadcastParticipants(room);
   res.json({ ok: true });
-});
-
-app.get('/rooms/:room/participants', (req: Request, res: Response) => {
-  const { room } = req.params;
-  const participants = roomParticipants[room] || { hosts: new Set(), viewers: new Set() };
-  res.json({ hosts: Array.from(participants.hosts), viewers: Array.from(participants.viewers) });
 });
 
 server.listen(port, () => {

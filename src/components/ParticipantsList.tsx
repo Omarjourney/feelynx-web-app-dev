@@ -12,13 +12,22 @@ interface ParticipantsListProps {
 export const ParticipantsList = ({ room }: ParticipantsListProps) => {
   const [hosts, setHosts] = useState<string[]>([]);
   const [viewers, setViewers] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
-      const res = await fetch(`/rooms/${room}/participants`);
-      const data: ParticipantsResponse = await res.json();
-      setHosts(data.hosts);
-      setViewers(data.viewers);
+      try {
+        const res = await fetch(`/rooms/${room}/participants`);
+        if (!res.ok) {
+          throw new Error(`Request failed with status ${res.status}`);
+        }
+        const data: ParticipantsResponse = await res.json();
+        setHosts(data.hosts);
+        setViewers(data.viewers);
+      } catch (err) {
+        console.error('Failed to load participants', err);
+        setError('Unable to load participants');
+      }
     };
     load();
     const ws = new WebSocket(`ws://${window.location.host}`);
@@ -35,6 +44,10 @@ export const ParticipantsList = ({ room }: ParticipantsListProps) => {
     };
     return () => ws.close();
   }, [room]);
+
+  if (error) {
+    return <div className="text-sm text-muted-foreground">{error}</div>;
+  }
 
   return (
     <div className="space-y-4">
