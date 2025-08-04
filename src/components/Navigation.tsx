@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ChevronDown, Globe } from 'lucide-react';
+import { ChevronDown, Globe, Menu } from 'lucide-react';
 import feelynxLogo from '@/assets/feelynx-logo.png';
 
 interface NavigationProps {
@@ -11,6 +11,7 @@ interface NavigationProps {
 
 export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
   const [coins] = useState(2547);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const tabs = [
     { id: 'explore', label: 'Explore' },
@@ -34,14 +35,13 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
           </div>
 
           {/* Navigation Tabs */}
-          <div className="flex items-center space-x-2">
+          <div className="hidden md:flex items-center space-x-2">
             {tabs.map((tab) => (
               <Button
                 key={tab.id}
                 variant={activeTab === tab.id ? 'default' : 'ghost'}
                 size="default"
                 onClick={() => onTabChange(tab.id)}
-                className={`md:size-sm min-h-11 px-6 py-2 rounded-full transition-all ${
                   activeTab === tab.id
                     ? 'bg-gradient-primary text-primary-foreground shadow-glow'
                     : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
@@ -81,8 +81,40 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
             >
               Profile
             </Button>
+
+            {/* Mobile Menu Button */}
+            <button
+              className="md:hidden flex items-center justify-center min-h-11 min-w-11"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-expanded={isMenuOpen}
+            >
+              <Menu className="h-6 w-6" />
+            </button>
           </div>
         </div>
+
+        {isMenuOpen && (
+          <div className="flex flex-col space-y-2 pb-4 md:hidden">
+            {tabs.map((tab) => (
+              <Button
+                key={tab.id}
+                variant={activeTab === tab.id ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => {
+                  onTabChange(tab.id);
+                  setIsMenuOpen(false);
+                }}
+                className={`min-h-11 min-w-11 justify-start rounded-full ${
+                  activeTab === tab.id
+                    ? 'bg-gradient-primary text-primary-foreground shadow-glow'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+                }`}
+              >
+                {tab.label}
+              </Button>
+            ))}
+          </div>
+        )}
       </div>
     </nav>
   );

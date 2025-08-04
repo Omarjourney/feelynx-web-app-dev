@@ -9,7 +9,7 @@ const Groups = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation activeTab="groups" onTabChange={handleTab} />
-      <div className="container mx-auto p-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="container mx-auto p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {groups.map((g) => (
           <GroupCard key={g.id} group={g} />
         ))}
