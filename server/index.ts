@@ -17,9 +17,23 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
+const allowedOrigins = process.env.CORS_ORIGIN?.split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+if (
+  process.env.NODE_ENV === 'production' &&
+  (!allowedOrigins || allowedOrigins.length === 0 || allowedOrigins.includes('*'))
+) {
+  console.error(
+    'CORS_ORIGIN must include every front-end URL in production'
+  );
+  process.exit(1);
+}
+
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN?.split(',')
+    origin: allowedOrigins
   })
 );
 
