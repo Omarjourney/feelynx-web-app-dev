@@ -26,6 +26,7 @@ const LiveCreator = () => {
   const [chatMessage, setChatMessage] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [earnings, setEarnings] = useState(0);
+  const [isVideoReady, setIsVideoReady] = useState(false);
 
   const roomRef = useRef<Room | null>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
@@ -40,6 +41,7 @@ const LiveCreator = () => {
   const startLiveStream = async () => {
     try {
       await requestMediaPermissions();
+      setIsVideoReady(false);
 
       // Get token for creator
       const tokenRes = await fetch(`/livekit/token?room=${roomName}&identity=creator_${Date.now()}`);
@@ -47,6 +49,14 @@ const LiveCreator = () => {
 
       const { token } = await tokenRes.json();
       const room = new Room();
+
+      // Attach local video once published
+      room.on(RoomEvent.LocalTrackPublished, (publication) => {
+        if (publication.track instanceof LocalVideoTrack && localVideoRef.current) {
+          publication.track.attach(localVideoRef.current);
+          setIsVideoReady(true);
+        }
+      });
 
       // Connect to LiveKit room
       const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL || 'ws://localhost:7880';
@@ -58,24 +68,6 @@ const LiveCreator = () => {
       } catch (err) {
         console.error('Failed to enable camera and microphone:', err);
         throw err;
-      }
-
-      const localVideoTrack = room.localParticipant.videoTrackPublications
-        .values()
-        .next().value?.track as LocalVideoTrack | undefined;
-
-      if (!localVideoTrack) {
-        toast({
-          title: 'Camera not found',
-          description: 'Unable to access your camera. Please check your devices and permissions.',
-          variant: 'destructive',
-        });
-        await room.disconnect();
-        return;
-      }
-
-      if (localVideoRef.current) {
-        localVideoTrack.attach(localVideoRef.current);
       }
 
       // Listen for participant changes to update viewer count
@@ -147,6 +139,7 @@ const LiveCreator = () => {
     }
     
     setIsLive(false);
+    setIsVideoReady(false);
     toast({ title: 'Stream ended', description: 'You are now offline' });
     navigate('/');
   };
@@ -207,6 +200,11 @@ const LiveCreator = () => {
                 muted
                 playsInline
               />
+              {isLive && !isVideoReady && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/60">
+                  <p className="text-white">Loading video...</p>
+                </div>
+              )}
               {!isLive && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/60">
                   <div className="text-center space-y-4">
