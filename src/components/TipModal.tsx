@@ -32,7 +32,7 @@ const TipModal = ({ isVisible, onClose, onSubmit }: TipModalProps) => {
     <Dialog open={isVisible} onOpenChange={onClose}>
       <DialogPortal>
         <DialogOverlay className="fixed inset-0 bg-black/50" />
-        <DialogContent className="max-w-sm mx-auto">
+        <DialogContent className="w-[90vw] max-w-sm sm:max-w-md max-h-[90vh] overflow-y-auto p-4 bottom-0 sm:inset-auto">
           {sent ? (
             <div className="p-6 text-center space-y-4">
               <div className="text-4xl">💖</div>
