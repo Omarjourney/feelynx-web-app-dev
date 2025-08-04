@@ -4,21 +4,11 @@ import LovenseToggle from '@/components/LovenseToggle';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
+import { requestMediaPermissions } from '@/lib/mediaPermissions';
 
 const CallRoom = () => {
   const [state, setState] = useState<'idle' | 'connecting' | 'live' | 'ended'>('idle');
   const localVideoRef = useRef<HTMLVideoElement>(null);
-
-  const startCall = async () => {
-    setState('connecting');
-    try {
-
-    } catch (err) {
-      console.error(err);
-      toast({ title: 'Connection failed' });
-      setState('idle');
-    }
-  };
 
   const endCall = () => {
     roomRef.current?.disconnect();

@@ -1,10 +1,13 @@
-import { Router } from 'express';
+import { Router, type Request, type Response } from 'express';
 import { creators as frontendCreators } from '../../src/data/creators';
+import { prisma } from '../db/prisma';
+
+const usePrisma = process.env.USE_PRISMA_CREATORS === 'true';
 
 export interface Creator {
   id: number;
   username: string;
-  displayName: string;
+  name: string;
   avatar: string;
   country: string;
   specialty: string;
@@ -24,32 +27,60 @@ const parseFollowers = (followers: string): number => {
   return parseInt(trimmed, 10);
 };
 
-const creators: Creator[] = frontendCreators.map((c, idx) => ({
-  id: c.id,
-  username: c.username.replace('@', ''),
-  displayName: c.name,
-  avatar: c.avatarUrl,
-  country: c.country,
-  specialty: Array.isArray(c.specialties) ? c.specialties[0] : c.specialties,
-  isLive: c.isLive,
-  followers: parseFollowers(c.subscribers),
-  trendingScore: Math.floor(Math.random() * 100),
-  createdAt: new Date(Date.now() - (idx + 1) * 1000 * 60 * 60 * 24).toISOString(),
-  lastOnline: new Date(Date.now() - Math.random() * 1000 * 60 * 60 * 24).toISOString(),
-}));
+const creators: Creator[] = !usePrisma
+  ? frontendCreators.map((c, idx) => ({
+      id: c.id,
+      username: c.username,
+      name: c.name,
+      avatar: c.avatar,
+      country: c.country,
+      specialty: Array.isArray(c.specialties) ? c.specialties[0] : c.specialties,
+      isLive: c.isLive,
+      followers: parseFollowers(c.subscribers),
+      trendingScore: Math.floor(Math.random() * 100),
+      createdAt: new Date(Date.now() - (idx + 1) * 1000 * 60 * 60 * 24).toISOString(),
+      lastOnline: new Date(Date.now() - Math.random() * 1000 * 60 * 60 * 24).toISOString(),
+    }))
+  : [];
 
 const router = Router();
 
-router.get('/', (req, res) => {
-  let result = [...creators];
+router.get('/', async (req: Request, res: Response) => {
   const { country, specialty, isLive, search, sort } = req.query;
 
-  if (country) {
+  if (usePrisma) {
+      const where: Record<string, unknown> = {};
+    if (country) where.country = String(country);
+    if (specialty) where.specialty = String(specialty);
+    if (typeof isLive !== 'undefined')
+      where.isLive = String(isLive).toLowerCase() === 'true';
+    if (search) {
+      where.OR = [
+        { username: { contains: String(search), mode: 'insensitive' } },
+        { name: { contains: String(search), mode: 'insensitive' } },
+      ];
+    }
+    const orderBy = sort
+      ? sort === 'trendingScore'
+        ? { trendingScore: 'desc' }
+        : sort === 'createdAt'
+          ? { createdAt: 'desc' }
+          : sort === 'followers'
+            ? { followers: 'desc' }
+            : undefined
+      : undefined;
+    const result = await prisma.creator.findMany({ where, orderBy: orderBy ? [orderBy] : undefined });
+    return res.json(result);
+  }
+
+  let result = [...creators];
+
+  if (country && String(country).toLowerCase() !== 'all') {
     const value = String(country).toLowerCase();
     result = result.filter((c) => c.country.toLowerCase() === value);
   }
 
-  if (specialty) {
+  if (specialty && String(specialty).toLowerCase() !== 'all') {
     const value = String(specialty).toLowerCase();
     result = result.filter((c) => c.specialty.toLowerCase() === value);
   }
@@ -64,7 +95,7 @@ router.get('/', (req, res) => {
     result = result.filter(
       (c) =>
         c.username.toLowerCase().includes(value) ||
-        c.displayName.toLowerCase().includes(value)
+        c.name.toLowerCase().includes(value)
     );
   }
 
@@ -84,8 +115,14 @@ router.get('/', (req, res) => {
   res.json(result);
 });
 
-router.post('/', (req, res) => {
-  const creator = req.body as Creator;
+  router.post('/', async (req: Request, res: Response) => {
+    const creator = req.body as Creator;
+
+  if (usePrisma) {
+    const created = await prisma.creator.create({ data: creator });
+    return res.status(201).json(created);
+  }
+
   creator.id = creators.length ? creators[creators.length - 1].id + 1 : 1;
   creators.push(creator);
   res.status(201).json(creator);

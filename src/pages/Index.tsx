@@ -1,10 +1,9 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { HeroSection } from '@/components/HeroSection';
-import { SearchFilters } from '@/components/SearchFilters';
+import { SearchFilters, SearchFiltersState } from '@/components/SearchFilters';
 import { CreatorCard } from '@/components/CreatorCard';
-import { LiveStream } from '@/components/LiveStream';
-import { CoinsPanel } from '@/components/CoinsPanel';
 import { VibeCoinPackages } from '@/components/VibeCoinPackages';
 import { useCreatorLive } from '@/hooks/useCreatorLive';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,35 +12,25 @@ import { Button } from '@/components/ui/button';
 const Index = () => {
   const creators = useCreatorLive();
   const [activeTab, setActiveTab] = useState('explore');
-  const [selectedCreator, setSelectedCreator] = useState<number | null>(null);
-  const [isInLiveStream, setIsInLiveStream] = useState(false);
+  const navigate = useNavigate();
+  const [filters, setFilters] = useState<SearchFiltersState>({
+    search: '',
+    country: 'all',
+    specialty: 'all',
+    isLive: false,
+    sort: 'trending'
+  });
+
+  const handleFiltersChange = (newFilters: Partial<SearchFiltersState>) => {
+    setFilters(prev => ({ ...prev, ...newFilters }));
+  };
 
   const handleViewProfile = (creatorId: number) => {
     const creator = creators.find((c) => c.id === creatorId);
     if (creator?.isLive) {
-      setSelectedCreator(creatorId);
-      setIsInLiveStream(true);
+      navigate(`/live/${creator.username}`);
     }
   };
-
-  const handleBackFromStream = () => {
-    setIsInLiveStream(false);
-    setSelectedCreator(null);
-  };
-
-  if (isInLiveStream && selectedCreator) {
-    const creator = creators.find((c) => c.id === selectedCreator);
-    return (
-      <div className="min-h-screen bg-background">
-        <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
-        <LiveStream
-          creatorName={creator?.name || ''}
-          viewers={creator?.viewers || 0}
-          onBack={handleBackFromStream}
-        />
-      </div>
-    );
-  }
 
   const renderContent = () => {
     switch (activeTab) {
@@ -53,7 +42,7 @@ const Index = () => {
 
             {/* Search and Filters */}
             <div className="container mx-auto px-4">
-              <SearchFilters />
+              <SearchFilters {...filters} onChange={handleFiltersChange} />
             </div>
 
             {/* Live Creators */}
@@ -91,7 +80,7 @@ const Index = () => {
       case 'creators':
         return (
           <div className="container mx-auto px-4 space-y-8">
-            <SearchFilters />
+            <SearchFilters {...filters} onChange={handleFiltersChange} />
             <h2 className="text-3xl font-bold">All Creators</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {creators.map((creator) => (

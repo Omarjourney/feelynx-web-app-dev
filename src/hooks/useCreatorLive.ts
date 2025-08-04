@@ -1,32 +1,13 @@
 import { useEffect, useState } from 'react';
 import { creators as initialCreators } from '@/data/creators';
-
-export interface Creator {
-  id: number;
-  name: string;
-  username: string;
-  country: string;
-  age: number;
-  tier: string;
-  subscribers: string;
-  isLive: boolean;
-  viewers?: number;
-  toyConnected?: string;
-  videoRate: number;
-  voiceRate: number;
-  specialties: string[];
-  earnings: string;
-  status: string;
-  initial: string;
-  gradientColors: string;
-  isFeatured?: boolean;
-}
+import type { Creator } from '@/types/creator';
 
 export function useCreatorLive() {
   const [list, setList] = useState<Creator[]>(initialCreators);
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:3001');
+    const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:3001';
+    const ws = new WebSocket(wsUrl);
     ws.onmessage = (event) => {
       try {
         const msg = JSON.parse(event.data);

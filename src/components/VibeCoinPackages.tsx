@@ -19,6 +19,35 @@ interface VibeCoinPackagesProps {
 export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPackagesProps) => {
   const packages: VibeCoinPackage[] = vibeCoinPackages;
 
+  const handlePurchase = async (packageData: VibeCoinPackage) => {
+    try {
+      console.log('Purchasing:', packageData);
+      
+      // Create payment session (placeholder for Stripe integration)
+      const response = await fetch('/api/payments/create-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          packageId: packageData.id,
+          amount: packageData.price,
+          coins: packageData.tokens,
+          currency: 'usd'
+        })
+      });
+      
+      if (response.ok) {
+        const { sessionUrl } = await response.json();
+        // Open payment in new tab
+        window.open(sessionUrl, '_blank');
+      } else {
+        throw new Error('Failed to create payment session');
+      }
+    } catch (error) {
+      console.error('Purchase failed:', error);
+      // In a real app, show error toast
+    }
+  };
+
   return (
     <div>
       <h2 className="text-3xl font-bold mb-8 text-center">VibeCoin Packages</h2>
@@ -71,7 +100,7 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
                     : 'bg-secondary hover:bg-secondary/80'
                 }`}
                 size="lg"
-                onClick={() => onPurchase?.(pkg)}
+                onClick={() => onPurchase ? onPurchase(pkg) : handlePurchase(pkg)}
               >
                 Purchase Now
               </Button>
