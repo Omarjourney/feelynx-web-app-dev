@@ -4,11 +4,21 @@ import { AccessToken } from 'livekit-server-sdk';
 const router = Router();
 
 const {
-  LIVEKIT_URL = 'http://localhost:7880',
-  LIVEKIT_API_KEY = 'devkey',
-  LIVEKIT_API_SECRET = 'secret',
+  LIVEKIT_URL,
+  LIVEKIT_API_KEY,
+  LIVEKIT_API_SECRET,
   RTMP_BASE_URL = 'rtmp://localhost/live',
 } = process.env;
+
+const requiredEnv = { LIVEKIT_URL, LIVEKIT_API_KEY, LIVEKIT_API_SECRET };
+
+for (const [name, value] of Object.entries(requiredEnv)) {
+  if (!value) {
+    const message = `Missing required environment variable: ${name}`;
+    console.error(message);
+    throw new Error(message);
+  }
+}
 
 // Generate a LiveKit access token for joining a WebRTC room
 router.post('/webrtc/token', (req, res) => {
