@@ -47,7 +47,17 @@ const LiveCreator = () => {
       const tokenRes = await fetch(`/livekit/token?room=${roomName}&identity=creator_${Date.now()}`);
       if (!tokenRes.ok) throw new Error('Failed to get token');
 
-      const { token } = await tokenRes.json();
+      const contentType = tokenRes.headers.get('Content-Type') || '';
+      let token = '';
+      if (contentType.includes('application/json')) {
+        try {
+          ({ token } = await tokenRes.json());
+        } catch (err) {
+          throw new Error('Invalid token response');
+        }
+      } else {
+        throw new Error('Invalid token response');
+      }
       // Mock room for now - LiveKit integration will be added later
       const room = { disconnect: () => {}, remoteParticipants: { size: 0 } };
 
