@@ -39,9 +39,9 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
               <Button
                 key={tab.id}
                 variant={activeTab === tab.id ? 'default' : 'ghost'}
-                size="sm"
+                size="default"
                 onClick={() => onTabChange(tab.id)}
-                className={`px-6 py-2 rounded-full transition-all ${
+                className={`md:size-sm min-h-11 px-6 py-2 rounded-full transition-all ${
                   activeTab === tab.id
                     ? 'bg-gradient-primary text-primary-foreground shadow-glow'
                     : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
@@ -55,7 +55,11 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
           {/* User Actions */}
           <div className="flex items-center space-x-4">
             {/* Language Selector */}
-            <Button variant="ghost" size="sm" className="flex items-center space-x-1">
+            <Button
+              variant="ghost"
+              size="default"
+              className="md:size-sm min-h-11 flex items-center space-x-1"
+            >
               <Globe className="w-4 h-4" />
               <span>EN</span>
               <ChevronDown className="w-3 h-3" />
@@ -70,7 +74,11 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
             </Badge>
 
             {/* Profile */}
-            <Button variant="outline" size="sm" className="rounded-full">
+            <Button
+              variant="outline"
+              size="default"
+              className="md:size-sm min-h-11 rounded-full"
+            >
               Profile
             </Button>
           </div>
