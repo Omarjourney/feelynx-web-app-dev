@@ -37,43 +37,4 @@ model Payment {
 }
 
 model Creator {
-  id            Int      @id @default(autoincrement())
-  username      String
-  displayName   String   @map("display_name")
-  avatar        String
-  country       String
-  specialty     String
-  isLive        Boolean  @map("is_live")
-  followers     Int
-  trendingScore Int      @map("trending_score")
-  createdAt     DateTime @map("created_at") @default(now())
-  lastOnline    DateTime @map("last_online")
 
-  @@map("creators")
-}
-
-model TokenBalance {
-  id      Int  @id @default(autoincrement())
-  userId  Int  @map("user_id")
-  balance Int  @default(0)
-
-  @@map("token_balances")
-}
-
-model Gift {
-  id   Int    @id @default(autoincrement())
-  name String
-  cost Int
-
-  @@map("gifts")
-}
-
-model GiftTransaction {
-  id        Int      @id @default(autoincrement())
-  fromId    Int      @map("from_id")
-  toId      Int      @map("to_id")
-  giftId    Int      @map("gift_id")
-  createdAt DateTime @map("created_at") @default(now())
-
-  @@map("gift_transactions")
-}

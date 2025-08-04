@@ -43,6 +43,7 @@ app.use('/users', usersRoutes);
 app.use('/posts', postsRoutes);
 app.use('/payments', paymentsRoutes);
 app.use('/livekit', livekitRoutes);
+app.use('/creators', creatorsRoutes);
 
 const port = process.env.PORT || 3001;
 
