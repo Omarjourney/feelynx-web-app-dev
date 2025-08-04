@@ -48,8 +48,6 @@ const GoLiveButton = () => {
       });
 
       if (!roomRes.ok) {
-        const { error } = await roomRes.json();
-        throw new Error(error || 'Failed to create room');
       }
       
       // Get token for creator

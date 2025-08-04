@@ -55,7 +55,17 @@ const Creators = () => {
         if (filters.isLive) params.set('isLive', '1');
         const res = await fetch(`/api/creators?${params.toString()}`);
         if (!res.ok) throw new Error('Failed to fetch creators');
-        const data = (await res.json()) as ApiCreator[];
+        let data: ApiCreator[] = [];
+        const contentType = res.headers.get('Content-Type') || '';
+        if (contentType.includes('application/json')) {
+          try {
+            data = await res.json();
+          } catch (err) {
+            throw new Error('Invalid creators response');
+          }
+        } else {
+          throw new Error('Invalid creators response');
+        }
         const mapped = data.map((c) => ({
           id: c.id,
           name: c.name,

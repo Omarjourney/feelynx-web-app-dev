@@ -16,18 +16,6 @@ export const ParticipantsList = ({ room }: ParticipantsListProps) => {
 
   useEffect(() => {
     const load = async () => {
-      try {
-        const res = await fetch(`/rooms/${room}/participants`);
-        if (!res.ok) {
-          throw new Error(`Request failed with status ${res.status}`);
-        }
-        const data: ParticipantsResponse = await res.json();
-        setHosts(data.hosts);
-        setViewers(data.viewers);
-      } catch (err) {
-        console.error('Failed to load participants', err);
-        setError('Unable to load participants');
-      }
     };
     load();
     const ws = new WebSocket(`ws://${window.location.host}`);
