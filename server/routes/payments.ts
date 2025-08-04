@@ -11,17 +11,31 @@ router.post('/charge', (req, res) => {
 router.post('/create-session', async (req, res) => {
   try {
     const { packageId, amount, coins, currency = 'usd' } = req.body;
-    
+
+    const packageIdNum = Number(packageId);
+    const amountNum = Number(amount);
+    const coinsNum = Number(coins);
+
+    if (
+      [packageIdNum, amountNum, coinsNum].some(
+        (n) => Number.isNaN(n) || n <= 0
+      )
+    ) {
+      return res.status(400).json({
+        error: 'Invalid packageId, amount, or coins. All must be positive numbers.'
+      });
+    }
+
     // In a real implementation, this would integrate with Stripe
     // For now, return a mock payment URL
     const mockSessionUrl = `https://checkout.stripe.com/pay/mock_session_${Date.now()}`;
-    
+
     res.json({
       sessionUrl: mockSessionUrl,
       sessionId: `cs_mock_${Date.now()}`,
-      packageId,
-      amount,
-      coins
+      packageId: packageIdNum,
+      amount: amountNum,
+      coins: coinsNum
     });
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
