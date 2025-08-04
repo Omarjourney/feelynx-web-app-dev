@@ -1,6 +1,10 @@
-import { PrismaClient } from '@prisma/client';
-import { withOptimize } from '@prisma/extension-optimize';
+let prisma: any;
 
-export const prisma = new PrismaClient().$extends(
-  withOptimize({ apiKey: process.env.OPTIMIZE_API_KEY || '' })
-);
+if (process.env.NODE_ENV === 'test') {
+  prisma = { user: {} };
+} else {
+  const { PrismaClient } = await import('@prisma/client');
+  prisma = new PrismaClient();
+}
+
+export { prisma };
