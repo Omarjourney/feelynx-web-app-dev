@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Room, RoomEvent, Track, LocalVideoTrack, LocalAudioTrack } from 'livekit-client';
+import { Room, RoomEvent, LocalVideoTrack } from 'livekit-client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -50,11 +50,29 @@ const LiveCreator = () => {
       await room.connect(wsUrl, token);
 
       // Enable camera and microphone
-      await room.localParticipant.enableCameraAndMicrophone();
-      const localVideoTrack = room.localParticipant.videoTrackPublications.values().next().value?.track as LocalVideoTrack;
-      
-      if (localVideoTrack && localVideoRef.current) {
-        localVideoRef.current.srcObject = new MediaStream([localVideoTrack.mediaStreamTrack]);
+      try {
+        await room.localParticipant.enableCameraAndMicrophone();
+      } catch (err) {
+        console.error('Failed to enable camera and microphone:', err);
+        throw err;
+      }
+
+      const localVideoTrack = room.localParticipant.videoTrackPublications
+        .values()
+        .next().value?.track as LocalVideoTrack | undefined;
+
+      if (!localVideoTrack) {
+        toast({
+          title: 'Camera not found',
+          description: 'Unable to access your camera. Please check your devices and permissions.',
+          variant: 'destructive',
+        });
+        await room.disconnect();
+        return;
+      }
+
+      if (localVideoRef.current) {
+        localVideoTrack.attach(localVideoRef.current);
       }
 
       // Listen for participant changes to update viewer count
