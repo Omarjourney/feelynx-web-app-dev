@@ -36,9 +36,9 @@ export const SearchFilters = ({
 
   return (
     <div className="bg-card/50 backdrop-blur-sm p-6 rounded-lg border border-border space-y-4">
-      <div className="flex flex-wrap items-center gap-4">
+      <div className="flex flex-col sm:flex-row gap-4">
         {/* Search Bar */}
-        <div className="relative flex-1 min-w-[16rem]">
+        <div className="relative w-full sm:w-[16rem]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             aria-label="Search creators"
@@ -54,7 +54,7 @@ export const SearchFilters = ({
           value={country || 'all'}
           onValueChange={(value) => handleChange({ country: value })}
         >
-          <SelectTrigger className="w-[140px] bg-background/50">
+          <SelectTrigger className="w-full sm:w-[140px] bg-background/50">
             <SelectValue placeholder="Country" />
           </SelectTrigger>
           <SelectContent>
@@ -71,7 +71,7 @@ export const SearchFilters = ({
           value={specialty || 'all'}
           onValueChange={(value) => handleChange({ specialty: value })}
         >
-          <SelectTrigger className="w-[140px] bg-background/50">
+          <SelectTrigger className="w-full sm:w-[140px] bg-background/50">
             <SelectValue placeholder="Category" />
           </SelectTrigger>
           <SelectContent>
