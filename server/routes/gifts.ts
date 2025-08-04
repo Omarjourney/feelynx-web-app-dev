@@ -27,7 +27,11 @@ router.post('/send', (req, res) => {
   const { from, to, giftId } = req.body as { from: string; to: string; giftId: number };
   const gift = gifts.find((g) => g.id === giftId);
   if (!gift) return res.status(400).json({ error: 'Invalid gift' });
-  balances[from] = (balances[from] || 0) - gift.cost;
+  const currentBalance = balances[from] || 0;
+  if (currentBalance < gift.cost) {
+    return res.status(400).json({ error: 'Insufficient balance' });
+  }
+  balances[from] = currentBalance - gift.cost;
   transactions.push({ from, to, giftId, createdAt: new Date() });
   res.json({ success: true, balance: balances[from] });
 });
