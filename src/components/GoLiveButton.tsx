@@ -17,6 +17,7 @@ import {
   SelectItem,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { requestMediaPermissions } from '@/lib/mediaPermissions';
 
 const GoLiveButton = () => {
   const [open, setOpen] = useState(false);
@@ -27,7 +28,9 @@ const GoLiveButton = () => {
   const handleStart = async () => {
     try {
       // Get media permissions first
-      await navigator.mediaDevices.getUserMedia({ video: mediaEnabled, audio: mediaEnabled });
+      if (mediaEnabled) {
+        await requestMediaPermissions();
+      }
       setMediaError('');
       
       // Create a live room for the creator
@@ -67,7 +70,7 @@ const GoLiveButton = () => {
       
     } catch (err) {
       console.error('Failed to start stream:', err);
-      setMediaError('Unable to start stream. Please check permissions and try again.');
+      setMediaError(err instanceof Error ? err.message : String(err));
     }
   };
 
