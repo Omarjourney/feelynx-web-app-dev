@@ -24,7 +24,7 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
       console.log('Purchasing:', packageData);
       
       // Create payment session (placeholder for Stripe integration)
-      const response = await fetch('/api/payments/create-session', {
+      const response = await fetch('/payments/create-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
