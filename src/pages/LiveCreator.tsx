@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { ToastAction } from '@/components/ui/toast';
 import { toast } from '@/hooks/use-toast';
 import { requestMediaPermissions } from '@/lib/mediaPermissions';
 
@@ -93,10 +94,38 @@ const LiveCreator = () => {
 
     } catch (error) {
       console.error('Failed to start live stream:', error);
+      let description = 'Please check your connection and try again';
+      let action;
+
+      if (error instanceof Error) {
+        const msg = error.message.toLowerCase();
+
+        if (msg.includes('token') || msg.includes('permission') || msg.includes('401')) {
+          description = 'LiveKit token rejected. Please refresh and try again';
+        } else if (msg.includes('cors')) {
+          description = 'WebSocket blocked by CORS. Verify server CORS settings';
+        } else if (
+          msg.includes('network') ||
+          msg.includes('fetch') ||
+          msg.includes('unreachable') ||
+          msg.includes('failed to connect')
+        ) {
+          description = 'Server unreachable. Please check your connection and try again';
+          action = (
+            <ToastAction altText="Retry" onClick={() => startLiveStream()}>
+              Retry
+            </ToastAction>
+          );
+        } else {
+          description = error.message;
+        }
+      }
+
       toast({
         title: 'Stream failed to start',
-        description: error instanceof Error ? error.message : 'Please check your connection and try again',
-        variant: 'destructive'
+        description,
+        variant: 'destructive',
+        action,
       });
     }
   };
