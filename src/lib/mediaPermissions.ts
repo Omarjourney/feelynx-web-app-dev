@@ -19,12 +19,26 @@ export async function requestMediaPermissions(): Promise<void> {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
     // Immediately stop tracks to release devices until LiveKit publishes them
     stream.getTracks().forEach((t) => t.stop());
-  } catch (err: any) {
-    if (err?.name === 'NotAllowedError') {
+  } catch (err: unknown) {
+    const errorName = (err as { name?: string })?.name;
+    if (errorName === 'NotAllowedError') {
       throw new Error('Please allow camera and microphone access in your browser and system settings.');
     }
-    if (err?.name === 'NotFoundError') {
+    if (errorName === 'NotFoundError') {
       throw new Error('No camera or microphone found. Please connect a device or try a different browser.');
+    }
+    if (errorName === 'NotReadableError') {
+      throw new Error('Unable to access camera or microphone. They might be in use by another application.');
+    }
+    if (errorName === 'OverconstrainedError') {
+      throw new Error(
+        "The requested camera or microphone settings aren't supported by your device. Try different settings or a different device.",
+      );
+    }
+    if (errorName === 'SecurityError') {
+      throw new Error(
+        'Camera or microphone access was blocked due to security restrictions. Check your browser settings.',
+      );
     }
     throw err instanceof Error ? err : new Error(String(err));
   }
