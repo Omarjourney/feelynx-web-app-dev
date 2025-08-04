@@ -23,7 +23,14 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
   ];
 
   return (
-    <nav className="bg-background/95 backdrop-blur-sm border-b border-border sticky top-0 z-50">
+    <nav
+      className="bg-background/95 backdrop-blur-sm border-b border-border sticky top-0 z-50"
+      style={{
+        paddingTop: 'env(safe-area-inset-top)',
+        paddingLeft: 'env(safe-area-inset-left)',
+        paddingRight: 'env(safe-area-inset-right)',
+      }}
+    >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -42,6 +49,7 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
                 variant={activeTab === tab.id ? 'default' : 'ghost'}
                 size="default"
                 onClick={() => onTabChange(tab.id)}
+                className={`min-h-11 min-w-11 rounded-full ${
                   activeTab === tab.id
                     ? 'bg-gradient-primary text-primary-foreground shadow-glow'
                     : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
@@ -74,11 +82,7 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
             </Badge>
 
             {/* Profile */}
-            <Button
-              variant="outline"
-              size="default"
-              className="md:size-sm min-h-11 rounded-full"
-            >
+            <Button variant="outline" size="default" className="md:size-sm min-h-11 rounded-full">
               Profile
             </Button>
 

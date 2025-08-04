@@ -32,41 +32,42 @@ const GoLiveButton = () => {
         await requestMediaPermissions();
       }
       setMediaError('');
-      
+
       // Create a live room for the creator
       const roomName = `live_creator_${Date.now()}`;
-      
+
       // Create room first
       const roomRes = await fetch('/livekit/rooms', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           name: roomName,
           emptyTimeout: 300, // 5 minutes
-          maxParticipants: 1000 
-        })
+          maxParticipants: 1000,
+        }),
       });
 
       if (!roomRes.ok) {
       }
-      
+
       // Get token for creator
-      const tokenRes = await fetch(`/livekit/token?room=${roomName}&identity=creator_${Date.now()}`);
+      const tokenRes = await fetch(
+        `/livekit/token?room=${roomName}&identity=creator_${Date.now()}`,
+      );
       if (!tokenRes.ok) {
         throw new Error('Failed to get LiveKit token');
       }
-      
+
       // Update creator status to live
       await fetch('/creators/creator_username/status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isLive: true })
+        body: JSON.stringify({ isLive: true }),
       });
-      
+
       setOpen(false);
       // Navigate to live streaming interface with room info
       window.location.href = `/live-creator?room=${roomName}`;
-      
     } catch (err) {
       console.error('Failed to start stream:', err);
       setMediaError(err instanceof Error ? err.message : String(err));
@@ -78,6 +79,10 @@ const GoLiveButton = () => {
       <DialogTrigger asChild>
         <Button
           className="fixed bottom-6 right-6 z-40 rounded-full bg-gradient-primary px-6 py-4 text-lg font-semibold text-primary-foreground shadow-glow transition hover:brightness-110 animate-pulse"
+          style={{
+            bottom: 'calc(env(safe-area-inset-bottom) + 1.5rem)',
+            right: 'calc(env(safe-area-inset-right) + 1.5rem)',
+          }}
         >
           Go Live
         </Button>
@@ -110,18 +115,12 @@ const GoLiveButton = () => {
             </Select>
           </div>
           <div className="flex items-center space-x-2">
-            <Switch
-              id="media"
-              checked={mediaEnabled}
-              onCheckedChange={setMediaEnabled}
-            />
+            <Switch id="media" checked={mediaEnabled} onCheckedChange={setMediaEnabled} />
             <label htmlFor="media" className="text-sm">
               Enable Camera &amp; Mic
             </label>
           </div>
-          {mediaError && (
-            <p className="text-sm text-destructive">{mediaError}</p>
-          )}
+          {mediaError && <p className="text-sm text-destructive">{mediaError}</p>}
           <Button
             className="w-full bg-gradient-primary text-primary-foreground"
             onClick={handleStart}
