@@ -32,11 +32,10 @@ const LiveCreator = () => {
   const roomName = searchParams.get('room') || 'default_room';
 
   useEffect(() => {
-    startLiveStream();
     return () => {
       endStream();
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const startLiveStream = async () => {
     try {
