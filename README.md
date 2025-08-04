@@ -51,6 +51,8 @@ cp .env.example .env
 # Edit .env with your configuration
 ```
 
+> **Note:** The `.env` file is excluded from version control. Never commit your personal environment settings.
+
 3. **Start development servers:**
 ```bash
 # Start all services with Docker
@@ -170,6 +172,8 @@ npm run lint  # Code linting
 2. Create a feature branch
 3. Make your changes with tests
 4. Submit a pull request
+
+> Remember to create your local `.env` from `.env.example` and keep it out of version control.
 
 ## 📄 License
 
