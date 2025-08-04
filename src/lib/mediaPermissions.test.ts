@@ -9,6 +9,7 @@ describe('requestMediaPermissions', () => {
       value: { hostname: 'localhost' },
       configurable: true,
     });
+    import.meta.env.VITE_MEDIA_HOST_WHITELIST = '';
   });
 
   it('resolves when permissions are granted', async () => {
@@ -67,5 +68,47 @@ describe('requestMediaPermissions', () => {
     await expect(requestMediaPermissions()).rejects.toThrow(
       'Camera or microphone access was blocked',
     );
+  });
+
+  it('allows private network hosts when not secure', async () => {
+    Object.defineProperty(window, 'isSecureContext', { value: false, configurable: true });
+    Object.defineProperty(window, 'location', {
+      value: { hostname: '192.168.1.2' },
+      configurable: true,
+    });
+    const mockGetUserMedia = vi.fn().mockResolvedValue({ getTracks: () => [] });
+    // @ts-expect-error mock mediaDevices
+    navigator.mediaDevices = { getUserMedia: mockGetUserMedia };
+    await expect(requestMediaPermissions()).resolves.toBeUndefined();
+    expect(mockGetUserMedia).toHaveBeenCalled();
+  });
+
+  it('allows hosts from environment whitelist when not secure', async () => {
+    import.meta.env.VITE_MEDIA_HOST_WHITELIST = 'dev.example.com, test.local';
+    Object.defineProperty(window, 'isSecureContext', { value: false, configurable: true });
+    Object.defineProperty(window, 'location', {
+      value: { hostname: 'test.local' },
+      configurable: true,
+    });
+    const mockGetUserMedia = vi.fn().mockResolvedValue({ getTracks: () => [] });
+    // @ts-expect-error mock mediaDevices
+    navigator.mediaDevices = { getUserMedia: mockGetUserMedia };
+    await expect(requestMediaPermissions()).resolves.toBeUndefined();
+    expect(mockGetUserMedia).toHaveBeenCalled();
+  });
+
+  it('throws on insecure non-whitelisted host', async () => {
+    Object.defineProperty(window, 'isSecureContext', { value: false, configurable: true });
+    Object.defineProperty(window, 'location', {
+      value: { hostname: 'example.com' },
+      configurable: true,
+    });
+    const mockGetUserMedia = vi.fn();
+    // @ts-expect-error mock mediaDevices
+    navigator.mediaDevices = { getUserMedia: mockGetUserMedia };
+    await expect(requestMediaPermissions()).rejects.toThrow(
+      'A secure HTTPS connection is required',
+    );
+    expect(mockGetUserMedia).not.toHaveBeenCalled();
   });
 });

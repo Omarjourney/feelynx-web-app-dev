@@ -10,8 +10,24 @@ export async function requestMediaPermissions(): Promise<void> {
   }
 
   const hostname = window.location.hostname;
-  const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
-  if (!window.isSecureContext && !isLocalhost) {
+  const allowedHosts = (import.meta.env.VITE_MEDIA_HOST_WHITELIST || '')
+    .split(',')
+    .map((h) => h.trim())
+    .filter(Boolean);
+
+  const privateHostPatterns = [
+    /^localhost$/,
+    /^0\.0\.0\.0$/,
+    /^127(?:\.\d{1,3}){3}$/,
+    /^10(?:\.\d{1,3}){3}$/,
+    /^192\.168(?:\.\d{1,3}){2}$/,
+    /^172\.(1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2}$/,
+  ];
+
+  const isAllowedHost =
+    allowedHosts.includes(hostname) || privateHostPatterns.some((p) => p.test(hostname));
+
+  if (!window.isSecureContext && !isAllowedHost) {
     throw new Error('A secure HTTPS connection is required for camera and microphone access.');
   }
 
