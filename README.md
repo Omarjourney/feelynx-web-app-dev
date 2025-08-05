@@ -78,7 +78,7 @@ Key environment variables (see `.env.example` for sample values):
 # LiveKit configuration
 LIVEKIT_API_KEY=example_livekit_api_key
 LIVEKIT_API_SECRET=example_livekit_api_secret
-LIVEKIT_HOST=http://localhost:7880
+LIVEKIT_URL=http://localhost:7880
 VITE_LIVEKIT_WS_URL=ws://localhost:7880
 
 # Database
@@ -104,7 +104,7 @@ docker-compose up -d
 ```
 
 3. **Environment setup:**
-- Set production LiveKit server URL
+- Set production `LIVEKIT_URL`
 - Configure production database
 - Set up Stripe webhook endpoints
 - Enable HTTPS/SSL certificates
