@@ -1,6 +1,6 @@
+import 'dotenv/config';
 import express from 'express';
 import type { Request, Response } from 'express';
-import dotenv from 'dotenv';
 import cors from 'cors';
 import { createServer } from 'http';
 import { WebSocketServer, WebSocket } from 'ws';
@@ -14,8 +14,6 @@ import streamRoutes from './routes/stream';
 import giftsRoutes from './routes/gifts';
 import roomsRoutes from './routes/rooms';
 import { roomParticipants } from './roomParticipants';
-
-dotenv.config();
 
 const app = express();
 app.use(express.json());
@@ -38,6 +36,13 @@ app.use(
     origin: allowedOrigins
   })
 );
+
+const { LIVEKIT_API_KEY, LIVEKIT_API_SECRET } = process.env;
+if (!LIVEKIT_API_KEY || !LIVEKIT_API_SECRET) {
+  console.error('LIVEKIT_API_KEY and LIVEKIT_API_SECRET must be set');
+  process.exit(1);
+}
+console.log('LiveKit API credentials loaded');
 
 
 app.use('/auth', authRoutes);
