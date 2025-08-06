@@ -57,7 +57,12 @@ const Explore = () => {
       <Navigation activeTab="explore" onTabChange={handleTab} />
       <div className="container mx-auto p-4 space-y-6">
         <StoryBubbles
-          creators={creators.filter((c) => c.isLive)}
+          creators={creators.filter((c) => c.isLive).map(c => ({
+            username: c.username,
+            avatar: c.avatar || '',
+            isLive: c.isLive,
+            badge: c.tier
+          }))}
           onSelect={handleWatch}
         />
         <Tabs value={tab} onValueChange={setTab}>

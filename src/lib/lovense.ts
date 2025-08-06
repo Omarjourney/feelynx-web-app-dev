@@ -4,8 +4,8 @@ const LUSH_SERVICE_UUID = 0xfff0;
 const COMMAND_CHAR_UUID = 0xfff1;
 
 export class LovenseToy {
-  private device?: BluetoothDevice;
-  private characteristic?: BluetoothRemoteGATTCharacteristic;
+  private device?: any;
+  private characteristic?: any;
 
   async pair() {
     if (!isBluetoothSupported()) {

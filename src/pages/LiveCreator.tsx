@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { connect, Room, RoomEvent, Track, createLocalTracks } from 'livekit-client';
+import { Room, RoomEvent, Track, createLocalTracks } from 'livekit-client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -50,11 +50,16 @@ const LiveCreator = () => {
       const { token } = await tokenRes.json();
 
       const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL;
-      const room: Room = await connect(wsUrl, token, { autoSubscribe: true });
+      const room = new Room();
+      await room.connect(wsUrl, token);
 
       // Publish local tracks
       const localTracks = await createLocalTracks({ audio: true, video: true });
-      await room.localParticipant.publishTracks(localTracks);
+      
+      // Publish each track individually
+      for (const track of localTracks) {
+        await room.localParticipant.publishTrack(track);
+      }
 
       const videoTrack = localTracks.find((t) => t.kind === Track.Kind.Video);
       if (videoTrack && localVideoRef.current) {

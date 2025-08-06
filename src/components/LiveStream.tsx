@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { connect, Room, RoomEvent, Track } from 'livekit-client';
+import { Room, RoomEvent, Track } from 'livekit-client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -61,7 +61,8 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
       const { token } = await tokenRes.json();
 
       const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL;
-      const room: Room = await connect(wsUrl, token, { autoSubscribe: true });
+      const room = new Room();
+      await room.connect(wsUrl, token);
       roomRef.current = room;
 
       room.on(RoomEvent.TrackSubscribed, (track) => {
@@ -125,6 +126,12 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
         <Card className="lg:col-span-3 bg-gradient-card">
           <CardContent className="p-0">
             <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
+              <video
+                ref={videoRef}
+                className="w-full h-full object-cover"
+                autoPlay
+                playsInline
+              />
               {!isConnected ? (
                 <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary-glow/10">
                   <div className="text-center space-y-4">
