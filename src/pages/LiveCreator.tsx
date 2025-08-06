@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-// import { Room, RoomEvent, LocalVideoTrack } from 'livekit-client';
+import { connect, Room, RoomEvent, Track, createLocalTracks } from 'livekit-client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -47,32 +47,25 @@ const LiveCreator = () => {
       const tokenRes = await fetch(`/livekit/token?room=${roomName}&identity=creator_${Date.now()}`);
       if (!tokenRes.ok) throw new Error('Failed to get token');
 
-      const contentType = tokenRes.headers.get('Content-Type') || '';
-      let token = '';
-      if (contentType.includes('application/json')) {
-        try {
-          ({ token } = await tokenRes.json());
-        } catch (err) {
-          throw new Error('Invalid token response');
-        }
-      } else {
-        throw new Error('Invalid token response');
-      }
-      // Mock room for now - LiveKit integration will be added later
-      const room = { disconnect: () => {}, remoteParticipants: { size: 0 } };
+      const { token } = await tokenRes.json();
 
-      // Mock video setup
-      try {
-        await requestMediaPermissions();
-        if (localVideoRef.current) {
-          const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-          localVideoRef.current.srcObject = stream;
-          setIsVideoReady(true);
-        }
-      } catch (err) {
-        console.error('Failed to enable camera and microphone:', err);
-        throw err;
+      const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL;
+      const room: Room = await connect(wsUrl, token, { autoSubscribe: true });
+
+      // Publish local tracks
+      const localTracks = await createLocalTracks({ audio: true, video: true });
+      await room.localParticipant.publishTracks(localTracks);
+
+      const videoTrack = localTracks.find((t) => t.kind === Track.Kind.Video);
+      if (videoTrack && localVideoRef.current) {
+        videoTrack.attach(localVideoRef.current);
+        setIsVideoReady(true);
       }
+
+      const updateParticipants = () => setViewers(room.remoteParticipants.size);
+      room.on(RoomEvent.ParticipantConnected, updateParticipants);
+      room.on(RoomEvent.ParticipantDisconnected, updateParticipants);
+      updateParticipants();
 
       roomRef.current = room;
       setIsLive(true);

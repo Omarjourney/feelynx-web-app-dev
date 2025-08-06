@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-// import { Room, RoomEvent, Track } from 'livekit-client';
+import { connect, Room, RoomEvent, Track } from 'livekit-client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -24,7 +24,6 @@ interface ChatMessage {
 
 export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) => {
   const [isConnected, setIsConnected] = useState(false);
-  const [streamUrl, setStreamUrl] = useState<string | null>(null);
   const [chatMessage, setChatMessage] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -57,6 +56,20 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
 
   const handleConnect = async () => {
     try {
+      const tokenRes = await fetch(`/livekit/token?room=${roomName}&identity=${participantIdRef.current}`);
+      if (!tokenRes.ok) throw new Error('Failed to get token');
+      const { token } = await tokenRes.json();
+
+      const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL;
+      const room: Room = await connect(wsUrl, token, { autoSubscribe: true });
+      roomRef.current = room;
+
+      room.on(RoomEvent.TrackSubscribed, (track) => {
+        if (track.kind === Track.Kind.Video && videoRef.current) {
+          track.attach(videoRef.current);
+        }
+      });
+
       setIsConnected(true);
     } catch (error) {
       console.error('Connection failed:', error);
