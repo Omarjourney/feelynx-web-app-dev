@@ -90,6 +90,8 @@ STRIPE_SECRET_KEY=sk_test_...
 
 > **Note:** `LIVEKIT_API_SECRET` is for backend use only and must never be exposed to the frontend.
 
+The application streams over WebRTC using [LiveKit Cloud](https://docs.livekit.io/home/cloud/).
+
 ## 🏗 Production Deployment
 
 1. **Build the application:**
