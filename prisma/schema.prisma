@@ -37,4 +37,35 @@ model Payment {
 }
 
 model Creator {
+  id        Int              @id @default(autoincrement())
+  userId    Int?             @map("user_id")
+  user      User?            @relation(fields: [userId], references: [id])
+  createdAt DateTime         @map("created_at") @default(now())
+  payoutAccounts PayoutAccount[]
+  payouts         Payout[]
 
+  @@map("creators")
+}
+
+model PayoutAccount {
+  id              Int     @id @default(autoincrement())
+  creatorId       Int     @map("creator_id")
+  creator         Creator @relation(fields: [creatorId], references: [id])
+  stripeAccountId String  @map("stripe_account_id")
+  status          String
+  payouts         Payout[]
+
+  @@map("payout_accounts")
+}
+
+model Payout {
+  id          Int      @id @default(autoincrement())
+  creatorId   Int      @map("creator_id")
+  creator     Creator  @relation(fields: [creatorId], references: [id])
+  amount      Decimal
+  status      String
+  initiatedAt DateTime  @map("initiated_at") @default(now())
+  processedAt DateTime? @map("processed_at")
+
+  @@map("payouts")
+}
