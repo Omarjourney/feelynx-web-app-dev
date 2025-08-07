@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { AccessToken, RoomServiceClient } from 'livekit-server-sdk';
+import { supabase } from '../db/supabase';
 
 const router = Router();
 
@@ -80,6 +81,38 @@ router.delete('/rooms/:room', async (req, res) => {
     res.json({ ok: true });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
+  }
+});
+
+// LiveKit webhook endpoint for analytics
+router.post('/webhook', async (req, res) => {
+  const event = req.body as { event?: string; room?: { name?: string; }; participant?: { identity?: string } };
+
+  if (!event.event) {
+    return res.status(400).json({ error: 'invalid webhook payload' });
+  }
+
+  try {
+    switch (event.event) {
+      case 'participant_joined':
+        await supabase.from('audience_retention').insert({
+          stream_id: event.room?.name,
+          participant_identity: event.participant?.identity,
+          joined_at: new Date().toISOString()
+        });
+        break;
+      case 'room_finished':
+        await supabase.from('stream_stats').insert({
+          stream_id: event.room?.name,
+          ended_at: new Date().toISOString()
+        });
+        break;
+      default:
+        break;
+    }
+    res.json({ ok: true });
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message });
   }
 });
 

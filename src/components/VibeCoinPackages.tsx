@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { vibeCoinPackages, VibeCoinPackage } from '@/data/vibecoinPackages';
+import { PaymentReceipt } from './PaymentReceipt';
 
 interface VibeCoinPackagesProps {
   /**
@@ -18,42 +20,41 @@ interface VibeCoinPackagesProps {
 
 export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPackagesProps) => {
   const packages: VibeCoinPackage[] = vibeCoinPackages;
+  const [receipt, setReceipt] = useState<{
+    receiptUrl: string;
+    disputeUrl: string;
+  } | null>(null);
 
   const handlePurchase = async (packageData: VibeCoinPackage) => {
     try {
       console.log('Purchasing:', packageData);
-      
-      // Create payment session (placeholder for Stripe integration)
-      const response = await fetch('/payments/create-session', {
+
+      const response = await fetch('/payments/create-intent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          packageId: packageData.id,
           amount: packageData.price,
           coins: packageData.tokens,
-          currency: 'usd'
+          currency: 'usd',
+          userId: 1
         })
       });
-      
-      if (response.ok) {
-        const contentType = response.headers.get('Content-Type') || '';
-        if (contentType.includes('application/json')) {
-          try {
-            const { sessionUrl } = await response.json();
-            if (sessionUrl) {
-              // Open payment in new tab
-              window.open(sessionUrl, '_blank');
-            } else {
-              console.error('Payment session missing URL');
-            }
-          } catch (err) {
-            console.error('Failed to parse payment session response', err);
-          }
-        } else {
-          console.error('Expected JSON response, got', contentType);
-        }
+
+      if (!response.ok) throw new Error('Failed to create payment intent');
+
+      const { paymentIntentId } = await response.json();
+
+      const successRes = await fetch('/payments/success', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paymentIntentId })
+      });
+
+      if (successRes.ok) {
+        const data = await successRes.json();
+        setReceipt({ receiptUrl: data.receiptUrl, disputeUrl: data.disputeUrl });
       } else {
-        throw new Error('Failed to create payment session');
+        console.error('Payment verification failed');
       }
     } catch (error) {
       console.error('Purchase failed:', error);
@@ -126,6 +127,12 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
           </Card>
         ))}
       </div>
+      {receipt && (
+        <PaymentReceipt
+          receiptUrl={receipt.receiptUrl}
+          disputeUrl={receipt.disputeUrl}
+        />
+      )}
     </div>
   );
 };
