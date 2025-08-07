@@ -7,16 +7,22 @@ import { WebSocketServer, WebSocket } from 'ws';
 import authRoutes from './routes/auth';
 import usersRoutes from './routes/users';
 import postsRoutes from './routes/posts';
-import paymentsRoutes from './routes/payments';
+import paymentsRoutes, { webhookHandler as stripeWebhookHandler } from './routes/payments';
 import livekitRoutes from './routes/livekit';
 import creatorsRoutes from './routes/creators';
 import streamRoutes from './routes/stream';
 import giftsRoutes from './routes/gifts';
 import roomsRoutes from './routes/rooms';
-import analyticsRoutes from './routes/analytics';
+
 import { roomParticipants } from './roomParticipants';
 
 const app = express();
+// Stripe webhooks need the raw body for signature verification
+app.post(
+  '/payments/webhook',
+  express.raw({ type: 'application/json' }),
+  stripeWebhookHandler
+);
 app.use(express.json());
 const allowedOrigins = process.env.CORS_ORIGIN?.split(',')
   .map((origin) => origin.trim())
