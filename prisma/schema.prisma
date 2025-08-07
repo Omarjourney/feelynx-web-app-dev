@@ -13,7 +13,6 @@ model User {
   password String
   posts    Post[]
   payments Payment[]
-  fraudLogs SuspiciousActivity[]
 
   @@map("users")
 }
@@ -50,14 +49,6 @@ model SuspiciousActivity {
   @@map("suspicious_activity")
 }
 
-}
-
-model DMThread {
-  id String @id @default(uuid())
-  user1Id String @map("user1_id")
-  user2Id String @map("user2_id")
-  createdAt DateTime @map("created_at") @default(now())
-  messages DMMessage[]
 
   @@map("dm_threads")
 }
