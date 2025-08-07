@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Menu } from 'lucide-react';
+import { Menu, LogOut } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 import feelynxLogo from '@/assets/feelynx-logo.png';
 
 const links = [
@@ -15,6 +16,11 @@ const links = [
 const Navbar = () => {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
   return (
     <nav
       className="bg-background/95 backdrop-blur-sm border-b border-border sticky top-0 z-50"
@@ -45,6 +51,15 @@ const Navbar = () => {
           >
             💎 0
           </Badge>
+          {user ? (
+            <Button variant="ghost" size="icon" onClick={handleSignOut}>
+              <LogOut className="h-5 w-5" />
+            </Button>
+          ) : (
+            <Link to="/auth">
+              <Button variant="outline">Sign In</Button>
+            </Link>
+          )}
           <button
             className="md:hidden flex items-center justify-center min-h-11 min-w-11"
             onClick={() => setIsMenuOpen(!isMenuOpen)}

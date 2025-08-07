@@ -3,10 +3,10 @@ import { AccessToken } from 'livekit-server-sdk';
 
 const app = express();
 
-// === Replace these placeholders with your real values ===
-const LIVEKIT_API_KEY = 'APIBaMPjQuhffX7';
-const LIVEKIT_API_SECRET = 'X8NfiffKnxGzH63qsT6I9RMkDsBcS8JlJAesTUK44M2B';
-const LIVEKIT_SERVER_URL = 'wss://feelynxlive-rtnczet2.livekit.cloud';
+// Get credentials from environment variables
+const LIVEKIT_API_KEY = process.env.LIVEKIT_API_KEY;
+const LIVEKIT_API_SECRET = process.env.LIVEKIT_API_SECRET;
+const LIVEKIT_SERVER_URL = process.env.LIVEKIT_URL;
 
 app.get('/token', (req, res) => {
   const identity = req.query.identity || 'user';

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { HeroSection } from '@/components/HeroSection';
 import { SearchFilters, SearchFiltersState } from '@/components/SearchFilters';
@@ -8,11 +8,13 @@ import { VibeCoinPackages } from '@/components/VibeCoinPackages';
 import { useCreatorLive } from '@/hooks/useCreatorLive';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Index = () => {
   const creators = useCreatorLive();
   const [activeTab, setActiveTab] = useState('explore');
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [filters, setFilters] = useState<SearchFiltersState>({
     search: '',
     country: 'all',
@@ -39,6 +41,16 @@ const Index = () => {
           <div className="space-y-8">
             {/* Hero Section */}
             <HeroSection />
+            
+            {/* Security Notice for Non-Authenticated Users */}
+            {!user && (
+              <div className="bg-primary/10 p-4 text-center container mx-auto">
+                <p className="mb-2">⚠️ Sign in to access all features and secure data</p>
+                <Link to="/auth">
+                  <Button>Get Started</Button>
+                </Link>
+              </div>
+            )}
 
             {/* Search and Filters */}
             <div className="container mx-auto px-4">

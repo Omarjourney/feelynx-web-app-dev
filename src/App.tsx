@@ -4,6 +4,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Auth from './pages/Auth';
 import Index from './pages/Index';
 import TokenShop from './pages/TokenShop';
 import CallRoom from './pages/CallRoom';
@@ -39,6 +40,7 @@ const App = () => (
           <Route path="/token-shop" element={<TokenShop />} />
           <Route path="/call-room" element={<CallRoom />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/auth" element={<Auth />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
