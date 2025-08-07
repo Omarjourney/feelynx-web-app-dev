@@ -13,6 +13,7 @@ import creatorsRoutes from './routes/creators';
 import streamRoutes from './routes/stream';
 import giftsRoutes from './routes/gifts';
 import roomsRoutes from './routes/rooms';
+import pkBattlesRoutes from './routes/pkBattles';
 import { roomParticipants } from './roomParticipants';
 
 const app = express();
@@ -54,6 +55,7 @@ app.use('/creators', creatorsRoutes);
 app.use('/stream', streamRoutes);
 app.use('/gifts', giftsRoutes);
 app.use('/rooms', roomsRoutes);
+app.use('/pk-battles', pkBattlesRoutes);
 
 const port = process.env.PORT || 3001;
 
