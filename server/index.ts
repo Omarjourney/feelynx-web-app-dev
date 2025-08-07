@@ -13,6 +13,7 @@ import creatorsRoutes from './routes/creators';
 import streamRoutes from './routes/stream';
 import giftsRoutes from './routes/gifts';
 import roomsRoutes from './routes/rooms';
+
 import { roomParticipants } from './roomParticipants';
 
 const app = express();

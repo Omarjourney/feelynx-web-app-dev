@@ -49,3 +49,4 @@ model SuspiciousActivity {
 
   @@map("suspicious_activity")
 }
+
