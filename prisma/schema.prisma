@@ -53,26 +53,4 @@ model SuspiciousActivity {
   @@map("dm_threads")
 }
 
-model DMMessage {
-  id String @id @default(uuid())
-  threadId String @map("thread_id")
-  thread DMThread @relation(fields: [threadId], references: [id])
-  senderId String @map("sender_id")
-  recipientId String @map("recipient_id")
-  nonce String
-  cipherText String @map("cipher_text")
-  readAt DateTime? @map("read_at")
-  burnAfterReading Boolean @map("burn_after_reading") @default(false)
-  createdAt DateTime @map("created_at") @default(now())
-
-  @@map("dm_messages")
-}
-
-model DMKeyPair {
-  userId String @id @map("user_id")
-  publicKey String @map("public_key")
-  privateKey String @map("private_key")
-  createdAt DateTime @map("created_at") @default(now())
-
-  @@map("dm_key_pairs")
 }

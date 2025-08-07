@@ -13,15 +13,12 @@ import creatorsRoutes from './routes/creators';
 import streamRoutes from './routes/stream';
 import giftsRoutes from './routes/gifts';
 import roomsRoutes from './routes/rooms';
+import payoutsRoutes, { processPendingPayouts, webhookHandler } from './routes/payouts';
+import cron from 'node-cron';
 import { roomParticipants } from './roomParticipants';
 
 const app = express();
-// Stripe webhooks need the raw body for signature verification
-app.post(
-  '/payments/webhook',
-  express.raw({ type: 'application/json' }),
-  stripeWebhookHandler
-);
+
 app.use(express.json());
 const allowedOrigins = process.env.CORS_ORIGIN?.split(',')
   .map((origin) => origin.trim())
@@ -60,6 +57,7 @@ app.use('/creators', creatorsRoutes);
 app.use('/stream', streamRoutes);
 app.use('/gifts', giftsRoutes);
 app.use('/rooms', roomsRoutes);
+app.use('/payouts', payoutsRoutes);
 
 const port = process.env.PORT || 3001;
 
@@ -136,3 +134,5 @@ app.post('/rooms/:room/leave', (req: Request, res: Response) => {
 server.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
+cron.schedule('0 0 * * *', processPendingPayouts);

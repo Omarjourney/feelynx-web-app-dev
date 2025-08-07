@@ -25,6 +25,20 @@ async function migrate() {
       created_at TIMESTAMP DEFAULT NOW(),
       last_online TIMESTAMP
     )`);
+    await client.query(`CREATE TABLE IF NOT EXISTS payout_accounts (
+      id SERIAL PRIMARY KEY,
+      creator_id INTEGER REFERENCES creators(id),
+      stripe_account_id TEXT NOT NULL,
+      status TEXT NOT NULL
+    )`);
+    await client.query(`CREATE TABLE IF NOT EXISTS payouts (
+      id SERIAL PRIMARY KEY,
+      creator_id INTEGER REFERENCES creators(id),
+      amount NUMERIC NOT NULL,
+      status TEXT NOT NULL,
+      initiated_at TIMESTAMP DEFAULT NOW(),
+      processed_at TIMESTAMP
+    )`);
     await client.query('COMMIT');
     console.log('Migration complete');
   } catch (err) {
