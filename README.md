@@ -114,7 +114,7 @@ docker-compose up -d
 ## 📚 API Documentation
 
 ### LiveKit Endpoints
-- `GET /livekit/token` - Get room access token
+- `POST /livekit/token` - Get room access token
 - `POST /livekit/rooms` - Create new room
 - `GET /livekit/rooms` - List active rooms
 - `DELETE /livekit/rooms/:room` - Delete room
