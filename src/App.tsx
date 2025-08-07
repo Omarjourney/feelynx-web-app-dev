@@ -18,6 +18,7 @@ import Live from './pages/Live';
 import LiveCreator from './pages/LiveCreator';
 import NotFound from './pages/NotFound';
 import GoLiveButton from '@/components/GoLiveButton';
+import Moderation from './pages/Moderation';
 
 const queryClient = new QueryClient();
 
@@ -39,8 +40,9 @@ const App = () => (
           <Route path="/live-creator" element={<LiveCreator />} />
           <Route path="/token-shop" element={<TokenShop />} />
           <Route path="/call-room" element={<CallRoom />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/auth" element={<Auth />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/moderation" element={<Moderation />} />
+            <Route path="/auth" element={<Auth />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

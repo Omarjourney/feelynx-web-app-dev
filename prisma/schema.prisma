@@ -36,5 +36,37 @@ model Payment {
   @@map("payments")
 }
 
-model Creator {
+model Report {
+  id         Int      @id @default(autoincrement())
+  reportedId Int      @map("reported_id")
+  type       String
+  reason     String
+  status     String   @default("pending")
+  createdAt  DateTime @map("created_at") @default(now())
+
+  actions    ModerationAction[]
+
+  @@map("reports")
+}
+
+model ModerationAction {
+  id          Int      @id @default(autoincrement())
+  reportId    Int      @map("report_id")
+  report      Report   @relation(fields: [reportId], references: [id])
+  action      String
+  moderatorId Int?     @map("moderator_id")
+  createdAt   DateTime @map("created_at") @default(now())
+
+  @@map("moderation_actions")
+}
+
+model BannedUser {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  reason    String?
+  bannedAt  DateTime @map("banned_at") @default(now())
+  expiresAt DateTime? @map("expires_at")
+
+  @@map("banned_users")
+}
 

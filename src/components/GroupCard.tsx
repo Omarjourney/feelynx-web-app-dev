@@ -2,6 +2,7 @@ import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Group } from '@/data/groups';
+import ReportButton from '@/components/ReportButton';
 
 export const GroupCard = ({ group }: { group: Group }) => (
   <Dialog>
@@ -26,15 +27,16 @@ export const GroupCard = ({ group }: { group: Group }) => (
         <div className="space-y-2 max-h-40 overflow-y-auto">
           <p className="text-sm">Group chat coming soon...</p>
         </div>
-        <div className="space-y-2">
-          <Button size="sm" className="w-full bg-gradient-primary text-primary-foreground">
-            Join Group
-          </Button>
-          <Button size="sm" variant="secondary" className="w-full">
-            Schedule with Creator
-          </Button>
+          <div className="space-y-2">
+            <Button size="sm" className="w-full bg-gradient-primary text-primary-foreground">
+              Join Group
+            </Button>
+            <Button size="sm" variant="secondary" className="w-full">
+              Schedule with Creator
+            </Button>
+            <ReportButton targetId={group.id} type="dm" />
+          </div>
         </div>
-      </div>
-    </DialogContent>
-  </Dialog>
-);
+      </DialogContent>
+    </Dialog>
+  );
