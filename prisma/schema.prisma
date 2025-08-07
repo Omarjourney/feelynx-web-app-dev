@@ -13,6 +13,7 @@ model User {
   password String
   posts    Post[]
   payments Payment[]
+  privacySettings PrivacySettings?
 
   @@map("users")
 }
@@ -36,5 +37,13 @@ model Payment {
   @@map("payments")
 }
 
-model Creator {
+model PrivacySettings {
+  id                Int     @id @default(autoincrement())
+  userId            Int     @unique @map("user_id")
+  user              User    @relation(fields: [userId], references: [id])
+  profileVisibility String  @default("public")
+  allowDMs          Boolean @default(true)
+  dataRetentionDays Int     @default(30)
 
+  @@map("privacy_settings")
+}
