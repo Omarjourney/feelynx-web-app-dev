@@ -13,6 +13,7 @@ model User {
   password String
   posts    Post[]
   payments Payment[]
+  fraudLogs SuspiciousActivity[]
 
   @@map("users")
 }
@@ -27,13 +28,25 @@ model Post {
 }
 
 model Payment {
-  id        Int      @id @default(autoincrement())
-  userId    Int?     @map("user_id")
-  user      User?    @relation(fields: [userId], references: [id])
-  amount    Decimal
-  createdAt DateTime @map("created_at") @default(now())
+  id             Int      @id @default(autoincrement())
+  userId         Int?     @map("user_id")
+  user           User?    @relation(fields: [userId], references: [id])
+  amount         Decimal
+  coins          Int      @default(0)
+  paymentIntentId String  @map("payment_intent_id")
+  receiptUrl     String?  @map("receipt_url")
+  createdAt      DateTime @map("created_at") @default(now())
 
   @@map("payments")
 }
 
+model SuspiciousActivity {
+  id        Int      @id @default(autoincrement())
+  userId    Int?     @map("user_id")
+  user      User?    @relation(fields: [userId], references: [id])
+  reason    String
+  createdAt DateTime @map("created_at") @default(now())
+
+  @@map("suspicious_activity")
 }
+
