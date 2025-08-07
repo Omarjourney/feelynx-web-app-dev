@@ -16,6 +16,7 @@ import Calls from './pages/Calls';
 import Groups from './pages/Groups';
 import Live from './pages/Live';
 import LiveCreator from './pages/LiveCreator';
+import PKBattle from './pages/PKBattle';
 import NotFound from './pages/NotFound';
 import GoLiveButton from '@/components/GoLiveButton';
 
@@ -37,6 +38,7 @@ const App = () => (
           <Route path="/groups" element={<Groups />} />
           <Route path="/live/:username" element={<Live />} />
           <Route path="/live-creator" element={<LiveCreator />} />
+            <Route path="/pk-battle/:battleId" element={<PKBattle />} />
           <Route path="/token-shop" element={<TokenShop />} />
           <Route path="/call-room" element={<CallRoom />} />
           <Route path="/dashboard" element={<Dashboard />} />
