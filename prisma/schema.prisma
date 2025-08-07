@@ -13,7 +13,6 @@ model User {
   password String
   posts    Post[]
   payments Payment[]
-  gameParticipants GameParticipant[]
 
   @@map("users")
 }
@@ -37,35 +36,6 @@ model Payment {
   @@map("payments")
 }
 
-model Game {
-  id        Int            @id @default(autoincrement())
-  name      String
-  createdAt DateTime       @default(now())
-  sessions  GameSession[]
-
-  @@map("games")
-}
-
-model GameSession {
-  id        Int            @id @default(autoincrement())
-  gameId    Int            @map("game_id")
-  game      Game           @relation(fields: [gameId], references: [id])
-  room      String
-  startedAt DateTime       @default(now())
-  endedAt   DateTime?
-  participants GameParticipant[]
-  events       GameEvent[]
-
-  @@map("game_sessions")
-}
-
-model GameParticipant {
-  id        Int         @id @default(autoincrement())
-  sessionId Int         @map("session_id")
-  session   GameSession @relation(fields: [sessionId], references: [id])
-  userId    Int         @map("user_id")
-  user      User        @relation(fields: [userId], references: [id])
-  score     Int         @default(0)
 
   @@map("game_participants")
 }
