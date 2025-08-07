@@ -61,6 +61,7 @@ app.use('/creators', creatorsRoutes);
 app.use('/stream', streamRoutes);
 app.use('/gifts', giftsRoutes);
 app.use('/rooms', roomsRoutes);
+app.use('/analytics', analyticsRoutes);
 
 const port = process.env.PORT || 3001;
 

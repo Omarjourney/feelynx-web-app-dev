@@ -19,6 +19,7 @@ import LiveCreator from './pages/LiveCreator';
 import PKBattle from './pages/PKBattle';
 import NotFound from './pages/NotFound';
 import GoLiveButton from '@/components/GoLiveButton';
+import Analytics from './pages/Analytics';
 
 const queryClient = new QueryClient();
 
@@ -38,7 +39,6 @@ const App = () => (
           <Route path="/groups" element={<Groups />} />
           <Route path="/live/:username" element={<Live />} />
           <Route path="/live-creator" element={<LiveCreator />} />
-            <Route path="/pk-battle/:battleId" element={<PKBattle />} />
           <Route path="/token-shop" element={<TokenShop />} />
           <Route path="/call-room" element={<CallRoom />} />
           <Route path="/dashboard" element={<Dashboard />} />
