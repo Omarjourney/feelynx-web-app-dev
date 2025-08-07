@@ -276,37 +276,43 @@ export type Database = {
       }
       subscription_tiers: {
         Row: {
-          benefits: string | null
+          badge: string | null
           creator_id: string | null
           discount_percent: number | null
           duration_days: number | null
           id: string
           name: string | null
+          perks: string | null
           price: number | null
           promo_code: string | null
           trial_days: number | null
+          visibility: string | null
         }
         Insert: {
-          benefits?: string | null
+          badge?: string | null
           creator_id?: string | null
           discount_percent?: number | null
           duration_days?: number | null
           id?: string
           name?: string | null
+          perks?: string | null
           price?: number | null
           promo_code?: string | null
           trial_days?: number | null
+          visibility?: string | null
         }
         Update: {
-          benefits?: string | null
+          badge?: string | null
           creator_id?: string | null
           discount_percent?: number | null
           duration_days?: number | null
           id?: string
           name?: string | null
+          perks?: string | null
           price?: number | null
           promo_code?: string | null
           trial_days?: number | null
+          visibility?: string | null
         }
         Relationships: [
           {
@@ -315,6 +321,44 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "creators"
             referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      fan_subscriptions: {
+        Row: {
+          created_at: string | null
+          id: string
+          renews_at: string | null
+          status: string | null
+          tier_id: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          renews_at?: string | null
+          status?: string | null
+          tier_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          renews_at?: string | null
+          status?: string | null
+          tier_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fan_subscriptions_tier_id_fkey"
+            columns: ["tier_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_tiers"
+            referencedColumns: ["id"]
           },
         ]
       }
