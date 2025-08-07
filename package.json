@@ -59,6 +59,7 @@
     "livekit-server-sdk": "^2.13.1",
     "lucide-react": "^0.462.0",
     "next-themes": "^0.3.0",
+    "node-cron": "^3.0.3",
     "pg": "^8.11.3",
     "react": "^18.3.1",
     "react-day-picker": "^8.10.1",
@@ -99,6 +100,7 @@
     "supertest": "^7.1.4",
     "tailwindcss": "^3.4.11",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.3"
+    "typescript": "^5.5.3",
+    "vitest": "^3.2.4"
   }
 }

@@ -37,4 +37,19 @@ model Payment {
 }
 
 model Creator {
+  id String @id @default(uuid())
+
+  @@map("creators")
+}
+
+model Story {
+  id         String   @id @default(uuid())
+  creatorId  String   @map("creator_id")
+  mediaUrl   String   @map("media_url")
+  expiresAt  DateTime @map("expires_at")
+  visibility String
+  tier       String?  @map("tier_id")
+
+  @@map("stories")
+}
 
