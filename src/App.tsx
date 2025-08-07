@@ -16,6 +16,7 @@ import Calls from './pages/Calls';
 import Groups from './pages/Groups';
 import Live from './pages/Live';
 import LiveCreator from './pages/LiveCreator';
+import PKBattle from './pages/PKBattle';
 import NotFound from './pages/NotFound';
 import GoLiveButton from '@/components/GoLiveButton';
 import Stories from './pages/Stories';
@@ -35,16 +36,14 @@ const App = () => (
           <Route path="/creators" element={<Creators />} />
           <Route path="/content" element={<Content />} />
           <Route path="/calls" element={<Calls />} />
+          <Route path="/match" element={<Match />} />
           <Route path="/groups" element={<Groups />} />
+          <Route path="/dm" element={<DM />} />
           <Route path="/live/:username" element={<Live />} />
           <Route path="/live-creator" element={<LiveCreator />} />
           <Route path="/stories" element={<Stories />} />
           <Route path="/token-shop" element={<TokenShop />} />
           <Route path="/call-room" element={<CallRoom />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/auth" element={<Auth />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
         </Routes>
           <GoLiveButton />
         </BrowserRouter>

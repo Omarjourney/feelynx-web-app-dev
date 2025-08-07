@@ -27,29 +27,30 @@ model Post {
 }
 
 model Payment {
-  id        Int      @id @default(autoincrement())
-  userId    Int?     @map("user_id")
-  user      User?    @relation(fields: [userId], references: [id])
-  amount    Decimal
-  createdAt DateTime @map("created_at") @default(now())
+  id             Int      @id @default(autoincrement())
+  userId         Int?     @map("user_id")
+  user           User?    @relation(fields: [userId], references: [id])
+  amount         Decimal
+  coins          Int      @default(0)
+  paymentIntentId String  @map("payment_intent_id")
+  receiptUrl     String?  @map("receipt_url")
+  createdAt      DateTime @map("created_at") @default(now())
 
   @@map("payments")
 }
 
-model Creator {
-  id String @id @default(uuid())
+model SuspiciousActivity {
+  id        Int      @id @default(autoincrement())
+  userId    Int?     @map("user_id")
+  user      User?    @relation(fields: [userId], references: [id])
+  reason    String
+  createdAt DateTime @map("created_at") @default(now())
 
-  @@map("creators")
+  @@map("suspicious_activity")
 }
 
-model Story {
-  id         String   @id @default(uuid())
-  creatorId  String   @map("creator_id")
-  mediaUrl   String   @map("media_url")
-  expiresAt  DateTime @map("expires_at")
-  visibility String
-  tier       String?  @map("tier_id")
 
-  @@map("stories")
+  @@map("dm_threads")
 }
 
+}
