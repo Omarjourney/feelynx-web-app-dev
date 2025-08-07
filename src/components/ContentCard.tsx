@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import ReportButton from '@/components/ReportButton';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Heart, MessageCircle, Share2, Lock, Image as ImageIcon, Video as VideoIcon } from 'lucide-react';
 import type { Post } from '@/data/posts';
@@ -75,12 +76,13 @@ const ContentCard = ({ id, username, avatar, mediaType, src, locked, price, tier
                 ))}
               </div>
             )}
-            <div className="flex gap-4">
-              <Button variant="ghost" size="sm"><Heart className="mr-1 h-4 w-4" />{likes}</Button>
-              <Button variant="ghost" size="sm"><MessageCircle className="mr-1 h-4 w-4" />{comments}</Button>
-              <Button variant="ghost" size="sm"><Share2 className="mr-1 h-4 w-4" />Share</Button>
+              <div className="flex gap-4">
+                <Button variant="ghost" size="sm"><Heart className="mr-1 h-4 w-4" />{likes}</Button>
+                <Button variant="ghost" size="sm"><MessageCircle className="mr-1 h-4 w-4" />{comments}</Button>
+                <Button variant="ghost" size="sm"><Share2 className="mr-1 h-4 w-4" />Share</Button>
+                <ReportButton targetId={id} type="content" />
+              </div>
             </div>
-          </div>
         </DialogContent>
       </Dialog>
     </div>

@@ -19,7 +19,6 @@ import LiveCreator from './pages/LiveCreator';
 import PKBattle from './pages/PKBattle';
 import NotFound from './pages/NotFound';
 import GoLiveButton from '@/components/GoLiveButton';
-import Stories from './pages/Stories';
 
 const queryClient = new QueryClient();
 

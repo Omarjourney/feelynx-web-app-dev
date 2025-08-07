@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import TipModal from './TipModal';
 import ParticipantsList from './ParticipantsList';
+import ReportButton from './ReportButton';
 
 interface LiveStreamProps {
   creatorName: string;
@@ -116,13 +117,13 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
         <Button variant="outline" onClick={onBack}>
           ← Back
         </Button>
-        <div className="text-center">
+        <div className="text-center flex-1">
           <h1 className="text-2xl font-bold">{creatorName}</h1>
           <Badge className="bg-live text-white animate-pulse">
             🔴 LIVE • {viewers.toLocaleString()} viewers
           </Badge>
         </div>
-        <div className="w-20" /> {/* Spacer */}
+        <ReportButton targetId={creatorName} type="stream" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
