@@ -18,7 +18,6 @@ import Live from './pages/Live';
 import LiveCreator from './pages/LiveCreator';
 import NotFound from './pages/NotFound';
 import GoLiveButton from '@/components/GoLiveButton';
-import SettingsPrivacy from './pages/SettingsPrivacy';
 
 const queryClient = new QueryClient();
 
@@ -43,6 +42,8 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/settings/privacy" element={<SettingsPrivacy />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/dmca" element={<DMCA />} />
+          <Route path="/admin/dmca" element={<AdminDMCA />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

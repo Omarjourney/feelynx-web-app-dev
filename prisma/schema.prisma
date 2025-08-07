@@ -37,13 +37,4 @@ model Payment {
   @@map("payments")
 }
 
-model PrivacySettings {
-  id                Int     @id @default(autoincrement())
-  userId            Int     @unique @map("user_id")
-  user              User    @relation(fields: [userId], references: [id])
-  profileVisibility String  @default("public")
-  allowDMs          Boolean @default(true)
-  dataRetentionDays Int     @default(30)
 
-  @@map("privacy_settings")
-}
