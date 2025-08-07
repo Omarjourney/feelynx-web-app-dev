@@ -184,9 +184,12 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
-      <main>{renderContent()}</main>
+      <main className="flex-1">{renderContent()}</main>
+      <footer className="text-center p-4 text-sm text-muted-foreground">
+        <Link to="/dmca">DMCA Notice</Link>
+      </footer>
     </div>
   );
 };

@@ -7,7 +7,7 @@ import { WebSocketServer, WebSocket } from 'ws';
 import authRoutes from './routes/auth';
 import usersRoutes from './routes/users';
 import postsRoutes from './routes/posts';
-import paymentsRoutes from './routes/payments';
+import paymentsRoutes, { webhookHandler as stripeWebhookHandler } from './routes/payments';
 import livekitRoutes from './routes/livekit';
 import creatorsRoutes from './routes/creators';
 import streamRoutes from './routes/stream';
@@ -18,14 +18,7 @@ import cron from 'node-cron';
 import { roomParticipants } from './roomParticipants';
 
 const app = express();
-app.enable('trust proxy');
-app.use((req, res, next) => {
-  if (process.env.NODE_ENV === 'production' && !req.secure) {
-    return res.status(403).json({ error: 'HTTPS required' });
-  }
-  next();
-});
-app.post('/payouts/webhook', express.raw({ type: 'application/json' }), webhookHandler);
+
 app.use(express.json());
 const allowedOrigins = process.env.CORS_ORIGIN?.split(',')
   .map((origin) => origin.trim())

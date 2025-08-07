@@ -27,45 +27,30 @@ model Post {
 }
 
 model Payment {
-  id        Int      @id @default(autoincrement())
-  userId    Int?     @map("user_id")
-  user      User?    @relation(fields: [userId], references: [id])
-  amount    Decimal
-  createdAt DateTime @map("created_at") @default(now())
+  id             Int      @id @default(autoincrement())
+  userId         Int?     @map("user_id")
+  user           User?    @relation(fields: [userId], references: [id])
+  amount         Decimal
+  coins          Int      @default(0)
+  paymentIntentId String  @map("payment_intent_id")
+  receiptUrl     String?  @map("receipt_url")
+  createdAt      DateTime @map("created_at") @default(now())
 
   @@map("payments")
 }
 
-model Creator {
-  id        Int              @id @default(autoincrement())
-  userId    Int?             @map("user_id")
-  user      User?            @relation(fields: [userId], references: [id])
-  createdAt DateTime         @map("created_at") @default(now())
-  payoutAccounts PayoutAccount[]
-  payouts         Payout[]
+model SuspiciousActivity {
+  id        Int      @id @default(autoincrement())
+  userId    Int?     @map("user_id")
+  user      User?    @relation(fields: [userId], references: [id])
+  reason    String
+  createdAt DateTime @map("created_at") @default(now())
 
-  @@map("creators")
+  @@map("suspicious_activity")
 }
 
-model PayoutAccount {
-  id              Int     @id @default(autoincrement())
-  creatorId       Int     @map("creator_id")
-  creator         Creator @relation(fields: [creatorId], references: [id])
-  stripeAccountId String  @map("stripe_account_id")
-  status          String
-  payouts         Payout[]
 
-  @@map("payout_accounts")
+  @@map("dm_threads")
 }
 
-model Payout {
-  id          Int      @id @default(autoincrement())
-  creatorId   Int      @map("creator_id")
-  creator     Creator  @relation(fields: [creatorId], references: [id])
-  amount      Decimal
-  status      String
-  initiatedAt DateTime  @map("initiated_at") @default(now())
-  processedAt DateTime? @map("processed_at")
-
-  @@map("payouts")
 }
