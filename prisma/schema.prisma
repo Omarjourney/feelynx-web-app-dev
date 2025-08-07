@@ -13,7 +13,6 @@ model User {
   password String
   posts    Post[]
   payments Payment[]
-  privacySettings PrivacySettings?
 
   @@map("users")
 }
@@ -38,3 +37,20 @@ model Payment {
 }
 
 
+  @@map("game_participants")
+}
+
+model GameEvent {
+  id        Int         @id @default(autoincrement())
+  sessionId Int         @map("session_id")
+  session   GameSession @relation(fields: [sessionId], references: [id])
+  type      String
+  data      Json?
+  createdAt DateTime    @default(now())
+
+  @@map("game_events")
+}
+
+model Creator {
+  id Int @id @default(autoincrement())
+}
