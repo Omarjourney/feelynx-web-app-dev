@@ -56,7 +56,11 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
 
   const handleConnect = async () => {
     try {
-      const tokenRes = await fetch(`/livekit/token?room=${roomName}&identity=${participantIdRef.current}`);
+      const tokenRes = await fetch('/livekit/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ room: roomName, identity: participantIdRef.current })
+      });
       if (!tokenRes.ok) throw new Error('Failed to get token');
       const { token } = await tokenRes.json();
 

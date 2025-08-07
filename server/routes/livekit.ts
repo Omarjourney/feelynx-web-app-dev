@@ -14,12 +14,12 @@ if (apiKey && apiSecret && wsUrl) {
 }
 
 // Generate access token for a user to join a room
-router.get('/token', async (req, res) => {
+router.post('/token', async (req, res) => {
   if (!apiKey || !apiSecret) {
     return res.status(500).json({ error: 'LiveKit credentials not configured' });
   }
 
-  const { room, identity } = req.query as { room?: string; identity?: string };
+  const { room, identity } = req.body as { room?: string; identity?: string };
   
   if (!room || !identity) {
     return res.status(400).json({ error: 'room and identity are required' });
