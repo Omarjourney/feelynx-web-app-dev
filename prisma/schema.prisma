@@ -13,6 +13,7 @@ model User {
   password String
   posts    Post[]
   payments Payment[]
+  privacySettings PrivacySettings?
 
   @@map("users")
 }
@@ -36,17 +37,4 @@ model Payment {
   @@map("payments")
 }
 
-model Creator {
-}
 
-model DmcaNotice {
-  id            Int      @id @default(autoincrement())
-  reporterName  String   @map("reporter_name")
-  reporterEmail String   @map("reporter_email")
-  contentLink   String   @map("content_link")
-  status        String   @default("pending")
-  resolution    String?
-  createdAt     DateTime @map("created_at") @default(now())
-
-  @@map("dmca_notices")
-}
