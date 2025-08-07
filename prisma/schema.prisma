@@ -13,6 +13,11 @@ model User {
   password String
   posts    Post[]
   payments Payment[]
+  profile  UserProfile?
+  swipesSent     MatchSwipe[] @relation("swipes_swiper")
+  swipesReceived MatchSwipe[] @relation("swipes_swiped")
+  matchesA       Match[]      @relation("userA")
+  matchesB       Match[]      @relation("userB")
 
   @@map("users")
 }
@@ -37,4 +42,53 @@ model Payment {
 }
 
 model Creator {
+  id            Int       @id @default(autoincrement())
+  username      String    @unique
+  displayName   String
+  avatar        String?
+  country       String?
+  specialty     String?
+  isLive        Boolean   @default(false) @map("is_live")
+  followers     Int       @default(0)
+  trendingScore Float     @default(0) @map("trending_score")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  lastOnline    DateTime? @map("last_online")
+
+  @@map("creators")
+}
+
+model UserProfile {
+  id        Int    @id @default(autoincrement())
+  userId    Int    @unique @map("user_id")
+  user      User   @relation(fields: [userId], references: [id])
+  interests String?
+  location  String?
+
+  @@map("user_profiles")
+}
+
+model MatchSwipe {
+  id        Int      @id @default(autoincrement())
+  swiperId  Int      @map("swiper_id")
+  swiper    User     @relation("swipes_swiper", fields: [swiperId], references: [id])
+  swipedId  Int      @map("swiped_id")
+  swiped    User     @relation("swipes_swiped", fields: [swipedId], references: [id])
+  liked     Boolean
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("match_swipes")
+}
+
+model Match {
+  id        Int      @id @default(autoincrement())
+  userAId   Int      @map("user_a_id")
+  userA     User     @relation("userA", fields: [userAId], references: [id])
+  userBId   Int      @map("user_b_id")
+  userB     User     @relation("userB", fields: [userBId], references: [id])
+  roomToken String   @map("room_token")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([userAId, userBId], name: "userAId_userBId")
+  @@map("matches")
+}
 

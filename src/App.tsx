@@ -18,6 +18,7 @@ import Live from './pages/Live';
 import LiveCreator from './pages/LiveCreator';
 import NotFound from './pages/NotFound';
 import GoLiveButton from '@/components/GoLiveButton';
+import Match from './pages/Match';
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ const App = () => (
           <Route path="/creators" element={<Creators />} />
           <Route path="/content" element={<Content />} />
           <Route path="/calls" element={<Calls />} />
+          <Route path="/match" element={<Match />} />
           <Route path="/groups" element={<Groups />} />
           <Route path="/live/:username" element={<Live />} />
           <Route path="/live-creator" element={<LiveCreator />} />
