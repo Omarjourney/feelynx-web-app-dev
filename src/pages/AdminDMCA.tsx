@@ -24,7 +24,7 @@ const AdminDMCA = () => {
     const res = await fetch(`/dmca/${id}/resolve`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: 'resolved', resolution })
+      body: JSON.stringify({ status: 'resolved', resolution }),
     });
     const updated = await res.json();
     setNotices((n) => n.map((notice) => (notice.id === id ? updated : notice)));

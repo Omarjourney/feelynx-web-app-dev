@@ -14,9 +14,13 @@ export const GroupCard = ({ group }: { group: Group }) => (
           {group.isLive && <Badge className="bg-live text-white">Live</Badge>}
         </div>
         <p className="text-sm text-muted-foreground line-clamp-2">{group.description}</p>
-        <div className="text-sm text-muted-foreground">👥 {group.members.toLocaleString()} members</div>
+        <div className="text-sm text-muted-foreground">
+          👥 {group.members.toLocaleString()} members
+        </div>
         <DialogTrigger asChild>
-          <Button size="sm" className="w-full bg-gradient-primary text-primary-foreground">Open</Button>
+          <Button size="sm" className="w-full bg-gradient-primary text-primary-foreground">
+            Open
+          </Button>
         </DialogTrigger>
       </div>
     </div>
@@ -27,16 +31,16 @@ export const GroupCard = ({ group }: { group: Group }) => (
         <div className="space-y-2 max-h-40 overflow-y-auto">
           <p className="text-sm">Group chat coming soon...</p>
         </div>
-          <div className="space-y-2">
-            <Button size="sm" className="w-full bg-gradient-primary text-primary-foreground">
-              Join Group
-            </Button>
-            <Button size="sm" variant="secondary" className="w-full">
-              Schedule with Creator
-            </Button>
-            <ReportButton targetId={group.id} type="dm" />
-          </div>
+        <div className="space-y-2">
+          <Button size="sm" className="w-full bg-gradient-primary text-primary-foreground">
+            Join Group
+          </Button>
+          <Button size="sm" variant="secondary" className="w-full">
+            Schedule with Creator
+          </Button>
+          <ReportButton targetId={group.id} type="dm" />
         </div>
-      </DialogContent>
-    </Dialog>
-  );
+      </div>
+    </DialogContent>
+  </Dialog>
+);

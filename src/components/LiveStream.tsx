@@ -60,7 +60,7 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
       const tokenRes = await fetch('/livekit/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ room: roomName, identity: participantIdRef.current })
+        body: JSON.stringify({ room: roomName, identity: participantIdRef.current }),
       });
       if (!tokenRes.ok) throw new Error('Failed to get token');
       const { token } = await tokenRes.json();
@@ -89,7 +89,7 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
         fetch(`/rooms/${roomName}/leave`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ role: 'viewer', identity })
+          body: JSON.stringify({ role: 'viewer', identity }),
         }).catch(() => {});
         roomRef.current.disconnect();
       }
@@ -131,12 +131,7 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
         <Card className="lg:col-span-3 bg-gradient-card">
           <CardContent className="p-0">
             <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
-              <video
-                ref={videoRef}
-                className="w-full h-full object-cover"
-                autoPlay
-                playsInline
-              />
+              <video ref={videoRef} className="w-full h-full object-cover" autoPlay playsInline />
               {!isConnected ? (
                 <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary-glow/10">
                   <div className="text-center space-y-4">

@@ -29,7 +29,7 @@ const LovenseToggle = () => {
       toast({
         title: 'Pairing failed',
         description: error.message || 'Could not pair with toy',
-        variant: 'destructive'
+        variant: 'destructive',
       });
     }
   };
@@ -48,7 +48,7 @@ const LovenseToggle = () => {
       toast({
         title: 'Command failed',
         description: error.message || 'Could not control toy',
-        variant: 'destructive'
+        variant: 'destructive',
       });
     }
   };

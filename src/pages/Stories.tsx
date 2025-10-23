@@ -46,7 +46,7 @@ const Stories = () => {
   const handleSwipe = (deltaY: number) => {
     if (Math.abs(deltaY) < 50) return;
     setIndex((i) =>
-      deltaY > 0 ? (i + 1) % stories.length : (i - 1 + stories.length) % stories.length
+      deltaY > 0 ? (i + 1) % stories.length : (i - 1 + stories.length) % stories.length,
     );
   };
 
@@ -60,7 +60,8 @@ const Stories = () => {
     startY.current = null;
   };
 
-  if (!stories.length) return <div className="flex items-center justify-center h-screen">No stories</div>;
+  if (!stories.length)
+    return <div className="flex items-center justify-center h-screen">No stories</div>;
 
   const story = stories[index];
 

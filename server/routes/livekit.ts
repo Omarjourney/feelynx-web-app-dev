@@ -21,7 +21,7 @@ router.post('/token', async (req, res) => {
   }
 
   const { room, identity } = req.body as { room?: string; identity?: string };
-  
+
   if (!room || !identity) {
     return res.status(400).json({ error: 'room and identity are required' });
   }
@@ -86,7 +86,11 @@ router.delete('/rooms/:room', async (req, res) => {
 
 // LiveKit webhook endpoint for analytics
 router.post('/webhook', async (req, res) => {
-  const event = req.body as { event?: string; room?: { name?: string; }; participant?: { identity?: string } };
+  const event = req.body as {
+    event?: string;
+    room?: { name?: string };
+    participant?: { identity?: string };
+  };
 
   if (!event.event) {
     return res.status(400).json({ error: 'invalid webhook payload' });
@@ -98,13 +102,13 @@ router.post('/webhook', async (req, res) => {
         await supabase.from('audience_retention').insert({
           stream_id: event.room?.name,
           participant_identity: event.participant?.identity,
-          joined_at: new Date().toISOString()
+          joined_at: new Date().toISOString(),
         });
         break;
       case 'room_finished':
         await supabase.from('stream_stats').insert({
           stream_id: event.room?.name,
-          ended_at: new Date().toISOString()
+          ended_at: new Date().toISOString(),
         });
         break;
       default:

@@ -27,16 +27,14 @@ if (
   process.env.NODE_ENV === 'production' &&
   (!allowedOrigins || allowedOrigins.length === 0 || allowedOrigins.includes('*'))
 ) {
-  console.error(
-    'CORS_ORIGIN must include every front-end URL in production'
-  );
+  console.error('CORS_ORIGIN must include every front-end URL in production');
   process.exit(1);
 }
 
 app.use(
   cors({
-    origin: allowedOrigins
-  })
+    origin: allowedOrigins,
+  }),
 );
 
 const { LIVEKIT_API_KEY, LIVEKIT_API_SECRET } = process.env;
@@ -45,7 +43,6 @@ if (!LIVEKIT_API_KEY || !LIVEKIT_API_SECRET) {
   process.exit(1);
 }
 console.log('LiveKit API credentials loaded');
-
 
 app.use('/auth', authRoutes);
 app.use('/users', usersRoutes);
@@ -86,7 +83,7 @@ function broadcastParticipants(room: string) {
     type: 'roomParticipants',
     room,
     hosts: Array.from(participants.hosts),
-    viewers: Array.from(participants.viewers)
+    viewers: Array.from(participants.viewers),
   });
   wss.clients.forEach((client: WebSocket) => {
     if (client.readyState === WebSocket.OPEN) {

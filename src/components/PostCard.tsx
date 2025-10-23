@@ -17,9 +17,13 @@ export const PostCard = ({ post }: { post: Post }) => {
         {post.locked && (
           <div className="absolute inset-0 backdrop-blur-sm bg-black/40 flex items-center justify-center">
             {post.price ? (
-              <Badge className="bg-gradient-primary text-primary-foreground">Unlock for {post.price}💎</Badge>
+              <Badge className="bg-gradient-primary text-primary-foreground">
+                Unlock for {post.price}💎
+              </Badge>
             ) : (
-              <Badge className="bg-gradient-primary text-primary-foreground">Subscribe {post.tier}</Badge>
+              <Badge className="bg-gradient-primary text-primary-foreground">
+                Subscribe {post.tier}
+              </Badge>
             )}
           </div>
         )}

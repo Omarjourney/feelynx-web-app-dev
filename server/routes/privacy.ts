@@ -7,7 +7,7 @@ router.get('/:userId', async (req, res) => {
   const userId = Number(req.params.userId);
   try {
     const settings = await prisma.privacySettings.findUnique({
-      where: { userId }
+      where: { userId },
     });
     res.json(settings);
   } catch (err) {
@@ -22,7 +22,7 @@ router.post('/:userId', async (req, res) => {
     const settings = await prisma.privacySettings.upsert({
       where: { userId },
       update: { profileVisibility, allowDMs, dataRetentionDays },
-      create: { userId, profileVisibility, allowDMs, dataRetentionDays }
+      create: { userId, profileVisibility, allowDMs, dataRetentionDays },
     });
     scheduleDeletion(userId, dataRetentionDays);
     res.json(settings);

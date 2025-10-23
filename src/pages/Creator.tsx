@@ -30,7 +30,7 @@ const Creator = () => {
     const res = await fetch('/subscriptions/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ priceId: tierId, tierId })
+      body: JSON.stringify({ priceId: tierId, tierId }),
     });
     const json = await res.json();
     if (json.url) {
@@ -42,7 +42,7 @@ const Creator = () => {
     await fetch('/subscriptions/cancel', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tierId })
+      body: JSON.stringify({ tierId }),
     });
   };
 

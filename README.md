@@ -16,6 +16,7 @@ A modern, full-stack web application for live streaming, creator monetization, a
 ## 🛠 Tech Stack
 
 **Frontend:**
+
 - React 18 + TypeScript
 - Vite for build tooling
 - Tailwind CSS + shadcn/ui components
@@ -24,6 +25,7 @@ A modern, full-stack web application for live streaming, creator monetization, a
 - TanStack Query for state management
 
 **Backend:**
+
 - Node.js + Express + TypeScript
 - LiveKit server SDK
 - WebSocket for real-time updates
@@ -39,6 +41,7 @@ A modern, full-stack web application for live streaming, creator monetization, a
 ## ⚡ Quick Start
 
 1. **Clone and install dependencies:**
+
 ```bash
 git clone <repository-url>
 cd feelynx-web-app
@@ -46,6 +49,7 @@ npm install
 ```
 
 2. **Environment setup:**
+
 ```bash
 cp .env.example .env
 # Edit .env with your configuration
@@ -54,6 +58,7 @@ cp .env.example .env
 > **Note:** The `.env` file is excluded from version control. Never commit your personal environment settings.
 
 3. **Start development servers:**
+
 ```bash
 # Start all services with Docker
 npm run docker:up
@@ -64,8 +69,9 @@ npm run dev         # Frontend on :8080
 ```
 
 4. **Access the application:**
+
 - Frontend: http://localhost:8080
-- Backend API: http://localhost:3001  
+- Backend API: http://localhost:3001
 - LiveKit: http://localhost:7880
 
 ## 🔧 Configuration
@@ -95,17 +101,20 @@ The application streams over WebRTC using [LiveKit Cloud](https://docs.livekit.i
 ## 🏗 Production Deployment
 
 1. **Build the application:**
+
 ```bash
 npm run build
 npm run build:server
 ```
 
 2. **Deploy using Docker:**
+
 ```bash
 docker-compose up -d
 ```
 
 3. **Environment setup:**
+
 - Set production `LIVEKIT_URL`
 - Configure production database
 - Set up Stripe webhook endpoints
@@ -114,20 +123,24 @@ docker-compose up -d
 ## 📚 API Documentation
 
 ### LiveKit Endpoints
+
 - `POST /livekit/token` - Get room access token
 - `POST /livekit/rooms` - Create new room
 - `GET /livekit/rooms` - List active rooms
 - `DELETE /livekit/rooms/:room` - Delete room
 
-### Creator Endpoints  
+### Creator Endpoints
+
 - `GET /api/creators` - Get creators with filtering
 - `POST /creators/:username/status` - Update live status
 
 ### Payment Endpoints
+
 - `POST /api/payments/create-session` - Create payment session
 - `GET /api/payments/balance/:userId` - Get user balance
 
 ### Gift Endpoints
+
 - `GET /api/gifts/catalog` - List available gifts
 - `POST /api/gifts/balance/:userId/purchase` - Add tokens to a user's balance
 - `POST /api/gifts/send` - Send a gift to a creator
@@ -147,6 +160,14 @@ npm test  # Unit and integration tests
 npm run lint  # Code linting
 ```
 
+## 🧹 Code Quality
+
+- `npm run format` – Check formatting with Prettier (runs automatically in the pre-commit hook).
+- `npm run format:fix` – Format the entire codebase with Prettier.
+- `npm run lint` – Run ESLint with the shared TypeScript + Prettier configuration.
+
+> Husky installs a pre-commit hook during `npm install` (via the `prepare` script). The hook runs `npm run lint` and `npm run format` to keep commits clean. If you ever need to re-install the hooks, run `npm run prepare`.
+
 ## 🎥 Camera & Microphone Troubleshooting
 
 - The app only accesses camera and microphone from secure origins (HTTPS) or `localhost`.
@@ -158,13 +179,15 @@ npm run lint  # Code linting
 ## 📱 Features Overview
 
 ### For Viewers
+
 - Browse live creators with filters
 - Join live streams with video/audio
 - Interactive chat and tipping
 - Purchase VibeCoin packages
 - Mobile-responsive experience
 
-### For Creators  
+### For Creators
+
 - Go live with camera/microphone
 - Real-time viewer analytics
 - Earnings tracking and tips
@@ -187,6 +210,7 @@ This project is licensed under the MIT License.
 ## 🆘 Support
 
 For technical support or questions:
+
 - Check the documentation
 - Review error logs in browser console
 - Ensure all environment variables are properly set
