@@ -1,10 +1,21 @@
 import { useCallback, useEffect, useState } from 'react';
 import sodium from 'libsodium-wrappers';
 
+/**
+ * Hook that exposes symmetric encryption helpers backed by libsodium.
+ *
+ * The hook waits for the wasm bundle to initialise before enabling the
+ * returned helpers. Consumers should check the `ready` flag to avoid
+ * encrypting or decrypting before libsodium is available.
+ *
+ * @param key - Pre-shared symmetric key used with the secretbox APIs.
+ * @returns Encryption utilities and a readiness flag for the sodium runtime.
+ */
 export const useEncryption = (key: Uint8Array) => {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    // Wait for libsodium's WASM runtime to finish loading before exposing helpers.
     const init = async () => {
       await sodium.ready;
       setReady(true);
