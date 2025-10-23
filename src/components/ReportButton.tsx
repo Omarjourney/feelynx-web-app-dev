@@ -12,7 +12,7 @@ const ReportButton = ({ targetId, type }: ReportButtonProps) => {
     await fetch('/moderation/report', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ reportedId: targetId, type, reason })
+      body: JSON.stringify({ reportedId: targetId, type, reason }),
     });
     alert('Report submitted');
   };

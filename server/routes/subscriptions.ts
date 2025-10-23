@@ -8,7 +8,7 @@ const stripe = new Stripe(stripeSecret, { apiVersion: '2024-06-20' as any });
 
 const supabase = createClient(
   process.env.SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_KEY || ''
+  process.env.SUPABASE_SERVICE_KEY || '',
 );
 
 router.post('/checkout', async (req: Request, res: Response) => {
@@ -19,7 +19,7 @@ router.post('/checkout', async (req: Request, res: Response) => {
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: successUrl,
       cancel_url: cancelUrl,
-      metadata: { user_id: userId, tier_id: tierId }
+      metadata: { user_id: userId, tier_id: tierId },
     });
     res.json({ url: session.url });
   } catch (err) {
@@ -34,12 +34,15 @@ router.post('/webhook', async (req: Request, res: Response) => {
     const tierId = session.metadata?.tier_id as string | undefined;
     const userId = session.metadata?.user_id as string | undefined;
     if (tierId && userId) {
-      await supabase.from('fan_subscriptions').upsert({
-        tier_id: tierId,
-        user_id: userId,
-        status: 'active',
-        renews_at: new Date((session.expires_at || 0) * 1000).toISOString()
-      }, { onConflict: 'tier_id,user_id' });
+      await supabase.from('fan_subscriptions').upsert(
+        {
+          tier_id: tierId,
+          user_id: userId,
+          status: 'active',
+          renews_at: new Date((session.expires_at || 0) * 1000).toISOString(),
+        },
+        { onConflict: 'tier_id,user_id' },
+      );
     }
   }
   res.json({ received: true });

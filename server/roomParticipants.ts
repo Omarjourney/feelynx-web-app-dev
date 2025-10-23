@@ -4,4 +4,3 @@ export interface RoomParticipants {
 }
 
 export const roomParticipants: Record<string, RoomParticipants> = {};
-

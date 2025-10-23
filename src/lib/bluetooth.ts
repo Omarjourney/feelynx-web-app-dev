@@ -6,7 +6,7 @@ export async function requestBluetoothDevice(options?: any) {
   }
 
   const device = await (navigator as any).bluetooth.requestDevice(
-    options ?? { acceptAllDevices: true }
+    options ?? { acceptAllDevices: true },
   );
   return device;
 }

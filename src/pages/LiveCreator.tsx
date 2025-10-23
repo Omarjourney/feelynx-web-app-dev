@@ -47,7 +47,7 @@ const LiveCreator = () => {
       const tokenRes = await fetch('/livekit/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ room: roomName, identity: `creator_${Date.now()}` })
+        body: JSON.stringify({ room: roomName, identity: `creator_${Date.now()}` }),
       });
       if (!tokenRes.ok) throw new Error('Failed to get token');
 
@@ -59,7 +59,7 @@ const LiveCreator = () => {
 
       // Publish local tracks
       const localTracks = await createLocalTracks({ audio: true, video: true });
-      
+
       // Publish each track individually
       for (const track of localTracks) {
         await room.localParticipant.publishTrack(track);
@@ -79,7 +79,6 @@ const LiveCreator = () => {
       roomRef.current = room;
       setIsLive(true);
       toast({ title: 'You are now live!', description: 'Viewers can now join your stream' });
-
     } catch (error) {
       console.error('Failed to start live stream:', error);
       let description = 'Please check your connection and try again';
@@ -123,18 +122,18 @@ const LiveCreator = () => {
       roomRef.current.disconnect();
       roomRef.current = null;
     }
-    
+
     // Update creator status to offline
     try {
       await fetch('/creators/creator_username/status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isLive: false })
+        body: JSON.stringify({ isLive: false }),
       });
     } catch (error) {
       console.error('Failed to update status:', error);
     }
-    
+
     setIsLive(false);
     setIsVideoReady(false);
     toast({ title: 'Stream ended', description: 'You are now offline' });
@@ -152,7 +151,7 @@ const LiveCreator = () => {
       isHighlight: true,
     };
 
-    setMessages(prev => [...prev, newMessage]);
+    setMessages((prev) => [...prev, newMessage]);
     setChatMessage('');
   };
 
@@ -166,7 +165,7 @@ const LiveCreator = () => {
         <div className="text-center">
           <h1 className="text-2xl font-bold">Creator Dashboard</h1>
           <div className="flex items-center gap-2 justify-center">
-            <Badge className={isLive ? "bg-live text-white animate-pulse" : "bg-muted"}>
+            <Badge className={isLive ? 'bg-live text-white animate-pulse' : 'bg-muted'}>
               {isLive ? `🔴 LIVE • ${viewers} viewers` : '⚫ Offline'}
             </Badge>
             <Badge className="bg-gradient-primary text-primary-foreground">
@@ -174,8 +173,8 @@ const LiveCreator = () => {
             </Badge>
           </div>
         </div>
-        <Button 
-          variant={isLive ? "destructive" : "outline"} 
+        <Button
+          variant={isLive ? 'destructive' : 'outline'}
           onClick={isLive ? endStream : startLiveStream}
         >
           {isLive ? 'End Stream' : 'Start Stream'}
@@ -210,17 +209,25 @@ const LiveCreator = () => {
                   </div>
                 </div>
               )}
-              
+
               {/* Stream Controls */}
               {isLive && (
                 <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
                   <div className="flex space-x-2">
-                    <Button variant="secondary" size="sm">🎤 Mute</Button>
-                    <Button variant="secondary" size="sm">📹 Camera Off</Button>
+                    <Button variant="secondary" size="sm">
+                      🎤 Mute
+                    </Button>
+                    <Button variant="secondary" size="sm">
+                      📹 Camera Off
+                    </Button>
                   </div>
                   <div className="flex space-x-2">
-                    <Button variant="secondary" size="sm">📱 Mobile View</Button>
-                    <Button variant="secondary" size="sm">🎛️ Settings</Button>
+                    <Button variant="secondary" size="sm">
+                      📱 Mobile View
+                    </Button>
+                    <Button variant="secondary" size="sm">
+                      🎛️ Settings
+                    </Button>
                   </div>
                 </div>
               )}
@@ -260,7 +267,9 @@ const LiveCreator = () => {
                 placeholder="Chat with viewers..."
                 onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
               />
-              <Button onClick={sendMessage} size="sm">Send</Button>
+              <Button onClick={sendMessage} size="sm">
+                Send
+              </Button>
             </div>
           </CardContent>
         </Card>

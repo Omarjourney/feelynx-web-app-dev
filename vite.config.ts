@@ -29,7 +29,7 @@ export default defineConfig(({ mode }) => ({
         manualChunks: {
           'react-vendor': ['react', 'react-dom'],
           'ui-vendor': ['@radix-ui/react-dialog', '@radix-ui/react-toast'],
-          'livekit': ['livekit-client'],
+          livekit: ['livekit-client'],
         },
       },
     },

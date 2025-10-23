@@ -12,9 +12,7 @@ const SpinWheel = ({ room, segments }: SpinWheelProps) => {
   const [current, setCurrent] = useState<string | null>(null);
 
   useEffect(() => {
-    const handler = (
-      payload: Uint8Array,
-    ) => {
+    const handler = (payload: Uint8Array) => {
       try {
         const msg = JSON.parse(new TextDecoder().decode(payload));
         if (msg.type === 'spin') {
@@ -35,7 +33,7 @@ const SpinWheel = ({ room, segments }: SpinWheelProps) => {
     setCurrent(segment);
     room.localParticipant.publishData(
       JSON.stringify({ type: 'spin', segment }),
-      DataPacket_Kind.RELIABLE
+      DataPacket_Kind.RELIABLE,
     );
   };
 

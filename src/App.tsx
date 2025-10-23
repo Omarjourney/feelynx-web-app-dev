@@ -32,21 +32,21 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/explore" element={<Explore />} />
-          <Route path="/creators" element={<Creators />} />
-          <Route path="/content" element={<Content />} />
-          <Route path="/calls" element={<Calls />} />
-          <Route path="/match" element={<Match />} />
-          <Route path="/groups" element={<Groups />} />
-          <Route path="/dm" element={<DM />} />
-          <Route path="/live/:username" element={<Live />} />
-          <Route path="/live-creator" element={<LiveCreator />} />
-          <Route path="/stories" element={<Stories />} />
-          <Route path="/token-shop" element={<TokenShop />} />
-          <Route path="/call-room" element={<CallRoom />} />
-        </Routes>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/explore" element={<Explore />} />
+            <Route path="/creators" element={<Creators />} />
+            <Route path="/content" element={<Content />} />
+            <Route path="/calls" element={<Calls />} />
+            <Route path="/match" element={<Match />} />
+            <Route path="/groups" element={<Groups />} />
+            <Route path="/dm" element={<DM />} />
+            <Route path="/live/:username" element={<Live />} />
+            <Route path="/live-creator" element={<LiveCreator />} />
+            <Route path="/stories" element={<Stories />} />
+            <Route path="/token-shop" element={<TokenShop />} />
+            <Route path="/call-room" element={<CallRoom />} />
+          </Routes>
           <GoLiveButton />
         </BrowserRouter>
       </TooltipProvider>

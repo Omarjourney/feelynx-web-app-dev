@@ -19,11 +19,7 @@ router.post('/', async (req, res) => {
       data: { reporterName, reporterEmail, contentLink },
     });
     await sendEmail('admin@example.com', 'New DMCA Notice', `Notice ${notice.id}`);
-    await sendEmail(
-      reporterEmail,
-      'DMCA Notice Received',
-      'We have received your DMCA notice.'
-    );
+    await sendEmail(reporterEmail, 'DMCA Notice Received', 'We have received your DMCA notice.');
     res.json(notice);
   } catch (err) {
     res.status(500).json({ error: 'Failed to submit notice' });
@@ -50,11 +46,7 @@ router.post('/:id/resolve', async (req, res) => {
       where: { id: Number(id) },
       data: { status, resolution },
     });
-    await sendEmail(
-      notice.reporterEmail,
-      'DMCA Notice Update',
-      `Your notice status: ${status}`
-    );
+    await sendEmail(notice.reporterEmail, 'DMCA Notice Update', `Your notice status: ${status}`);
     res.json(notice);
   } catch (err) {
     res.status(500).json({ error: 'Failed to resolve notice' });

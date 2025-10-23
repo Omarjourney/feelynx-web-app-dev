@@ -9,8 +9,8 @@ router.get('/', async (_req, res) => {
     const creators = await prisma.user.findMany({
       select: {
         id: true,
-        email: true
-      }
+        email: true,
+      },
     });
     res.json(creators);
   } catch (error) {

@@ -6,7 +6,7 @@ const DMCA = () => {
   const [form, setForm] = useState({
     reporterName: '',
     reporterEmail: '',
-    contentLink: ''
+    contentLink: '',
   });
   const [submitted, setSubmitted] = useState(false);
 
@@ -19,7 +19,7 @@ const DMCA = () => {
     await fetch('/dmca', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form)
+      body: JSON.stringify(form),
     });
     setSubmitted(true);
   };

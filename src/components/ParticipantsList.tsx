@@ -21,8 +21,7 @@ export const ParticipantsList = ({ room }: ParticipantsListProps) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const load = async () => {
-    };
+    const load = async () => {};
     load();
     const ws = new WebSocket(`ws://${window.location.host}`);
     ws.onmessage = (event) => {

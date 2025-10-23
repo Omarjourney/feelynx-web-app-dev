@@ -54,7 +54,7 @@ const GoLiveButton = () => {
       const tokenRes = await fetch('/livekit/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ room: roomName, identity: `creator_${Date.now()}` })
+        body: JSON.stringify({ room: roomName, identity: `creator_${Date.now()}` }),
       });
       if (!tokenRes.ok) {
         throw new Error('Failed to get LiveKit token');

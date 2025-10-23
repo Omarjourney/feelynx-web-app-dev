@@ -10,7 +10,7 @@ const router = Router();
 
 const supabase = createClient(
   process.env.SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+  process.env.SUPABASE_SERVICE_ROLE_KEY || '',
 );
 
 router.post('/threads', authenticateToken, async (req: AuthRequest, res: Response) => {
@@ -74,7 +74,7 @@ router.post('/threads/:id/messages', authenticateToken, async (req: AuthRequest,
       recipient_id: recipientId,
       cipher_text,
       nonce,
-      burn_after_reading: burnAfterReading ?? false
+      burn_after_reading: burnAfterReading ?? false,
     })
     .select()
     .single();
@@ -98,10 +98,7 @@ router.post('/messages/:id/read', authenticateToken, async (req: AuthRequest, re
     await supabase.from('dm_messages').delete().eq('id', id);
     return res.json({ burned: true });
   }
-  await supabase
-    .from('dm_messages')
-    .update({ read_at: new Date().toISOString() })
-    .eq('id', id);
+  await supabase.from('dm_messages').update({ read_at: new Date().toISOString() }).eq('id', id);
   res.json({ read: true });
 });
 

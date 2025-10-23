@@ -20,11 +20,11 @@ const Index = () => {
     country: 'all',
     specialty: 'all',
     isLive: false,
-    sort: 'trending'
+    sort: 'trending',
   });
 
   const handleFiltersChange = (newFilters: Partial<SearchFiltersState>) => {
-    setFilters(prev => ({ ...prev, ...newFilters }));
+    setFilters((prev) => ({ ...prev, ...newFilters }));
   };
 
   const handleViewProfile = (creatorId: number) => {
@@ -41,7 +41,7 @@ const Index = () => {
           <div className="space-y-8">
             {/* Hero Section */}
             <HeroSection />
-            
+
             {/* Security Notice for Non-Authenticated Users */}
             {!user && (
               <div className="bg-primary/10 p-4 text-center container mx-auto">

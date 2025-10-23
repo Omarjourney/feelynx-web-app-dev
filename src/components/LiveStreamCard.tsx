@@ -27,10 +27,7 @@ const LiveStreamCard = ({
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
-    const interval = setInterval(
-      () => setViewers((v) => v + Math.floor(Math.random() * 3)),
-      5000,
-    );
+    const interval = setInterval(() => setViewers((v) => v + Math.floor(Math.random() * 3)), 5000);
     return () => clearInterval(interval);
   }, []);
 
@@ -64,11 +61,7 @@ const LiveStreamCard = ({
       />
       <div className="absolute top-2 left-2 flex items-center space-x-1">
         <Badge className="bg-live text-white">LIVE</Badge>
-        {badge && (
-          <Badge className="bg-gradient-primary text-primary-foreground">
-            {badge}
-          </Badge>
-        )}
+        {badge && <Badge className="bg-gradient-primary text-primary-foreground">{badge}</Badge>}
         {isFeatured && !badge && (
           <Badge className="bg-gradient-primary text-primary-foreground">NEW</Badge>
         )}
@@ -82,11 +75,7 @@ const LiveStreamCard = ({
         {viewers.toLocaleString()} watching
       </div>
       <div className="flex items-center p-3 space-x-3">
-        <img
-          src={avatar}
-          alt={`@${username}`}
-          className="w-10 h-10 rounded-full object-cover"
-        />
+        <img src={avatar} alt={`@${username}`} className="w-10 h-10 rounded-full object-cover" />
         <div className="flex-1">
           <p className="font-medium leading-none">@{username}</p>
         </div>

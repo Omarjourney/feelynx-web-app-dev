@@ -14,10 +14,7 @@ const PKBattle = () => {
   const roomRef = useRef<Room>();
 
   useEffect(() => {
-    const interval = setInterval(
-      () => setTimeLeft((t) => (t > 0 ? t - 1 : 0)),
-      1000
-    );
+    const interval = setInterval(() => setTimeLeft((t) => (t > 0 ? t - 1 : 0)), 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -43,8 +40,8 @@ const PKBattle = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             room: `pk_battle_${battleId}`,
-            identity: `viewer_${Date.now()}`
-          })
+            identity: `viewer_${Date.now()}`,
+          }),
         });
         if (!tokenRes.ok) return;
         const { token } = await tokenRes.json();
@@ -82,12 +79,7 @@ const PKBattle = () => {
   const total = scoreA + scoreB || 1;
   let winner: string | null = null;
   if (timeLeft === 0) {
-    winner =
-      scoreA === scoreB
-        ? 'Tie'
-        : scoreA > scoreB
-        ? 'Creator A wins!'
-        : 'Creator B wins!';
+    winner = scoreA === scoreB ? 'Tie' : scoreA > scoreB ? 'Creator A wins!' : 'Creator B wins!';
   }
 
   const updateScore = (a: number, b: number) => {
@@ -95,7 +87,7 @@ const PKBattle = () => {
     fetch(`/pk-battles/${battleId}/scores`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ scoreA: a, scoreB: b })
+      body: JSON.stringify({ scoreA: a, scoreB: b }),
     });
   };
 

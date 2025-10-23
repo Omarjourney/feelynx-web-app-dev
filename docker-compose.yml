@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile.frontend
     ports:
-      - "3000:80"
+      - '3000:80'
     depends_on:
       - backend
   backend:
@@ -13,12 +13,12 @@ services:
       context: .
       dockerfile: Dockerfile.backend
     ports:
-      - "8000:8000"
+      - '8000:8000'
   livekit:
     image: livekit/livekit-server:latest
     ports:
-      - "7880:7880"
-      - "7881:7881"
+      - '7880:7880'
+      - '7881:7881'
     environment:
       - LIVEKIT_KEYS=${LIVEKIT_KEYS}
       - LIVEKIT_DEV=true

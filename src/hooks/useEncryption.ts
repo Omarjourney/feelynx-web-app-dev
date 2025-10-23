@@ -20,10 +20,10 @@ export const useEncryption = (key: Uint8Array) => {
       const cipher = sodium.crypto_secretbox_easy(message, nonce, key);
       return {
         cipher: sodium.to_base64(cipher),
-        nonce: sodium.to_base64(nonce)
+        nonce: sodium.to_base64(nonce),
       };
     },
-    [ready, key]
+    [ready, key],
   );
 
   const decrypt = useCallback(
@@ -34,7 +34,7 @@ export const useEncryption = (key: Uint8Array) => {
       const message = sodium.crypto_secretbox_open_easy(c, n, key);
       return sodium.to_string(message);
     },
-    [ready, key]
+    [ready, key],
   );
 
   return { encrypt, decrypt, ready };

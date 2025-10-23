@@ -15,7 +15,11 @@ interface Creator {
 export const CallCard = ({ creator }: { creator: Creator }) => (
   <Dialog>
     <div className="border rounded-lg overflow-hidden bg-card">
-      <div className={`h-32 flex items-center justify-center text-6xl text-white ${creator.gradientColors}`}>{creator.initial}</div>
+      <div
+        className={`h-32 flex items-center justify-center text-6xl text-white ${creator.gradientColors}`}
+      >
+        {creator.initial}
+      </div>
       <div className="p-3 space-y-2">
         <div className="flex items-center justify-between">
           <h3 className="font-semibold">{creator.name}</h3>

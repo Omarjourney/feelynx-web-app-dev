@@ -49,7 +49,7 @@ const Match = () => {
     const res = await fetch('/match/swipe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId: 1, targetId: current.id, liked })
+      body: JSON.stringify({ userId: 1, targetId: current.id, liked }),
     });
     const data = await res.json();
     if (data.token) {
@@ -67,7 +67,7 @@ const Match = () => {
 
   const handlers = useSwipeable({
     onSwipedLeft: () => handleSwipe(false),
-    onSwipedRight: () => handleSwipe(true)
+    onSwipedRight: () => handleSwipe(true),
   });
 
   return (
@@ -88,4 +88,3 @@ const Match = () => {
 };
 
 export default Match;
-
