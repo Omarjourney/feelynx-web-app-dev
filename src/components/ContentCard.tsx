@@ -7,7 +7,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Heart, MessageCircle, Share2, Lock, Image as ImageIcon, Video as VideoIcon } from 'lucide-react';
 import type { Post } from '@/data/posts';
 
-interface ContentCardProps extends Post {}
+type ContentCardProps = Post;
 
 const ContentCard = ({ id, username, avatar, mediaType, src, locked, price, tier, likes, comments, title, description, tags }: ContentCardProps) => {
   const [isUnlocked, setIsUnlocked] = useState(!locked);
@@ -23,7 +23,15 @@ const ContentCard = ({ id, username, avatar, mediaType, src, locked, price, tier
             {mediaType === 'image' ? (
               <img src={src} alt={title ?? username} className={`h-64 w-full object-cover ${displayLocked ? 'blur-md' : ''}`} />
             ) : (
-              <video src={src} className={`h-64 w-full object-cover ${displayLocked ? 'blur-md' : ''}`} autoPlay muted loop />
+              <video
+                src={src}
+                className={`h-64 w-full object-cover ${displayLocked ? 'blur-md' : ''}`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                aria-label={`${username}'s ${displayLocked ? 'locked ' : ''}video content`}
+              />
             )}
             {displayLocked && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/50">
@@ -58,7 +66,15 @@ const ContentCard = ({ id, username, avatar, mediaType, src, locked, price, tier
             {mediaType === 'image' ? (
               <img src={src} alt={title ?? username} className={`w-full object-cover ${displayLocked ? 'blur-md' : ''}`} />
             ) : (
-              <video src={src} className={`w-full object-cover ${displayLocked ? 'blur-md' : ''}`} autoPlay muted loop />
+              <video
+                src={src}
+                className={`w-full object-cover ${displayLocked ? 'blur-md' : ''}`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                aria-label={`${username}'s video content`}
+              />
             )}
             {displayLocked && (
               <div className="absolute inset-0 flex items-center justify-center bg-black/60">

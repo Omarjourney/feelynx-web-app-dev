@@ -85,6 +85,7 @@ export const SearchFilters = ({
 
         {/* Live Toggle */}
         <label className="flex items-center gap-2 cursor-pointer">
+          <span className="sr-only">Toggle live creators filter</span>
           <div className="relative">
             <input
               type="checkbox"
@@ -96,6 +97,7 @@ export const SearchFilters = ({
               variant={isLive ? "default" : "outline"}
               size="sm"
               onClick={() => handleChange({ isLive: !isLive })}
+              aria-pressed={isLive}
             >
               🔴 Live Only
             </Button>

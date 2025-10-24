@@ -48,9 +48,11 @@ const LiveStreamCard = ({
   };
 
   return (
-    <div
-      className="relative rounded-lg overflow-hidden border bg-card hover:shadow-glow transition cursor-pointer"
+    <button
+      type="button"
+      className="relative rounded-lg overflow-hidden border bg-card hover:shadow-glow transition cursor-pointer text-left"
       onClick={handleClick}
+      aria-label={`Watch ${username}'s live stream`}
     >
       <video
         ref={videoRef}
@@ -61,6 +63,7 @@ const LiveStreamCard = ({
         autoPlay
         playsInline
         preload="none"
+        aria-label={`${username}'s live stream preview`}
       />
       <div className="absolute top-2 left-2 flex items-center space-x-1">
         <Badge className="bg-live text-white">LIVE</Badge>
@@ -91,7 +94,7 @@ const LiveStreamCard = ({
           <p className="font-medium leading-none">@{username}</p>
         </div>
       </div>
-    </div>
+    </button>
   );
 };
 

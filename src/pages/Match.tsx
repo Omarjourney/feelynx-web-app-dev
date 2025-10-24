@@ -73,13 +73,15 @@ const Match = () => {
   return (
     <div className="flex h-full items-center justify-center">
       {current ? (
-        <div
+        <button
+          type="button"
           {...handlers}
-          className="w-80 h-96 bg-gray-200 flex items-center justify-center rounded-lg shadow-md"
+          className="w-80 h-96 bg-gray-200 flex items-center justify-center rounded-lg shadow-md text-lg"
           onClick={() => alert(current.email)}
+          aria-label={`Open profile for ${current.email}`}
         >
           <span>{current.email}</span>
-        </div>
+        </button>
       ) : (
         <p>No more creators</p>
       )}

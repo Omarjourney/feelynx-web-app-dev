@@ -28,7 +28,7 @@ const LiveCreator = () => {
   const [earnings, setEarnings] = useState(0);
   const [isVideoReady, setIsVideoReady] = useState(false);
 
-  const roomRef = useRef<any>(null);
+  const roomRef = useRef<Room | null>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const roomName = searchParams.get('room') || 'default_room';
 
@@ -54,6 +54,9 @@ const LiveCreator = () => {
       const { token } = await tokenRes.json();
 
       const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL;
+      if (!wsUrl) {
+        throw new Error('LiveKit WebSocket URL is not configured');
+      }
       const room = new Room();
       await room.connect(wsUrl, token);
 
@@ -119,8 +122,9 @@ const LiveCreator = () => {
   };
 
   const endStream = async () => {
-    if (roomRef.current) {
-      roomRef.current.disconnect();
+    const activeRoom = roomRef.current;
+    if (activeRoom) {
+      activeRoom.disconnect();
       roomRef.current = null;
     }
     
@@ -196,6 +200,7 @@ const LiveCreator = () => {
                 autoPlay
                 muted
                 playsInline
+                aria-label="Local live stream preview"
               />
               {isLive && !isVideoReady && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/60">

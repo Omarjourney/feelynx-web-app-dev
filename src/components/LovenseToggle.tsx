@@ -25,10 +25,11 @@ const LovenseToggle = () => {
       await toyRef.pair();
       setPaired(true);
       toast({ title: 'Toy paired' });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Could not pair with toy';
       toast({
         title: 'Pairing failed',
-        description: error.message || 'Could not pair with toy',
+        description: message,
         variant: 'destructive'
       });
     }
@@ -44,10 +45,11 @@ const LovenseToggle = () => {
       }
       setActive((prev) => !prev);
       toast({ title: active ? 'Toy stopped' : 'Toy activated' });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Could not control toy';
       toast({
         title: 'Command failed',
-        description: error.message || 'Could not control toy',
+        description: message,
         variant: 'destructive'
       });
     }

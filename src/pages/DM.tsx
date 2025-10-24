@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import useEncryption from '@/hooks/useEncryption';
 
 interface Message {
@@ -23,6 +23,33 @@ const DM = () => {
   const key = new Uint8Array(32); // demo key
   const { encrypt, decrypt, ready } = useEncryption(key);
 
+  const fetchMessages = useCallback(
+    async (tid: string) => {
+      const res = await fetch(`/dm/threads/${tid}/messages`);
+      const data: Message[] = await res.json();
+      const decrypted = data.map((m) => ({
+        ...m,
+        text: ready ? decrypt(m.cipher_text, m.nonce) : ''
+      }));
+      setMessages(decrypted);
+    },
+    [decrypt, ready]
+  );
+
+  const createThread = useCallback(
+    async (recipient: string) => {
+      const res = await fetch('/dm/threads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ recipientId: recipient })
+      });
+      const data = await res.json();
+      setThreadId(data.id);
+      fetchMessages(data.id);
+    },
+    [fetchMessages]
+  );
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const thread = params.get('thread');
@@ -34,30 +61,9 @@ const DM = () => {
     } else if (thread) {
       fetchMessages(thread);
     }
-  }, [ready]);
+  }, [createThread, fetchMessages]);
 
-  const createThread = async (recipient: string) => {
-    const res = await fetch('/dm/threads', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ recipientId: recipient })
-    });
-    const data = await res.json();
-    setThreadId(data.id);
-    fetchMessages(data.id);
-  };
-
-  const fetchMessages = async (tid: string) => {
-    const res = await fetch(`/dm/threads/${tid}/messages`);
-    const data: Message[] = await res.json();
-    const decrypted = data.map((m) => ({
-      ...m,
-      text: ready ? decrypt(m.cipher_text, m.nonce) : ''
-    }));
-    setMessages(decrypted);
-  };
-
-  const send = async () => {
+  const send = useCallback(async () => {
     if (!threadId || !recipientId) return;
     const { cipher, nonce } = encrypt(input);
     await fetch(`/dm/threads/${threadId}/messages`, {
@@ -73,14 +79,17 @@ const DM = () => {
     setInput('');
     setBurn(false);
     fetchMessages(threadId);
-  };
+  }, [burn, encrypt, fetchMessages, input, recipientId, threadId]);
 
-  const markRead = async (id: string) => {
-    await fetch(`/dm/messages/${id}/read`, { method: 'POST' });
-    if (threadId) {
-      fetchMessages(threadId);
-    }
-  };
+  const markRead = useCallback(
+    async (id: string) => {
+      await fetch(`/dm/messages/${id}/read`, { method: 'POST' });
+      if (threadId) {
+        fetchMessages(threadId);
+      }
+    },
+    [fetchMessages, threadId]
+  );
 
   return (
     <div className="p-4 space-y-4">

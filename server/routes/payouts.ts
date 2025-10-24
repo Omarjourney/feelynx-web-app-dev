@@ -65,7 +65,8 @@ export const webhookHandler = async (req: Request, res: Response) => {
     if (!webhookSecret || !sig) {
       throw new Error('Missing signature');
     }
-    event = stripe.webhooks.constructEvent((req as any).body, sig, webhookSecret);
+    const rawBody = req.body as Buffer | string | undefined;
+    event = stripe.webhooks.constructEvent(rawBody ?? '', sig, webhookSecret);
   } catch (err) {
     console.error('Webhook signature verification failed', err);
     return res.status(400).send(`Webhook Error: ${(err as Error).message}`);

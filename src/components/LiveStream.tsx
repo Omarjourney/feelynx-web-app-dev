@@ -51,7 +51,7 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
   const [tipOpen, setTipOpen] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
-  const roomRef = useRef<any>(null);
+  const roomRef = useRef<Room | null>(null);
   const participantIdRef = useRef<string>(`viewer_${Date.now()}`);
   const roomName = `live_${creatorName.toLowerCase().replace(/\s+/g, '_')}`;
 
@@ -66,6 +66,9 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
       const { token } = await tokenRes.json();
 
       const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL;
+      if (!wsUrl) {
+        throw new Error('LiveKit WebSocket URL is not configured');
+      }
       const room = new Room();
       await room.connect(wsUrl, token);
       roomRef.current = room;
@@ -83,15 +86,17 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
   };
 
   useEffect(() => {
+    const participantIdentity = participantIdRef.current;
+
     return () => {
-      if (roomRef.current) {
-        const identity = participantIdRef.current;
+      const activeRoom = roomRef.current;
+      if (activeRoom) {
         fetch(`/rooms/${roomName}/leave`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ role: 'viewer', identity })
+          body: JSON.stringify({ role: 'viewer', identity: participantIdentity })
         }).catch(() => {});
-        roomRef.current.disconnect();
+        activeRoom.disconnect();
       }
     };
   }, [roomName]);
@@ -136,7 +141,10 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
                 className="w-full h-full object-cover"
                 autoPlay
                 playsInline
-              />
+                aria-label="Live stream video"
+              >
+                <track kind="captions" label="Live stream captions" srcLang="en" src="data:," default />
+              </video>
               {!isConnected ? (
                 <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary-glow/10">
                   <div className="text-center space-y-4">
