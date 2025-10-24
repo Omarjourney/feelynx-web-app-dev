@@ -2,10 +2,22 @@ import { useEffect, useState } from 'react';
 import { creators as initialCreators } from '@/data/creators';
 import type { Creator } from '@/types/creator';
 
+/**
+ * Tracks the live status of creators by subscribing to the websocket stream
+ * exposed by the backend. The connection URL is taken from `VITE_WS_URL` and
+ * defaults to a local development endpoint.
+ *
+ * The hook keeps the latest list of creators in sync with `creatorStatus`
+ * messages pushed by the server and tears down the websocket when the
+ * component unmounts.
+ *
+ * @returns The list of creators with live state that updates in real time.
+ */
 export function useCreatorLive() {
   const [list, setList] = useState<Creator[]>(initialCreators);
 
   useEffect(() => {
+    // Subscribe to backend websocket updates to keep live status in sync.
     const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:3001';
     const ws = new WebSocket(wsUrl);
     ws.onmessage = (event) => {

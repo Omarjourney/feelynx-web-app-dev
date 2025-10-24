@@ -158,6 +158,7 @@ docker-compose up -d
 ```bash
 npm test  # Unit and integration tests
 npm run lint  # Code linting
+npm run test:e2e  # Playwright end-to-end tests (see docs/testing.md)
 ```
 
 ## 🧹 Code Quality

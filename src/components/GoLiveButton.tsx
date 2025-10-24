@@ -80,11 +80,7 @@ const GoLiveButton = () => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
-          className="fixed bottom-6 right-6 z-40 rounded-full bg-gradient-primary px-6 py-4 text-lg font-semibold text-primary-foreground shadow-glow transition hover:brightness-110 animate-pulse"
-          style={{
-            bottom: 'calc(env(safe-area-inset-bottom) + 1.5rem)',
-            right: 'calc(env(safe-area-inset-right) + 1.5rem)',
-          }}
+          className="fixed z-40 rounded-full bg-gradient-primary px-6 py-4 text-lg font-semibold text-primary-foreground shadow-glow transition hover:brightness-110 animate-pulse safe-fab-offset"
         >
           Go Live
         </Button>

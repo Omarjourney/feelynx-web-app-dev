@@ -13,6 +13,14 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+/**
+ * Accessor hook for the authenticated Supabase session exposed by
+ * `AuthProvider`.
+ *
+ * @returns Auth state values and auth mutation helpers from context.
+ * @throws When invoked outside the provider tree so misconfiguration surfaces
+ *         immediately during development.
+ */
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
