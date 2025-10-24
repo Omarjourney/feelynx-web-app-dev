@@ -81,6 +81,13 @@ LIVEKIT_API_SECRET=example_livekit_api_secret
 LIVEKIT_URL=http://localhost:7880
 VITE_LIVEKIT_WS_URL=ws://localhost:7880
 
+# Supabase configuration
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+
+# Media assets
+VITE_UNSPLASH_RANDOM_BASE_URL=https://source.unsplash.com/random/
+
 # Database
 DATABASE_URL=postgresql://postgres:password@localhost:5432/feelynx
 
@@ -89,6 +96,8 @@ STRIPE_SECRET_KEY=sk_test_...
 ```
 
 > **Note:** `LIVEKIT_API_SECRET` is for backend use only and must never be exposed to the frontend.
+
+The frontend configuration reads these variables at runtime via `src/config/index.ts`. Missing values cause the application to throw during startup so misconfigured builds fail fast. Ensure `VITE_UNSPLASH_RANDOM_BASE_URL` ends with a trailing slash so asset paths resolve correctly.
 
 The application streams over WebRTC using [LiveKit Cloud](https://docs.livekit.io/home/cloud/).
 

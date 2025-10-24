@@ -1,13 +1,14 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { UNSPLASH_RANDOM_BASE_URL } from '@/config';
 import { creators } from '@/data/creators';
 
 const Dashboard = () => {
   const user = {
     name: 'Jane Doe',
     username: 'janed',
-    avatar: 'https://source.unsplash.com/random/100x100?woman',
+    avatar: `${UNSPLASH_RANDOM_BASE_URL}100x100?woman`,
     tier: 'Premium',
     tokens: 120,
   };
