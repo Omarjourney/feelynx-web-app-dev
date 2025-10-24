@@ -48,6 +48,7 @@ const GoLiveButton = () => {
       });
 
       if (!roomRes.ok) {
+        throw new Error('Failed to create LiveKit room');
       }
 
       // Get token for creator

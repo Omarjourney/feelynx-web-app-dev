@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import type { Room } from 'livekit-client';
 
 import LovenseToggle from '@/components/LovenseToggle';
 import { Button } from '@/components/ui/button';
@@ -9,7 +10,7 @@ import { requestMediaPermissions } from '@/lib/mediaPermissions';
 const CallRoom = () => {
   const [state, setState] = useState<'idle' | 'connecting' | 'live' | 'ended'>('idle');
   const localVideoRef = useRef<HTMLVideoElement>(null);
-  const roomRef = useRef<any>(null);
+  const roomRef = useRef<Room | null>(null);
   const remoteVideoRef = useRef<HTMLDivElement>(null);
 
   const startCall = async () => {

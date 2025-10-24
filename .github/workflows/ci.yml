@@ -24,7 +24,29 @@ jobs:
             ${{ runner.os }}-node-
       - run: npm ci
       - run: npm run lint
+      - run: npm run lint:security
       - run: npm run build
+
+  dependency-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies (production only)
+        run: npm ci --omit=dev
+      - name: Audit production dependencies
+        run: npm audit --production --audit-level=high
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run gitleaks secret scan
+        uses: gitleaks/gitleaks-action@v2
+        with:
+          args: detect --source=. --no-git --redact
 
   docker:
     if: github.event_name == 'release'

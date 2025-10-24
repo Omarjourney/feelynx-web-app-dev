@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import type { Post } from '@/data/posts';
 
-interface ContentCardProps extends Post {}
+type ContentCardProps = Post;
 
 const ContentCard = ({
   id,
