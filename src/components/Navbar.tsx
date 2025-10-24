@@ -22,14 +22,7 @@ const Navbar = () => {
     await signOut();
   };
   return (
-    <nav
-      className="bg-background/95 backdrop-blur-sm border-b border-border sticky top-0 z-50"
-      style={{
-        paddingTop: 'env(safe-area-inset-top)',
-        paddingLeft: 'env(safe-area-inset-left)',
-        paddingRight: 'env(safe-area-inset-right)',
-      }}
-    >
+    <nav className="bg-background/95 backdrop-blur-sm border-b border-border sticky top-0 z-50 pt-safe px-safe">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <img src={feelynxLogo} alt="Feelynx" className="w-8 h-8" />

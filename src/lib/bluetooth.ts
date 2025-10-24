@@ -5,13 +5,7 @@ export async function requestBluetoothDevice(options?: RequestDeviceOptions): Pr
     throw new Error('Web Bluetooth API is not supported in this browser');
   }
 
-  const navigatorWithBluetooth = navigator as Navigator & {
-    bluetooth: {
-      requestDevice: (request?: RequestDeviceOptions) => Promise<BluetoothDevice>;
-    };
-  };
-
-  return navigatorWithBluetooth.bluetooth.requestDevice(
-    options ?? { acceptAllDevices: true }
+  const device = await (navigator as any).bluetooth.requestDevice(
+    options ?? { acceptAllDevices: true },
   );
 }

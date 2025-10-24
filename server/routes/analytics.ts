@@ -14,10 +14,7 @@ const router = Router();
 router.get('/streams/:streamId', async (req, res) => {
   const { streamId } = req.params;
 
-  const { data, error } = await supabase
-    .from('stream_stats')
-    .select('*')
-    .eq('stream_id', streamId);
+  const { data, error } = await supabase.from('stream_stats').select('*').eq('stream_id', streamId);
 
   if (error) {
     return res.status(500).json({ error: error.message });
@@ -30,7 +27,7 @@ router.get('/streams/:streamId', async (req, res) => {
       acc.subscriber_churn += row.subscriber_churn || 0;
       return acc;
     },
-    { viewer_count: 0, gift_revenue: 0, subscriber_churn: 0 }
+    { viewer_count: 0, gift_revenue: 0, subscriber_churn: 0 },
   ) || { viewer_count: 0, gift_revenue: 0, subscriber_churn: 0 };
 
   res.json({ streamId, metrics, entries: data });
@@ -49,7 +46,10 @@ router.get('/creators/:creatorId/daily', async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 
-  const perDay: Record<string, { viewer_count: number; gift_revenue: number; subscriber_churn: number }> = {};
+  const perDay: Record<
+    string,
+    { viewer_count: number; gift_revenue: number; subscriber_churn: number }
+  > = {};
 
   (data as StreamStat[] | null)?.forEach((row) => {
     const day = (row.created_at || '').slice(0, 10);
@@ -65,4 +65,3 @@ router.get('/creators/:creatorId/daily', async (req, res) => {
 });
 
 export default router;
-

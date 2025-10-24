@@ -94,7 +94,7 @@ export const SearchFilters = ({
               className="sr-only"
             />
             <Button
-              variant={isLive ? "default" : "outline"}
+              variant={isLive ? 'default' : 'outline'}
               size="sm"
               onClick={() => handleChange({ isLive: !isLive })}
               aria-pressed={isLive}
@@ -108,9 +108,7 @@ export const SearchFilters = ({
       {/* Sort Tabs */}
       <Tabs
         value={sort}
-        onValueChange={(v) =>
-          handleChange({ sort: v as SearchFiltersState['sort'] })
-        }
+        onValueChange={(v) => handleChange({ sort: v as SearchFiltersState['sort'] })}
       >
         <TabsList className="flex w-full flex-wrap gap-2">
           <TabsTrigger value="trending">Trending</TabsTrigger>

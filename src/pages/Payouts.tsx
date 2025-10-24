@@ -11,7 +11,7 @@ const Payouts = () => {
     await fetch('/payouts/request', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ creatorId: 1, amount: Number(amount) })
+      body: JSON.stringify({ creatorId: 1, amount: Number(amount) }),
     });
     setAmount('');
   };

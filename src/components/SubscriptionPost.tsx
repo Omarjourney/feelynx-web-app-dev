@@ -28,7 +28,9 @@ const SubscriptionPost = ({
             {isLocked && (
               <div className="absolute inset-0 flex flex-col items-center justify-center backdrop-blur-sm bg-black/40 space-y-2">
                 {price ? (
-                  <Badge className="bg-gradient-primary text-primary-foreground">Unlock for {price}💎</Badge>
+                  <Badge className="bg-gradient-primary text-primary-foreground">
+                    Unlock for {price}💎
+                  </Badge>
                 ) : (
                   <Badge className="bg-gradient-primary text-primary-foreground">Subscribe</Badge>
                 )}
@@ -49,7 +51,9 @@ const SubscriptionPost = ({
           <Button variant="ghost" size="sm" onClick={() => setLiked(!liked)}>
             {liked ? 'Unlike' : 'Like'}
           </Button>
-          <Button variant="ghost" size="sm">Tip</Button>
+          <Button variant="ghost" size="sm">
+            Tip
+          </Button>
         </div>
       </div>
     </div>

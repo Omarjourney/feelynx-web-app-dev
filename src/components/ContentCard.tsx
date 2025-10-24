@@ -4,12 +4,33 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import ReportButton from '@/components/ReportButton';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Heart, MessageCircle, Share2, Lock, Image as ImageIcon, Video as VideoIcon } from 'lucide-react';
+import {
+  Heart,
+  MessageCircle,
+  Share2,
+  Lock,
+  Image as ImageIcon,
+  Video as VideoIcon,
+} from 'lucide-react';
 import type { Post } from '@/data/posts';
 
 type ContentCardProps = Post;
 
-const ContentCard = ({ id, username, avatar, mediaType, src, locked, price, tier, likes, comments, title, description, tags }: ContentCardProps) => {
+const ContentCard = ({
+  id,
+  username,
+  avatar,
+  mediaType,
+  src,
+  locked,
+  price,
+  tier,
+  likes,
+  comments,
+  title,
+  description,
+  tags,
+}: ContentCardProps) => {
   const [isUnlocked, setIsUnlocked] = useState(!locked);
   const handleUnlock = () => setIsUnlocked(true);
   const displayLocked = locked && !isUnlocked;
@@ -21,7 +42,11 @@ const ContentCard = ({ id, username, avatar, mediaType, src, locked, price, tier
         <DialogTrigger asChild>
           <div className="group cursor-pointer overflow-hidden rounded-lg">
             {mediaType === 'image' ? (
-              <img src={src} alt={title ?? username} className={`h-64 w-full object-cover ${displayLocked ? 'blur-md' : ''}`} />
+              <img
+                src={src}
+                alt={title ?? username}
+                className={`h-64 w-full object-cover ${displayLocked ? 'blur-md' : ''}`}
+              />
             ) : (
               <video
                 src={src}
@@ -29,8 +54,6 @@ const ContentCard = ({ id, username, avatar, mediaType, src, locked, price, tier
                 autoPlay
                 muted
                 loop
-                playsInline
-                aria-label={`${username}'s ${displayLocked ? 'locked ' : ''}video content`}
               />
             )}
             {displayLocked && (
@@ -44,7 +67,9 @@ const ContentCard = ({ id, username, avatar, mediaType, src, locked, price, tier
               </div>
             )}
             {tier && (
-              <Badge className="absolute left-2 top-2 bg-secondary text-secondary-foreground">{tier}</Badge>
+              <Badge className="absolute left-2 top-2 bg-secondary text-secondary-foreground">
+                {tier}
+              </Badge>
             )}
             <div className="absolute right-2 top-2 rounded-full bg-black/60 p-1 text-white">
               <ContentIcon className="h-4 w-4" />
@@ -57,14 +82,20 @@ const ContentCard = ({ id, username, avatar, mediaType, src, locked, price, tier
                 </Avatar>
                 <span className="text-sm text-white">{username}</span>
               </div>
-              <Button size="sm" variant="secondary" onClick={(e) => e.stopPropagation()}>Follow</Button>
+              <Button size="sm" variant="secondary" onClick={(e) => e.stopPropagation()}>
+                Follow
+              </Button>
             </div>
           </div>
         </DialogTrigger>
         <DialogContent className="max-w-lg overflow-hidden p-0">
           <div className="relative">
             {mediaType === 'image' ? (
-              <img src={src} alt={title ?? username} className={`w-full object-cover ${displayLocked ? 'blur-md' : ''}`} />
+              <img
+                src={src}
+                alt={title ?? username}
+                className={`w-full object-cover ${displayLocked ? 'blur-md' : ''}`}
+              />
             ) : (
               <video
                 src={src}
@@ -72,8 +103,6 @@ const ContentCard = ({ id, username, avatar, mediaType, src, locked, price, tier
                 autoPlay
                 muted
                 loop
-                playsInline
-                aria-label={`${username}'s video content`}
               />
             )}
             {displayLocked && (
@@ -88,17 +117,28 @@ const ContentCard = ({ id, username, avatar, mediaType, src, locked, price, tier
             {tags && (
               <div className="flex flex-wrap gap-2">
                 {tags.map((t) => (
-                  <Badge key={t} variant="secondary">{t}</Badge>
+                  <Badge key={t} variant="secondary">
+                    {t}
+                  </Badge>
                 ))}
               </div>
             )}
-              <div className="flex gap-4">
-                <Button variant="ghost" size="sm"><Heart className="mr-1 h-4 w-4" />{likes}</Button>
-                <Button variant="ghost" size="sm"><MessageCircle className="mr-1 h-4 w-4" />{comments}</Button>
-                <Button variant="ghost" size="sm"><Share2 className="mr-1 h-4 w-4" />Share</Button>
-                <ReportButton targetId={id} type="content" />
-              </div>
+            <div className="flex gap-4">
+              <Button variant="ghost" size="sm">
+                <Heart className="mr-1 h-4 w-4" />
+                {likes}
+              </Button>
+              <Button variant="ghost" size="sm">
+                <MessageCircle className="mr-1 h-4 w-4" />
+                {comments}
+              </Button>
+              <Button variant="ghost" size="sm">
+                <Share2 className="mr-1 h-4 w-4" />
+                Share
+              </Button>
+              <ReportButton targetId={id} type="content" />
             </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
@@ -106,4 +146,3 @@ const ContentCard = ({ id, username, avatar, mediaType, src, locked, price, tier
 };
 
 export default ContentCard;
-

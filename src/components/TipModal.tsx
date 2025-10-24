@@ -1,10 +1,5 @@
 import { useState } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogOverlay,
-  DialogPortal,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogOverlay, DialogPortal } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -41,7 +36,9 @@ const TipModal = ({ isVisible, onClose, onSubmit }: TipModalProps) => {
           ) : (
             <div className="space-y-4">
               <div className="text-center">
-                <Badge className="bg-gradient-primary text-primary-foreground">Balance: 1000💎</Badge>
+                <Badge className="bg-gradient-primary text-primary-foreground">
+                  Balance: 1000💎
+                </Badge>
               </div>
               <div className="flex space-x-2 justify-center">
                 {[10, 50, 100].map((v) => (

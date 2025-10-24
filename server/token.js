@@ -10,10 +10,7 @@ const LIVEKIT_API_SECRET = process.env.LIVEKIT_API_SECRET;
 const LIVEKIT_SERVER_URL = process.env.LIVEKIT_URL;
 
 app.post('/token', (req, res) => {
-  const { identity = 'user', room: roomName = 'myRoom' } = req.body as {
-    identity?: string;
-    room?: string;
-  };
+  const { identity = 'user', room: roomName = 'myRoom' } = req.body ?? {};
 
   const at = new AccessToken(LIVEKIT_API_KEY, LIVEKIT_API_SECRET, { identity });
   at.addGrant({ roomJoin: true, room: roomName });

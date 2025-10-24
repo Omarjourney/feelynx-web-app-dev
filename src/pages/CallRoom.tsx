@@ -21,10 +21,10 @@ const CallRoom = () => {
       toast({ title: 'Call started', description: 'You are now connected' });
     } catch (error) {
       setState('idle');
-      toast({ 
-        title: 'Call failed', 
-        description: 'Could not start call', 
-        variant: 'destructive' 
+      toast({
+        title: 'Call failed',
+        description: 'Could not start call',
+        variant: 'destructive',
       });
     }
   };
@@ -34,6 +34,10 @@ const CallRoom = () => {
 
     setState('ended');
   };
+
+  useEffect(() => {
+    return () => {};
+  }, []);
 
   return (
     <div className="container mx-auto p-4 space-y-4">
@@ -59,10 +63,7 @@ const CallRoom = () => {
                 muted
                 className="w-full h-auto rounded-lg bg-black"
               />
-              <div
-                ref={remoteVideoRef}
-                className="w-full h-auto rounded-lg bg-black"
-              />
+              <div ref={remoteVideoRef} className="w-full h-auto rounded-lg bg-black" />
             </div>
           )}
           {state === 'live' && (

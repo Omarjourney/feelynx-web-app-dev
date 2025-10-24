@@ -14,7 +14,7 @@ export class LovenseToy {
 
     this.device = await requestBluetoothDevice({
       filters: [{ namePrefix: 'Lovense' }],
-      optionalServices: [LUSH_SERVICE_UUID]
+      optionalServices: [LUSH_SERVICE_UUID],
     });
 
     const server = await this.device.gatt?.connect();

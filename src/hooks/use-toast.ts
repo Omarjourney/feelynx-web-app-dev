@@ -68,6 +68,14 @@ const addToRemoveQueue = (toastId: string) => {
   toastTimeouts.set(toastId, timeout);
 };
 
+/**
+ * Reducer powering the global toast store. Besides returning state updates it
+ * also queues timeouts that eventually remove dismissed toasts from memory.
+ *
+ * @param state - Current toast state.
+ * @param action - Mutation describing how to update toast collection.
+ * @returns Updated state with any queued side effects applied.
+ */
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case 'ADD_TOAST':
@@ -85,8 +93,8 @@ export const reducer = (state: State, action: Action): State => {
     case 'DISMISS_TOAST': {
       const { toastId } = action;
 
-      // ! Side effects ! - This could be extracted into a dismissToast() action,
-      // but I'll keep it here for simplicity
+      // Queue removal timeouts for dismissed toasts so they leave the UI after
+      // the closing animation completes.
       if (toastId) {
         addToRemoveQueue(toastId);
       } else {
@@ -163,10 +171,20 @@ function toast({ ...props }: Toast) {
   };
 }
 
+/**
+ * React hook that exposes the global toast state along with helpers to create
+ * and dismiss notifications.
+ *
+ * Consumers receive live updates via a subscription list that is pruned on
+ * unmount to avoid leaking stale listeners.
+ *
+ * @returns The current toast collection plus imperative helpers.
+ */
 function useToast() {
   const [state, setState] = React.useState<State>(memoryState);
 
   React.useEffect(() => {
+    // Register component as a listener for toast store updates.
     listeners.push(setState);
     return () => {
       const index = listeners.indexOf(setState);

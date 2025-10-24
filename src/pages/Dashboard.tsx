@@ -141,7 +141,9 @@ const Dashboard = () => {
         </CardHeader>
         <CardContent>
           <ul className="text-sm text-muted-foreground space-y-2">
-            <li>New message from <span className="font-medium">Luna Star</span></li>
+            <li>
+              New message from <span className="font-medium">Luna Star</span>
+            </li>
             <li>Your tokens expire in 7 days</li>
           </ul>
         </CardContent>
@@ -181,4 +183,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-

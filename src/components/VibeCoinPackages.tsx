@@ -36,8 +36,8 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
           amount: packageData.price,
           coins: packageData.tokens,
           currency: 'usd',
-          userId: 1
-        })
+          userId: 1,
+        }),
       });
 
       if (!response.ok) throw new Error('Failed to create payment intent');
@@ -47,7 +47,7 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
       const successRes = await fetch('/payments/success', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ paymentIntentId })
+        body: JSON.stringify({ paymentIntentId }),
       });
 
       if (successRes.ok) {
@@ -114,7 +114,7 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
                     : 'bg-secondary hover:bg-secondary/80'
                 }`}
                 size="lg"
-                onClick={() => onPurchase ? onPurchase(pkg) : handlePurchase(pkg)}
+                onClick={() => (onPurchase ? onPurchase(pkg) : handlePurchase(pkg))}
               >
                 Purchase Now
               </Button>
@@ -128,10 +128,7 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
         ))}
       </div>
       {receipt && (
-        <PaymentReceipt
-          receiptUrl={receipt.receiptUrl}
-          disputeUrl={receipt.disputeUrl}
-        />
+        <PaymentReceipt receiptUrl={receipt.receiptUrl} disputeUrl={receipt.disputeUrl} />
       )}
     </div>
   );

@@ -5,7 +5,7 @@ const router = Router();
 // Placeholder gift catalogue
 const gifts = [
   { id: 1, name: 'Heart', cost: 10 },
-  { id: 2, name: 'Star', cost: 25 }
+  { id: 2, name: 'Star', cost: 25 },
 ];
 
 // In-memory token balances and transactions
