@@ -6,7 +6,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 process.env.NODE_ENV = 'test';
-const authRouter = (await import('./auth.js')).default;
+const authRouter = (await import('./auth.ts')).default;
 const { prisma } = await import('../db/prisma.js');
 
 const app = express();
