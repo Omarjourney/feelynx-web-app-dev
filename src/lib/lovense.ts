@@ -4,8 +4,8 @@ const LUSH_SERVICE_UUID = 0xfff0;
 const COMMAND_CHAR_UUID = 0xfff1;
 
 export class LovenseToy {
-  private device?: any;
-  private characteristic?: any;
+  private device?: BluetoothDevice;
+  private characteristic?: BluetoothRemoteGATTCharacteristic;
 
   async pair() {
     if (!isBluetoothSupported()) {
@@ -14,10 +14,13 @@ export class LovenseToy {
 
     this.device = await requestBluetoothDevice({
       filters: [{ namePrefix: 'Lovense' }],
-      optionalServices: [LUSH_SERVICE_UUID]
+      optionalServices: [LUSH_SERVICE_UUID],
     });
 
-    const server = await this.device.gatt!.connect();
+    const server = await this.device.gatt?.connect();
+    if (!server) {
+      throw new Error('Unable to connect to Lovense device');
+    }
     const service = await server.getPrimaryService(LUSH_SERVICE_UUID);
     this.characteristic = await service.getCharacteristic(COMMAND_CHAR_UUID);
   }

@@ -26,9 +26,7 @@ const TierCard = ({
     <div className="border rounded p-4 space-y-2 bg-card">
       <div className="flex items-center justify-between">
         <h3 className="font-semibold">{name}</h3>
-        {badge && (
-          <Badge className="bg-gradient-primary text-primary-foreground">{badge}</Badge>
-        )}
+        {badge && <Badge className="bg-gradient-primary text-primary-foreground">{badge}</Badge>}
       </div>
       <div className="text-sm text-muted-foreground">${price / 100} / month</div>
       <ul className="text-sm list-disc list-inside">

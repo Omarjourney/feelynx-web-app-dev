@@ -5,11 +5,16 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "build": "vite build",
     "build:server": "tsc -p tsconfig.server.json",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run --passWithNoTests",
+    "test:e2e": "TS_NODE_TRANSPILE_ONLY=true TS_NODE_PROJECT=tsconfig.server.json node --loader ts-node/esm --test server/routes",
+    "prepare": "husky"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -55,6 +60,7 @@
     "embla-carousel-react": "^8.3.0",
     "express": "^4.19.2",
     "input-otp": "^1.2.4",
+    "jsonwebtoken": "^9.0.2",
     "libsodium-wrappers": "^0.7.15",
     "livekit-client": "^2.15.4",
     "livekit-server-sdk": "^2.13.1",
@@ -86,17 +92,22 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22.5.5",
     "@types/pg": "^8.15.4",
-    "@types/react": "^19.1.9",
+    "@types/react": "^18.3.8",
     "@types/react-dom": "^18.3.0",
     "@types/supertest": "^6.0.3",
     "@vitejs/plugin-react-swc": "^3.11.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.9.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-security": "^3.0.1",
     "globals": "^15.9.0",
+    "husky": "^9.1.7",
     "jsdom": "^26.1.0",
-    "lovable-tagger": "^1.1.7",
+    "lovable-tagger": "^1.1.11",
     "postcss": "^8.4.47",
     "prettier": "^3.6.2",
     "prisma": "^6.12.0",
@@ -104,6 +115,7 @@
     "tailwindcss": "^3.4.11",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.3",
+    "typescript-eslint": "^8.46.2",
     "vitest": "^3.2.4"
   }
 }

@@ -23,8 +23,8 @@ router.post('/onboard', async (req: Request, res: Response) => {
       data: {
         creatorId,
         stripeAccountId: stripeAccount.id,
-        status: stripeAccount.details_submitted ? 'verified' : 'pending'
-      }
+        status: stripeAccount.details_submitted ? 'verified' : 'pending',
+      },
     });
   }
 
@@ -33,7 +33,7 @@ router.post('/onboard', async (req: Request, res: Response) => {
     account: account.stripeAccountId,
     refresh_url: `${origin}/payouts/refresh`,
     return_url: `${origin}/payouts/complete`,
-    type: 'account_onboarding'
+    type: 'account_onboarding',
   });
 
   res.json({ url: accountLink.url });
@@ -51,7 +51,7 @@ router.post('/request', async (req: Request, res: Response) => {
   }
 
   const payout = await prisma.payout.create({
-    data: { creatorId, amount, status: 'pending' }
+    data: { creatorId, amount, status: 'pending' },
   });
 
   res.json({ id: payout.id });
@@ -65,7 +65,8 @@ export const webhookHandler = async (req: Request, res: Response) => {
     if (!webhookSecret || !sig) {
       throw new Error('Missing signature');
     }
-    event = stripe.webhooks.constructEvent((req as any).body, sig, webhookSecret);
+    const rawBody = req.body as Buffer | string | undefined;
+    event = stripe.webhooks.constructEvent(rawBody ?? '', sig, webhookSecret);
   } catch (err) {
     console.error('Webhook signature verification failed', err);
     return res.status(400).send(`Webhook Error: ${(err as Error).message}`);
@@ -75,7 +76,7 @@ export const webhookHandler = async (req: Request, res: Response) => {
     const acct = event.data.object as Stripe.Account;
     await prisma.payoutAccount.updateMany({
       where: { stripeAccountId: acct.id },
-      data: { status: acct.details_submitted ? 'verified' : 'pending' }
+      data: { status: acct.details_submitted ? 'verified' : 'pending' },
     });
   }
 
@@ -90,11 +91,11 @@ export async function processPendingPayouts() {
     try {
       await stripe.payouts.create(
         { amount: Number(p.amount) * 100, currency: 'usd' },
-        { stripeAccount: account.stripeAccountId }
+        { stripeAccount: account.stripeAccountId },
       );
       await prisma.payout.update({
         where: { id: p.id },
-        data: { status: 'processed', processedAt: new Date() }
+        data: { status: 'processed', processedAt: new Date() },
       });
     } catch (err) {
       console.error('Payout error', err);

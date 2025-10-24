@@ -1,25 +1,71 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <meta charset="utf-8" />
-  <title>LiveKit WebRTC Example</title>
-</head>
-<body>
-  <h1>LiveKit WebRTC Demo</h1>
-  <div>
-    <h2>Local</h2>
-    <div id="localVideo"></div>
-  </div>
-  <div>
-    <h2>Remote Participants</h2>
-    <div id="remoteVideos"></div>
-  </div>
-  <script
-    src="https://cdn.jsdelivr.net/npm/livekit-client@2.15.4/dist/livekit-client.umd.js"
-    integrity="sha384-EpSY/2J7umRsmvgVNveWAArzM6T2UbPb0mM17PD4spSJvy69EYiN/Eqwm01zoO2n"
-    crossorigin="anonymous"
-    defer
-  ></script>
-  <script src="./livekit-demo.js" defer></script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <title>LiveKit WebRTC Example</title>
+    <script type="module">
+      import {
+        Room,
+        createLocalTracks,
+      } from 'https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.min.js';
+
+      async function startLiveKit() {
+        // 1. Fetch a token from your server.
+        const response = await fetch('http://localhost:3000/token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ identity: 'alice', room: 'myRoom' }),
+        });
+        const { token } = await response.json();
+
+        // 2. Connect to LiveKit server.
+        // === Replace with your LiveKit server URL ===
+        const room = new Room();
+        await room.connect('wss://feelynxlive-rtnczet2.livekit.cloud', token, {
+          autoSubscribe: true,
+        });
+
+        // 3. Publish local audio & video tracks.
+        const localTracks = await createLocalTracks({
+          audio: true,
+          video: { width: 1280, height: 720 },
+        });
+        await room.localParticipant.publishTracks(localTracks);
+
+        // 4. Attach local video to the page.
+        const localVideo = document.getElementById('localVideo');
+        room.localParticipant.videoTracks.forEach((pub) => {
+          const element = pub.track.attach();
+          localVideo.appendChild(element);
+        });
+
+        // 5. Render remote participants.
+        room.on('participantConnected', (participant) => {
+          const container = document.getElementById('remoteVideos');
+          participant.on('trackSubscribed', (track) => {
+            container.appendChild(track.attach());
+          });
+        });
+
+        // Handle disconnects.
+        room.on('disconnected', () => {
+          console.log('Disconnected from LiveKit');
+        });
+      }
+
+      // Run the example.
+      startLiveKit().catch(console.error);
+    </script>
+  </head>
+  <body>
+    <h1>LiveKit WebRTC Demo</h1>
+    <div>
+      <h2>Local</h2>
+      <div id="localVideo"></div>
+    </div>
+    <div>
+      <h2>Remote Participants</h2>
+      <div id="remoteVideos"></div>
+    </div>
+  </body>
 </html>

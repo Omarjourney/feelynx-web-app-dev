@@ -6,7 +6,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 process.env.NODE_ENV = 'test';
-const authRouter = (await import('./auth.js')).default;
+const authRouter = (await import('./auth.ts')).default;
 const { prisma } = await import('../db/prisma.js');
 
 const app = express();
@@ -18,7 +18,7 @@ test('registers a new user and returns token', async () => {
   prisma.user.create = async ({ data }) => ({
     id: 1,
     email: data.email,
-    password: data.password
+    password: data.password,
   });
 
   const res = await request(app)
@@ -36,7 +36,7 @@ test('fails to login with wrong password', async () => {
   prisma.user.findUnique = async () => ({
     id: 1,
     email: 'test@example.com',
-    password: hashed
+    password: hashed,
   });
 
   const res = await request(app)
@@ -51,7 +51,7 @@ test('logs in user and returns token', async () => {
   prisma.user.findUnique = async () => ({
     id: 1,
     email: 'test@example.com',
-    password: hashed
+    password: hashed,
   });
 
   const res = await request(app)
