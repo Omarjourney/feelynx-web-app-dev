@@ -1,3 +1,5 @@
+import { UNSPLASH_RANDOM_BASE_URL } from '@/config';
+
 export interface Post {
   id: number;
   username: string;
@@ -20,7 +22,7 @@ export const posts: Post[] = [
     username: 'Aria Vex',
     avatar: 'A',
     mediaType: 'image',
-    src: 'https://source.unsplash.com/random/800x600?sig=1',
+    src: `${UNSPLASH_RANDOM_BASE_URL}800x600?sig=1`,
     likes: 234,
     comments: 12,
     title: 'Sunset Tease',
@@ -32,7 +34,7 @@ export const posts: Post[] = [
     username: 'Mila Fox',
     avatar: 'M',
     mediaType: 'video',
-    src: 'https://source.unsplash.com/random/800x600?sig=2',
+    src: `${UNSPLASH_RANDOM_BASE_URL}800x600?sig=2`,
     locked: true,
     price: 15,
     likes: 188,
@@ -46,7 +48,7 @@ export const posts: Post[] = [
     username: 'Luna Star',
     avatar: 'L',
     mediaType: 'image',
-    src: 'https://source.unsplash.com/random/800x600?sig=3',
+    src: `${UNSPLASH_RANDOM_BASE_URL}800x600?sig=3`,
     locked: true,
     tier: 'Gold',
     likes: 321,

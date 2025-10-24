@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { UNSPLASH_RANDOM_BASE_URL } from '@/config';
 import { Navigation } from '@/components/Navigation';
 import { SearchFilters, SearchFiltersState } from '@/components/SearchFilters';
 import LiveStreamCard from '@/components/LiveStreamCard';
@@ -80,7 +81,7 @@ const Explore = () => {
               avatar={c.avatar ?? ''}
               viewerCount={c.viewers || 0}
               isFeatured={c.isFeatured}
-              streamPreviewUrl={`https://source.unsplash.com/random/400x300?sig=${c.id}`}
+              streamPreviewUrl={`${UNSPLASH_RANDOM_BASE_URL}400x300?sig=${c.id}`}
               badge={c.isFeatured ? 'VIP' : undefined}
               onWatch={() => handleWatch(c.username)}
             />
