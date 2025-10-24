@@ -12,6 +12,8 @@
     "format:fix": "prettier --write .",
     "preview": "vite preview",
     "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:ci": "playwright test --reporter=line",
     "prepare": "husky"
   },
   "dependencies": {
@@ -82,6 +84,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
+    "@playwright/test": "^1.56.1",
     "@tailwindcss/typography": "^0.5.15",
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.17",

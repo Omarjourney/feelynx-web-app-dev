@@ -34,6 +34,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
             <Route path="/explore" element={<Explore />} />
             <Route path="/creators" element={<Creators />} />
             <Route path="/content" element={<Content />} />
@@ -46,6 +47,7 @@ const App = () => (
             <Route path="/stories" element={<Stories />} />
             <Route path="/token-shop" element={<TokenShop />} />
             <Route path="/call-room" element={<CallRoom />} />
+            <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
           <GoLiveButton />
         </BrowserRouter>
