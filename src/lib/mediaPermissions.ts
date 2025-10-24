@@ -5,7 +5,7 @@ export async function requestMediaPermissions(): Promise<void> {
 
   if (!navigator.mediaDevices?.getUserMedia) {
     throw new Error(
-      'Camera and microphone access is not supported in this browser. Please try Chrome, Firefox, or Safari.'
+      'Camera and microphone access is not supported in this browser. Please try Chrome, Firefox, or Safari.',
     );
   }
 
@@ -38,13 +38,19 @@ export async function requestMediaPermissions(): Promise<void> {
   } catch (err: unknown) {
     const errorName = (err as { name?: string })?.name;
     if (errorName === 'NotAllowedError') {
-      throw new Error('Please allow camera and microphone access in your browser and system settings.');
+      throw new Error(
+        'Please allow camera and microphone access in your browser and system settings.',
+      );
     }
     if (errorName === 'NotFoundError') {
-      throw new Error('No camera or microphone found. Please connect a device or try a different browser.');
+      throw new Error(
+        'No camera or microphone found. Please connect a device or try a different browser.',
+      );
     }
     if (errorName === 'NotReadableError') {
-      throw new Error('Unable to access camera or microphone. They might be in use by another application.');
+      throw new Error(
+        'Unable to access camera or microphone. They might be in use by another application.',
+      );
     }
     if (errorName === 'OverconstrainedError') {
       throw new Error(

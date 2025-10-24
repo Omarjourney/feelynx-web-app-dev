@@ -1,6 +1,15 @@
 import { useEffect, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+} from 'recharts';
 
 interface DayMetrics {
   date: string;
@@ -14,16 +23,16 @@ const Analytics = () => {
   const [comparison, setComparison] = useState({ viewer: 0, revenue: 0, churn: 0 });
 
   useEffect(() => {
-      fetch('/analytics/creators/demo/daily')
-        .then((res) => res.json())
-        .then((json) => {
-          const perDay = (json.perDay || {}) as Record<string, Omit<DayMetrics, 'date'>>;
-          const arr: DayMetrics[] = Object.entries(perDay)
-            .map(([date, metrics]) => ({
-              date,
-              ...metrics,
-            }))
-            .sort((a, b) => a.date.localeCompare(b.date));
+    fetch('/analytics/creators/demo/daily')
+      .then((res) => res.json())
+      .then((json) => {
+        const perDay = (json.perDay || {}) as Record<string, Omit<DayMetrics, 'date'>>;
+        const arr: DayMetrics[] = Object.entries(perDay)
+          .map(([date, metrics]) => ({
+            date,
+            ...metrics,
+          }))
+          .sort((a, b) => a.date.localeCompare(b.date));
         setData(arr);
         if (arr.length > 1) {
           const last = arr[arr.length - 1];
@@ -111,9 +120,18 @@ const Analytics = () => {
         <CardContent>
           <p className="mb-2">Comparison with previous period:</p>
           <ul className="list-disc pl-5 text-sm mb-2">
-            <li>Viewer change: {comparison.viewer >= 0 ? '+' : ''}{comparison.viewer}</li>
-            <li>Revenue change: {comparison.revenue >= 0 ? '+' : ''}{comparison.revenue}</li>
-            <li>Churn change: {comparison.churn >= 0 ? '+' : ''}{comparison.churn}</li>
+            <li>
+              Viewer change: {comparison.viewer >= 0 ? '+' : ''}
+              {comparison.viewer}
+            </li>
+            <li>
+              Revenue change: {comparison.revenue >= 0 ? '+' : ''}
+              {comparison.revenue}
+            </li>
+            <li>
+              Churn change: {comparison.churn >= 0 ? '+' : ''}
+              {comparison.churn}
+            </li>
           </ul>
           {tips.length > 0 ? (
             <ul className="list-disc pl-5 text-sm text-muted-foreground">
@@ -133,4 +151,3 @@ const Analytics = () => {
 };
 
 export default Analytics;
-

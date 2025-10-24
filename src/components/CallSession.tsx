@@ -35,8 +35,12 @@ const CallSession = ({ creatorName, ratePerMinute }: CallSessionProps) => {
           <span>⏱ {(seconds / 60).toFixed(1)}m</span>
           <span>Cost: {cost}💎</span>
           <div className="space-x-2">
-            <Button variant="secondary" size="sm">Mute</Button>
-            <Button variant="secondary" size="sm">Camera</Button>
+            <Button variant="secondary" size="sm">
+              Mute
+            </Button>
+            <Button variant="secondary" size="sm">
+              Camera
+            </Button>
             <Button variant="destructive" size="sm" onClick={() => setConnected(false)}>
               End
             </Button>

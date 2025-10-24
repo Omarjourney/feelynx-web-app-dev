@@ -27,10 +27,7 @@ const LiveStreamCard = ({
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
-    const interval = setInterval(
-      () => setViewers((v) => v + Math.floor(Math.random() * 3)),
-      5000,
-    );
+    const interval = setInterval(() => setViewers((v) => v + Math.floor(Math.random() * 3)), 5000);
     return () => clearInterval(interval);
   }, []);
 
@@ -48,9 +45,11 @@ const LiveStreamCard = ({
   };
 
   return (
-    <div
-      className="relative rounded-lg overflow-hidden border bg-card hover:shadow-glow transition cursor-pointer"
+    <button
+      type="button"
+      className="relative rounded-lg overflow-hidden border bg-card hover:shadow-glow transition cursor-pointer text-left"
       onClick={handleClick}
+      aria-label={`Watch ${username}'s live stream`}
     >
       <video
         ref={videoRef}
@@ -61,14 +60,11 @@ const LiveStreamCard = ({
         autoPlay
         playsInline
         preload="none"
+        aria-label={`${username}'s live stream preview`}
       />
       <div className="absolute top-2 left-2 flex items-center space-x-1">
         <Badge className="bg-live text-white">LIVE</Badge>
-        {badge && (
-          <Badge className="bg-gradient-primary text-primary-foreground">
-            {badge}
-          </Badge>
-        )}
+        {badge && <Badge className="bg-gradient-primary text-primary-foreground">{badge}</Badge>}
         {isFeatured && !badge && (
           <Badge className="bg-gradient-primary text-primary-foreground">NEW</Badge>
         )}
@@ -82,16 +78,12 @@ const LiveStreamCard = ({
         {viewers.toLocaleString()} watching
       </div>
       <div className="flex items-center p-3 space-x-3">
-        <img
-          src={avatar}
-          alt={`@${username}`}
-          className="w-10 h-10 rounded-full object-cover"
-        />
+        <img src={avatar} alt={`@${username}`} className="w-10 h-10 rounded-full object-cover" />
         <div className="flex-1">
           <p className="font-medium leading-none">@{username}</p>
         </div>
       </div>
-    </div>
+    </button>
   );
 };
 

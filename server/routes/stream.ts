@@ -9,7 +9,7 @@ router.post('/rtmp/start', async (req, res) => {
     // For now, return a mock response
     res.json({
       url: 'rtmp://localhost:1935/live/stream_key',
-      streamKey: 'mock_stream_key_' + Date.now()
+      streamKey: 'mock_stream_key_' + Date.now(),
     });
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });

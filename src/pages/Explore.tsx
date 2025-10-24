@@ -12,8 +12,7 @@ import type { Creator } from '@/types/creator';
 
 const Explore = () => {
   const navigate = useNavigate();
-  const handleTab = (t: string) =>
-    navigate(t === 'explore' ? '/explore' : `/${t}`);
+  const handleTab = (t: string) => navigate(t === 'explore' ? '/explore' : `/${t}`);
 
   const [filters, setFilters] = useState<SearchFiltersState>({
     search: '',
@@ -31,11 +30,7 @@ const Explore = () => {
   const filteredCreators = creators.filter((c) => {
     if (filters.isLive && !c.isLive) return false;
     if (filters.country !== 'all' && c.country !== filters.country) return false;
-    if (
-      filters.specialty !== 'all' &&
-      !c.specialties.includes(filters.specialty)
-    )
-      return false;
+    if (filters.specialty !== 'all' && !c.specialties.includes(filters.specialty)) return false;
     if (tab === 'trending' && !c.isFeatured) return false;
     if (tab === 'new' && c.isFeatured) return false;
     return true;
@@ -58,12 +53,14 @@ const Explore = () => {
       <Navigation activeTab="explore" onTabChange={handleTab} />
       <div className="container mx-auto p-4 space-y-6">
         <StoryBubbles
-          creators={creators.filter((c) => c.isLive).map(c => ({
-            username: c.username,
-            avatar: c.avatar || '',
-            isLive: c.isLive,
-            badge: c.tier
-          }))}
+          creators={creators
+            .filter((c) => c.isLive)
+            .map((c) => ({
+              username: c.username,
+              avatar: c.avatar || '',
+              isLive: c.isLive,
+              badge: c.tier,
+            }))}
           onSelect={handleWatch}
         />
         <Tabs value={tab} onValueChange={setTab}>
@@ -90,11 +87,7 @@ const Explore = () => {
             />
           ))}
         </div>
-        <LiveStreamModal
-          creator={modalCreator}
-          open={open}
-          onOpenChange={setOpen}
-        />
+        <LiveStreamModal creator={modalCreator} open={open} onOpenChange={setOpen} />
       </div>
     </div>
   );

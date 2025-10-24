@@ -35,8 +35,8 @@ router.post('/', async (req, res) => {
         mediaUrl,
         expiresAt: new Date(expiresAt),
         visibility,
-        tier: tierId ?? null
-      }
+        tier: tierId ?? null,
+      },
     });
     res.json(story);
   } catch (err) {

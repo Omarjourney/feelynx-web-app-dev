@@ -11,13 +11,10 @@ const PKBattle = () => {
   const [scoreB, setScoreB] = useState(0);
   const videoARef = useRef<HTMLVideoElement>(null);
   const videoBRef = useRef<HTMLVideoElement>(null);
-  const roomRef = useRef<Room>();
+  const roomRef = useRef<Room | null>(null);
 
   useEffect(() => {
-    const interval = setInterval(
-      () => setTimeLeft((t) => (t > 0 ? t - 1 : 0)),
-      1000
-    );
+    const interval = setInterval(() => setTimeLeft((t) => (t > 0 ? t - 1 : 0)), 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -29,7 +26,9 @@ const PKBattle = () => {
         const data = JSON.parse(ev.data);
         setScoreA(data.scoreA ?? data.score_a ?? 0);
         setScoreB(data.scoreB ?? data.score_b ?? 0);
-      } catch {}
+      } catch (error) {
+        console.error('Failed to parse PK battle scores', error);
+      }
     };
     return () => es.close();
   }, [battleId]);
@@ -43,12 +42,15 @@ const PKBattle = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             room: `pk_battle_${battleId}`,
-            identity: `viewer_${Date.now()}`
-          })
+            identity: `viewer_${Date.now()}`,
+          }),
         });
         if (!tokenRes.ok) return;
         const { token } = await tokenRes.json();
         const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL;
+        if (!wsUrl) {
+          throw new Error('LiveKit WebSocket URL is not configured');
+        }
         const room = new Room();
         roomRef.current = room;
         await room.connect(wsUrl, token);
@@ -67,7 +69,9 @@ const PKBattle = () => {
           try {
             const msg = JSON.parse(new TextDecoder().decode(payload));
             if (msg.timeLeft !== undefined) setTimeLeft(msg.timeLeft);
-          } catch {}
+          } catch (error) {
+            console.error('Failed to parse PK battle timer update', error);
+          }
         });
       } catch (err) {
         console.error('LiveKit connect failed', err);
@@ -76,18 +80,14 @@ const PKBattle = () => {
     connect();
     return () => {
       roomRef.current?.disconnect();
+      roomRef.current = null;
     };
   }, [battleId]);
 
   const total = scoreA + scoreB || 1;
   let winner: string | null = null;
   if (timeLeft === 0) {
-    winner =
-      scoreA === scoreB
-        ? 'Tie'
-        : scoreA > scoreB
-        ? 'Creator A wins!'
-        : 'Creator B wins!';
+    winner = scoreA === scoreB ? 'Tie' : scoreA > scoreB ? 'Creator A wins!' : 'Creator B wins!';
   }
 
   const updateScore = (a: number, b: number) => {
@@ -95,15 +95,19 @@ const PKBattle = () => {
     fetch(`/pk-battles/${battleId}/scores`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ scoreA: a, scoreB: b })
+      body: JSON.stringify({ scoreA: a, scoreB: b }),
     });
   };
 
   return (
     <div className="p-4 space-y-4">
       <div className="flex space-x-4">
-        <video ref={videoARef} className="w-1/2 bg-black" autoPlay />
-        <video ref={videoBRef} className="w-1/2 bg-black" autoPlay />
+        <video ref={videoARef} className="w-1/2 bg-black" autoPlay playsInline aria-label="Creator A live feed">
+          <track kind="captions" label="Creator A captions" srcLang="en" src="data:," default />
+        </video>
+        <video ref={videoBRef} className="w-1/2 bg-black" autoPlay playsInline aria-label="Creator B live feed">
+          <track kind="captions" label="Creator B captions" srcLang="en" src="data:," default />
+        </video>
       </div>
       <div className="flex space-x-4 items-center">
         <div className="flex-1">

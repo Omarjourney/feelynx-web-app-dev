@@ -27,8 +27,8 @@ router.post('/', async (req: Request, res: Response) => {
         creatorBId,
         startAt: new Date(startAt),
         endAt: endAt ? new Date(endAt) : null,
-        status: 'pending'
-      }
+        status: 'pending',
+      },
     });
     streams[battle.id] = { scoreA: 0, scoreB: 0, clients: [] };
     res.json(battle);
@@ -45,7 +45,7 @@ router.post('/:battleId/scores', (req: Request, res: Response) => {
   stream.scoreB = scoreB;
   streams[id] = stream;
   stream.clients.forEach((client) =>
-    client.write(`data: ${JSON.stringify({ scoreA, scoreB })}\n\n`)
+    client.write(`data: ${JSON.stringify({ scoreA, scoreB })}\n\n`),
   );
   res.json({ ok: true });
 });

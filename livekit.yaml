@@ -17,9 +17,9 @@ room:
 
 logging:
   level: info
-  
+
 turn:
   enabled: false
-  
+
 webhook:
-  url: ""
+  url: ''

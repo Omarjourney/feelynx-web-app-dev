@@ -9,10 +9,10 @@ async function scanContent(content: string) {
     const res = await fetch('https://api.thehive.ai/api/v1/scan', {
       method: 'POST',
       headers: {
-        'Authorization': `Token ${process.env.HIVE_API_KEY}`,
-        'Content-Type': 'application/json'
+        Authorization: `Token ${process.env.HIVE_API_KEY}`,
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ content })
+      body: JSON.stringify({ content }),
     });
     return await res.json();
   } catch (err) {
@@ -22,9 +22,15 @@ async function scanContent(content: string) {
 }
 
 router.post('/report', async (req, res) => {
-  const { reportedId, type, reason } = req.body as { reportedId: number; type: string; reason: string };
+  const { reportedId, type, reason } = req.body as {
+    reportedId: number;
+    type: string;
+    reason: string;
+  };
   const scan = await scanContent(reason);
-  const report = await prisma.report.create({ data: { reportedId, type, reason, status: 'pending' } });
+  const report = await prisma.report.create({
+    data: { reportedId, type, reason, status: 'pending' },
+  });
   res.json({ report, scan });
 });
 
@@ -34,13 +40,19 @@ router.get('/reports', async (_req, res) => {
 });
 
 router.post('/actions', async (req, res) => {
-  const { reportId, action, moderatorId } = req.body as { reportId: number; action: string; moderatorId?: number };
+  const { reportId, action, moderatorId } = req.body as {
+    reportId: number;
+    action: string;
+    moderatorId?: number;
+  };
   const record = await prisma.moderationAction.create({ data: { reportId, action, moderatorId } });
   await prisma.report.update({ where: { id: reportId }, data: { status: 'resolved' } });
   if (action === 'ban') {
     const report = await prisma.report.findUnique({ where: { id: reportId } });
     if (report) {
-      await prisma.bannedUser.create({ data: { userId: report.reportedId, reason: report.reason } });
+      await prisma.bannedUser.create({
+        data: { userId: report.reportedId, reason: report.reason },
+      });
     }
   }
   res.json(record);

@@ -14,13 +14,13 @@ router.get('/next', async (req, res) => {
 
   const swiped = await prisma.matchSwipe.findMany({
     where: { swiperId: id },
-    select: { swipedId: true }
+    select: { swipedId: true },
   });
   const exclude = [id, ...swiped.map((s: any) => s.swipedId)];
 
   const creator = await prisma.user.findFirst({
     where: { id: { notIn: exclude } },
-    select: { id: true, email: true }
+    select: { id: true, email: true },
   });
   res.json({ creator });
 });
@@ -37,7 +37,7 @@ router.post('/swipe', async (req, res) => {
   }
 
   const swipe = await prisma.matchSwipe.create({
-    data: { swiperId: userId, swipedId: targetId, liked }
+    data: { swiperId: userId, swipedId: targetId, liked },
   });
 
   let match = null;
@@ -45,18 +45,16 @@ router.post('/swipe', async (req, res) => {
 
   if (liked) {
     const reciprocal = await prisma.matchSwipe.findFirst({
-      where: { swiperId: targetId, swipedId: userId, liked: true }
+      where: { swiperId: targetId, swipedId: userId, liked: true },
     });
     if (reciprocal) {
       const [a, b] = [userId, targetId].sort((x, y) => x - y);
       const roomName = `match_${a}_${b}`;
 
       if (process.env.LIVEKIT_API_KEY && process.env.LIVEKIT_API_SECRET) {
-        const at = new AccessToken(
-          process.env.LIVEKIT_API_KEY,
-          process.env.LIVEKIT_API_SECRET,
-          { identity: String(userId) }
-        );
+        const at = new AccessToken(process.env.LIVEKIT_API_KEY, process.env.LIVEKIT_API_SECRET, {
+          identity: String(userId),
+        });
         at.addGrant({ room: roomName, roomJoin: true, canPublish: true, canSubscribe: true });
         token = at.toJwt();
       }
@@ -67,8 +65,8 @@ router.post('/swipe', async (req, res) => {
         create: {
           userAId: a,
           userBId: b,
-          roomToken: token ?? ''
-        }
+          roomToken: token ?? '',
+        },
       });
     }
   }
@@ -77,4 +75,3 @@ router.post('/swipe', async (req, res) => {
 });
 
 export default router;
-

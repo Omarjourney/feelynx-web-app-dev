@@ -48,13 +48,14 @@ const GoLiveButton = () => {
       });
 
       if (!roomRes.ok) {
+        throw new Error('Failed to create LiveKit room');
       }
 
       // Get token for creator
       const tokenRes = await fetch('/livekit/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ room: roomName, identity: `creator_${Date.now()}` })
+        body: JSON.stringify({ room: roomName, identity: `creator_${Date.now()}` }),
       });
       if (!tokenRes.ok) {
         throw new Error('Failed to get LiveKit token');
@@ -80,11 +81,7 @@ const GoLiveButton = () => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
-          className="fixed bottom-6 right-6 z-40 rounded-full bg-gradient-primary px-6 py-4 text-lg font-semibold text-primary-foreground shadow-glow transition hover:brightness-110 animate-pulse"
-          style={{
-            bottom: 'calc(env(safe-area-inset-bottom) + 1.5rem)',
-            right: 'calc(env(safe-area-inset-right) + 1.5rem)',
-          }}
+          className="fixed z-40 rounded-full bg-gradient-primary px-6 py-4 text-lg font-semibold text-primary-foreground shadow-glow transition hover:brightness-110 animate-pulse safe-fab-offset"
         >
           Go Live
         </Button>

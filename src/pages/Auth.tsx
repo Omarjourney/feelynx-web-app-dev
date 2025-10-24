@@ -23,31 +23,31 @@ export default function Auth() {
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
+
     const { error } = await signIn(email, password);
-    
+
     if (error) {
       toast.error(error.message);
     } else {
       toast.success('Successfully signed in!');
       navigate('/');
     }
-    
+
     setLoading(false);
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
+
     const { error } = await signUp(email, password);
-    
+
     if (error) {
       toast.error(error.message);
     } else {
       toast.success('Check your email to confirm your account!');
     }
-    
+
     setLoading(false);
   };
 
@@ -64,7 +64,7 @@ export default function Auth() {
               <TabsTrigger value="signin">Sign In</TabsTrigger>
               <TabsTrigger value="signup">Sign Up</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="signin">
               <form onSubmit={handleSignIn} className="space-y-4">
                 <div className="space-y-2">
@@ -90,7 +90,7 @@ export default function Auth() {
                 </Button>
               </form>
             </TabsContent>
-            
+
             <TabsContent value="signup">
               <form onSubmit={handleSignUp} className="space-y-4">
                 <div className="space-y-2">

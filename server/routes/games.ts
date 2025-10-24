@@ -29,10 +29,8 @@ router.post('/start', async (req, res) => {
     const session = await prisma.gameSession.create({ data: { gameId, room } });
     await roomService.sendData(
       room,
-      Buffer.from(
-        JSON.stringify({ type: 'game-start', sessionId: session.id })
-      ),
-      DataPacket_Kind.RELIABLE
+      Buffer.from(JSON.stringify({ type: 'game-start', sessionId: session.id })),
+      DataPacket_Kind.RELIABLE,
     );
     res.json(session);
   } catch (err) {
@@ -55,7 +53,7 @@ router.post('/:id/end', async (req, res) => {
   try {
     const session = await prisma.gameSession.update({
       where: { id: sessionId },
-      data: { endedAt: new Date() }
+      data: { endedAt: new Date() },
     });
 
     let balance: number | undefined;
@@ -70,10 +68,10 @@ router.post('/:id/end', async (req, res) => {
           type: 'game-end',
           sessionId,
           winnerId,
-          reward
-        })
+          reward,
+        }),
       ),
-      DataPacket_Kind.RELIABLE
+      DataPacket_Kind.RELIABLE,
     );
 
     res.json({ session, balance });
