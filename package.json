@@ -11,7 +11,8 @@
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "preview": "vite preview",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
+    "test:e2e": "TS_NODE_TRANSPILE_ONLY=true TS_NODE_PROJECT=tsconfig.server.json node --loader ts-node/esm --test server/routes",
     "prepare": "husky"
   },
   "dependencies": {
@@ -58,6 +59,7 @@
     "embla-carousel-react": "^8.3.0",
     "express": "^4.19.2",
     "input-otp": "^1.2.4",
+    "jsonwebtoken": "^9.0.2",
     "libsodium-wrappers": "^0.7.15",
     "livekit-client": "^2.15.4",
     "livekit-server-sdk": "^2.13.1",
