@@ -28,6 +28,8 @@ const GoLiveButton = () => {
   const [mediaError, setMediaError] = useState('');
   const [isStarting, setIsStarting] = useState(false);
 
+  const STREAM_ERROR_MESSAGE = "We couldn't start your stream. Please try again.";
+
   const handleStart = async () => {
     if (isStarting) return;
 
