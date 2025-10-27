@@ -6,10 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ToastAction } from '@/components/ui/toast';
-import { toast } from '@/hooks/use-toast';
 import { requestMediaPermissions } from '@/lib/mediaPermissions';
-import { ApiError, isApiError, request } from '@/lib/api';
+import { toast } from 'sonner';
+import { getUserMessage, toApiError } from '@/lib/errors';
 
 interface ChatMessage {
   id: number;
@@ -50,6 +49,9 @@ const LiveCreator = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ room: roomName, identity: `creator_${Date.now()}` }),
       });
+      if (!tokenRes.ok) throw await toApiError(tokenRes);
+
+      const { token } = await tokenRes.json();
 
       const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL;
       if (!wsUrl) {
@@ -79,44 +81,39 @@ const LiveCreator = () => {
 
       roomRef.current = room;
       setIsLive(true);
-      toast({ title: 'You are now live!', description: 'Viewers can now join your stream' });
+      toast.success('You are now live!', {
+        description: 'Viewers can now join your stream.',
+      });
     } catch (error) {
       console.error('Failed to start live stream:', error);
-      const apiError: ApiError | undefined = isApiError(error)
-        ? error
-        : undefined;
-      let description = apiError?.message ?? 'Please check your connection and try again';
-      let action;
+      let description = getUserMessage(error);
+      let action: { label: string; onClick: () => void } | undefined;
 
       const baseMessage = apiError?.message ?? (error instanceof Error ? error.message : '');
       if (baseMessage) {
         const msg = baseMessage.toLowerCase();
 
         if (msg.includes('token') || msg.includes('permission') || msg.includes('401')) {
-          description = 'LiveKit token rejected. Please refresh and try again';
+          description = 'LiveKit token rejected. Please refresh and try again.';
         } else if (msg.includes('cors')) {
-          description = 'WebSocket blocked by CORS. Verify server CORS settings';
+          description = 'WebSocket blocked by CORS. Verify server CORS settings.';
         } else if (
           msg.includes('network') ||
           msg.includes('fetch') ||
           msg.includes('unreachable') ||
           msg.includes('failed to connect')
         ) {
-          description = 'Server unreachable. Please check your connection and try again';
-          action = (
-            <ToastAction altText="Retry" onClick={() => startLiveStream()}>
-              Retry
-            </ToastAction>
-          );
-        } else if (!apiError) {
-          description = baseMessage;
+          description = 'Server unreachable. Please check your connection and try again.';
+          action = {
+            label: 'Retry',
+            onClick: () => startLiveStream(),
+          };
         }
       }
 
-      toast({
-        title: 'Stream failed to start',
+      setMediaError(description);
+      toast.error('Stream failed to start', {
         description,
-        variant: 'destructive',
         action,
       });
     }
@@ -131,24 +128,24 @@ const LiveCreator = () => {
 
     // Update creator status to offline
     try {
-      await request('/creators/creator_username/status', {
+      const res = await fetch('/creators/creator_username/status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isLive: false }),
       });
+      if (!res.ok) {
+        throw await toApiError(res);
+      }
     } catch (error) {
       console.error('Failed to update status:', error);
-      const apiError: ApiError | undefined = isApiError(error)
-        ? error
-        : undefined;
-      if (apiError) {
-        console.debug('API error details:', apiError);
-      }
+      toast.error(getUserMessage(error));
     }
 
     setIsLive(false);
     setIsVideoReady(false);
-    toast({ title: 'Stream ended', description: 'You are now offline' });
+    toast.success('Stream ended', {
+      description: 'You are now offline.',
+    });
     navigate('/');
   };
 

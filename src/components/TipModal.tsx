@@ -13,8 +13,15 @@ export interface TipModalProps {
 const TipModal = ({ isVisible, onClose, onSubmit }: TipModalProps) => {
   const [amount, setAmount] = useState(10);
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState('');
 
   const send = () => {
+    if (!Number.isFinite(amount) || amount <= 0) {
+      setError('Enter a valid tip amount greater than zero.');
+      return;
+    }
+
+    setError('');
     onSubmit(amount);
     setSent(true);
     setTimeout(() => {
@@ -42,7 +49,14 @@ const TipModal = ({ isVisible, onClose, onSubmit }: TipModalProps) => {
               </div>
               <div className="flex space-x-2 justify-center">
                 {[10, 50, 100].map((v) => (
-                  <Button key={v} variant="secondary" onClick={() => setAmount(v)}>
+                  <Button
+                    key={v}
+                    variant="secondary"
+                    onClick={() => {
+                      setAmount(v);
+                      setError('');
+                    }}
+                  >
                     {v}💎
                   </Button>
                 ))}
@@ -50,9 +64,14 @@ const TipModal = ({ isVisible, onClose, onSubmit }: TipModalProps) => {
               <Input
                 type="number"
                 value={amount}
-                onChange={(e) => setAmount(Number(e.target.value))}
+                onChange={(e) => {
+                  const value = Number(e.target.value);
+                  setAmount(value);
+                  setError('');
+                }}
                 className="text-center"
               />
+              {error && <p className="text-sm text-destructive text-center">{error}</p>}
               <Button className="w-full bg-gradient-primary text-primary-foreground" onClick={send}>
                 Send Tip
               </Button>

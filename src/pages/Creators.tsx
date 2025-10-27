@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { SearchFilters, SearchFiltersState } from '@/components/SearchFilters';
 import { CreatorCard } from '@/components/CreatorCard';
+import { createClientError, getUserMessage, toApiError } from '@/lib/errors';
 import type { Creator as FrontendCreator } from '@/types/creator';
 import { ApiError, isApiError, request } from '@/lib/api';
 
@@ -16,6 +17,9 @@ interface ApiCreator {
   isLive: boolean;
   followers: number;
 }
+
+const LOAD_CREATORS_ERROR_MESSAGE =
+  "We couldn't load creators right now. Please try again later.";
 
 const Creators = () => {
   const navigate = useNavigate();
@@ -50,7 +54,21 @@ const Creators = () => {
         if (filters.country !== 'all') params.set('country', filters.country);
         if (filters.specialty !== 'all') params.set('specialty', filters.specialty);
         if (filters.isLive) params.set('isLive', '1');
-        const data = await request<ApiCreator[]>(`/api/creators?${params.toString()}`);
+        const res = await fetch(`/api/creators?${params.toString()}`);
+        if (!res.ok) {
+          throw await toApiError(res, LOAD_CREATORS_ERROR_MESSAGE);
+        }
+        let data: ApiCreator[] = [];
+        const contentType = res.headers.get('Content-Type') || '';
+        if (contentType.includes('application/json')) {
+          try {
+            data = await res.json();
+          } catch (err) {
+            throw createClientError(LOAD_CREATORS_ERROR_MESSAGE, { cause: err });
+          }
+        } else {
+          throw createClientError(LOAD_CREATORS_ERROR_MESSAGE);
+        }
         const mapped = data.map((c) => ({
           id: c.id,
           name: c.name,
@@ -73,11 +91,8 @@ const Creators = () => {
           isFeatured: false,
         }));
         setCreators(mapped);
-      } catch (error) {
-        const apiError: ApiError | undefined = isApiError(error)
-          ? error
-          : undefined;
-        setError(apiError?.message ?? (error instanceof Error ? error.message : 'Failed to load creators'));
+      } catch (err) {
+        setError(getUserMessage(err, LOAD_CREATORS_ERROR_MESSAGE));
       } finally {
         setLoading(false);
       }

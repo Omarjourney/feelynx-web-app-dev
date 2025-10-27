@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { vibeCoinPackages, VibeCoinPackage } from '@/data/vibecoinPackages';
 import { PaymentReceipt } from './PaymentReceipt';
-import { ApiError, isApiError, request } from '@/lib/api';
+import { toast } from 'sonner';
+import { getUserMessage, toApiError } from '@/lib/errors';
 
 interface VibeCoinPackagesProps {
   /**
@@ -16,7 +17,7 @@ interface VibeCoinPackagesProps {
   /**
    * Callback fired when a package is purchased.
    */
-  onPurchase?: (pkg: VibeCoinPackage) => void;
+  onPurchase?: (pkg: VibeCoinPackage) => void | Promise<void>;
 }
 
 export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPackagesProps) => {
@@ -25,9 +26,30 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
     receiptUrl: string;
     disputeUrl: string;
   } | null>(null);
+  const [loadingPackageId, setLoadingPackageId] = useState<number | null>(null);
+  const [purchaseError, setPurchaseError] = useState<string | null>(null);
 
   const handlePurchase = async (packageData: VibeCoinPackage) => {
+    setPurchaseError(null);
+
+    if (onPurchase) {
+      try {
+        setLoadingPackageId(packageData.id);
+        await Promise.resolve(onPurchase(packageData));
+        toast.success('Purchase complete!');
+      } catch (error) {
+        console.error('Custom purchase handler failed', error);
+        const message = getUserMessage(error);
+        setPurchaseError(message);
+        toast.error(message);
+      } finally {
+        setLoadingPackageId(null);
+      }
+      return;
+    }
+
     try {
+      setLoadingPackageId(packageData.id);
       console.log('Purchasing:', packageData);
 
       const { paymentIntentId } = await request<{ paymentIntentId: string }>('/payments/create-intent', {
@@ -41,23 +63,30 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
         }),
       });
 
-      const data = await request<{ receiptUrl: string; disputeUrl: string }>('/payments/success', {
+      if (!response.ok) throw await toApiError(response);
+
+      const { paymentIntentId } = await response.json();
+
+      const successRes = await fetch('/payments/success', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ paymentIntentId }),
       });
 
+      if (!successRes.ok) {
+        throw await toApiError(successRes);
+      }
+
+      const data = await successRes.json();
       setReceipt({ receiptUrl: data.receiptUrl, disputeUrl: data.disputeUrl });
+      toast.success('Purchase complete! Your receipt is ready.');
     } catch (error) {
       console.error('Purchase failed:', error);
-      const apiError: ApiError | undefined = isApiError(error)
-        ? error
-        : undefined;
-      // In a real app, show error toast
-      if (apiError) {
-        console.debug('API error details:', apiError);
-      }
-      // In a real app, show error toast
+      const message = getUserMessage(error);
+      setPurchaseError(message);
+      toast.error(message);
+    } finally {
+      setLoadingPackageId(null);
     }
   };
 
@@ -113,9 +142,10 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
                     : 'bg-secondary hover:bg-secondary/80'
                 }`}
                 size="lg"
-                onClick={() => (onPurchase ? onPurchase(pkg) : handlePurchase(pkg))}
+                onClick={() => handlePurchase(pkg)}
+                disabled={loadingPackageId === pkg.id}
               >
-                Purchase Now
+                {loadingPackageId === pkg.id ? 'Processing…' : 'Purchase Now'}
               </Button>
               {platform === 'app' && (
                 <div className="text-xs text-muted-foreground mt-2">
@@ -126,6 +156,11 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
           </Card>
         ))}
       </div>
+      {purchaseError && (
+        <p className="mt-4 text-sm text-center text-destructive" role="alert">
+          {purchaseError}
+        </p>
+      )}
       {receipt && (
         <PaymentReceipt receiptUrl={receipt.receiptUrl} disputeUrl={receipt.disputeUrl} />
       )}
