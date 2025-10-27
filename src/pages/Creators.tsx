@@ -5,6 +5,7 @@ import { SearchFilters, SearchFiltersState } from '@/components/SearchFilters';
 import { CreatorCard } from '@/components/CreatorCard';
 import { createClientError, getUserMessage, toApiError } from '@/lib/errors';
 import type { Creator as FrontendCreator } from '@/types/creator';
+import { ApiError, isApiError, request } from '@/lib/api';
 
 interface ApiCreator {
   id: number;

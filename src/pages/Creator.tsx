@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import TierCard from '@/components/TierCard';
 import { supabase } from '@/integrations/supabase/client';
+import { ApiError, isApiError, request } from '@/lib/api';
 
 interface Tier {
   id: string;
@@ -27,23 +28,36 @@ const Creator = () => {
   }, [id]);
 
   const subscribe = async (tierId: string) => {
-    const res = await fetch('/subscriptions/checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ priceId: tierId, tierId }),
-    });
-    const json = await res.json();
-    if (json.url) {
-      window.location.href = json.url;
+    try {
+      const json = await request<{ url?: string }>('/subscriptions/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ priceId: tierId, tierId }),
+      });
+      if (json?.url) {
+        window.location.href = json.url;
+      }
+    } catch (error) {
+      const apiError: ApiError | undefined = isApiError(error)
+        ? error
+        : undefined;
+      alert(apiError?.message ?? (error instanceof Error ? error.message : 'Failed to subscribe'));
     }
   };
 
   const cancel = async (tierId: string) => {
-    await fetch('/subscriptions/cancel', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tierId }),
-    });
+    try {
+      await request<void>('/subscriptions/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tierId }),
+      });
+    } catch (error) {
+      const apiError: ApiError | undefined = isApiError(error)
+        ? error
+        : undefined;
+      alert(apiError?.message ?? (error instanceof Error ? error.message : 'Failed to cancel subscription'));
+    }
   };
 
   return (

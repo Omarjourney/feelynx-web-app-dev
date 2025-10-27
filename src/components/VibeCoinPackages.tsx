@@ -52,7 +52,7 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
       setLoadingPackageId(packageData.id);
       console.log('Purchasing:', packageData);
 
-      const response = await fetch('/payments/create-intent', {
+      const { paymentIntentId } = await request<{ paymentIntentId: string }>('/payments/create-intent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

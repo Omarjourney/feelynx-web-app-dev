@@ -44,7 +44,7 @@ const LiveCreator = () => {
       setIsVideoReady(false);
 
       // Get token for creator
-      const tokenRes = await fetch('/livekit/token', {
+      const { token } = await request<{ token: string }>('/livekit/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ room: roomName, identity: `creator_${Date.now()}` }),
@@ -89,8 +89,9 @@ const LiveCreator = () => {
       let description = getUserMessage(error);
       let action: { label: string; onClick: () => void } | undefined;
 
-      if (error instanceof Error) {
-        const msg = error.message.toLowerCase();
+      const baseMessage = apiError?.message ?? (error instanceof Error ? error.message : '');
+      if (baseMessage) {
+        const msg = baseMessage.toLowerCase();
 
         if (msg.includes('token') || msg.includes('permission') || msg.includes('401')) {
           description = 'LiveKit token rejected. Please refresh and try again.';

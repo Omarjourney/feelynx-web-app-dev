@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { ApiError, isApiError, request } from '@/lib/api';
 
 interface Report {
   id: number;
@@ -13,19 +14,40 @@ const Moderation = () => {
   const [reports, setReports] = useState<Report[]>([]);
 
   useEffect(() => {
-    fetch('/moderation/reports')
-      .then((r) => r.json())
-      .then(setReports)
-      .catch(() => {});
+    const loadReports = async () => {
+      try {
+        const data = await request<Report[]>('/moderation/reports');
+        setReports(data);
+      } catch (error) {
+        const apiError: ApiError | undefined = isApiError(error)
+          ? error
+          : undefined;
+        console.error('Failed to fetch reports', error);
+        if (apiError) {
+          console.debug('API error details:', apiError);
+        }
+      }
+    };
+    loadReports();
   }, []);
 
   const act = async (reportId: number, action: string) => {
-    await fetch('/moderation/actions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ reportId, action }),
-    });
-    setReports((r) => r.filter((rep) => rep.id !== reportId));
+    try {
+      await request('/moderation/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reportId, action }),
+      });
+      setReports((r) => r.filter((rep) => rep.id !== reportId));
+    } catch (error) {
+      const apiError: ApiError | undefined = isApiError(error)
+        ? error
+        : undefined;
+      console.error('Failed to perform moderation action', error);
+      if (apiError) {
+        console.debug('API error details:', apiError);
+      }
+    }
   };
 
   return (

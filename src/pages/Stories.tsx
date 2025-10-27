@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Lock } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
+import { ApiError, isApiError, request } from '@/lib/api';
 
 interface Story {
   id: string;
@@ -19,10 +20,22 @@ const Stories = () => {
   const startY = useRef<number | null>(null);
 
   useEffect(() => {
-    fetch('/stories')
-      .then((r) => r.json())
-      .then((data) => setStories(data))
-      .catch(() => setStories([]));
+    const loadStories = async () => {
+      try {
+        const data = await request<Story[]>('/stories');
+        setStories(data);
+      } catch (error) {
+        const apiError: ApiError | undefined = isApiError(error)
+          ? error
+          : undefined;
+        console.error('Failed to load stories', error);
+        if (apiError) {
+          console.debug('API error details:', apiError);
+        }
+        setStories([]);
+      }
+    };
+    loadStories();
   }, []);
 
   useEffect(() => {

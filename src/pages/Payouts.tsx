@@ -2,18 +2,26 @@ import { useState, ChangeEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { ApiError, isApiError, request } from '@/lib/api';
 
 const Payouts = () => {
   const [balance] = useState(0);
   const [amount, setAmount] = useState('');
 
   const requestPayout = async () => {
-    await fetch('/payouts/request', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ creatorId: 1, amount: Number(amount) }),
-    });
-    setAmount('');
+    try {
+      await request<void>('/payouts/request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ creatorId: 1, amount: Number(amount) }),
+      });
+      setAmount('');
+    } catch (error) {
+      const apiError: ApiError | undefined = isApiError(error)
+        ? error
+        : undefined;
+      alert(apiError?.message ?? (error instanceof Error ? error.message : 'Failed to request payout'));
+    }
   };
 
   const handleTaxUpload = (e: ChangeEvent<HTMLInputElement>) => {

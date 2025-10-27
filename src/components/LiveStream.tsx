@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { ApiError, isApiError, request } from '@/lib/api';
 import TipModal from './TipModal';
 import ParticipantsList from './ParticipantsList';
 import ReportButton from './ReportButton';
@@ -57,13 +58,11 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
 
   const handleConnect = async () => {
     try {
-      const tokenRes = await fetch('/livekit/token', {
+      const { token } = await request<{ token: string }>('/livekit/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ room: roomName, identity: participantIdRef.current }),
       });
-      if (!tokenRes.ok) throw new Error('Failed to get token');
-      const { token } = await tokenRes.json();
 
       const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL;
       if (!wsUrl) {
@@ -82,6 +81,10 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
       setIsConnected(true);
     } catch (error) {
       console.error('Connection failed:', error);
+      const apiError: ApiError | undefined = isApiError(error)
+        ? error
+        : undefined;
+      alert(apiError?.message ?? (error instanceof Error ? error.message : 'Failed to connect'));
     }
   };
 
@@ -91,7 +94,7 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
     return () => {
       const activeRoom = roomRef.current;
       if (activeRoom) {
-        fetch(`/rooms/${roomName}/leave`, {
+        request(`/rooms/${roomName}/leave`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ role: 'viewer', identity }),
