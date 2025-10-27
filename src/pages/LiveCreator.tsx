@@ -9,6 +9,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { ToastAction } from '@/components/ui/toast';
 import { toast } from '@/hooks/use-toast';
 import { requestMediaPermissions } from '@/lib/mediaPermissions';
+import { ApiError, isApiError, request } from '@/lib/api';
 
 interface ChatMessage {
   id: number;
@@ -44,14 +45,11 @@ const LiveCreator = () => {
       setIsVideoReady(false);
 
       // Get token for creator
-      const tokenRes = await fetch('/livekit/token', {
+      const { token } = await request<{ token: string }>('/livekit/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ room: roomName, identity: `creator_${Date.now()}` }),
       });
-      if (!tokenRes.ok) throw new Error('Failed to get token');
-
-      const { token } = await tokenRes.json();
 
       const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL;
       if (!wsUrl) {
@@ -84,11 +82,15 @@ const LiveCreator = () => {
       toast({ title: 'You are now live!', description: 'Viewers can now join your stream' });
     } catch (error) {
       console.error('Failed to start live stream:', error);
-      let description = 'Please check your connection and try again';
+      const apiError: ApiError | undefined = isApiError(error)
+        ? error
+        : undefined;
+      let description = apiError?.message ?? 'Please check your connection and try again';
       let action;
 
-      if (error instanceof Error) {
-        const msg = error.message.toLowerCase();
+      const baseMessage = apiError?.message ?? (error instanceof Error ? error.message : '');
+      if (baseMessage) {
+        const msg = baseMessage.toLowerCase();
 
         if (msg.includes('token') || msg.includes('permission') || msg.includes('401')) {
           description = 'LiveKit token rejected. Please refresh and try again';
@@ -106,8 +108,8 @@ const LiveCreator = () => {
               Retry
             </ToastAction>
           );
-        } else {
-          description = error.message;
+        } else if (!apiError) {
+          description = baseMessage;
         }
       }
 
@@ -129,13 +131,19 @@ const LiveCreator = () => {
 
     // Update creator status to offline
     try {
-      await fetch('/creators/creator_username/status', {
+      await request('/creators/creator_username/status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isLive: false }),
       });
     } catch (error) {
       console.error('Failed to update status:', error);
+      const apiError: ApiError | undefined = isApiError(error)
+        ? error
+        : undefined;
+      if (apiError) {
+        console.debug('API error details:', apiError);
+      }
     }
 
     setIsLive(false);

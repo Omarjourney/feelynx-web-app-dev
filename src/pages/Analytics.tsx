@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { ApiError, isApiError, request } from '@/lib/api';
 import {
   LineChart,
   Line,
@@ -23,10 +24,12 @@ const Analytics = () => {
   const [comparison, setComparison] = useState({ viewer: 0, revenue: 0, churn: 0 });
 
   useEffect(() => {
-    fetch('/analytics/creators/demo/daily')
-      .then((res) => res.json())
-      .then((json) => {
-        const perDay = (json.perDay || {}) as Record<string, Omit<DayMetrics, 'date'>>;
+    const loadAnalytics = async () => {
+      try {
+        const json = await request<{ perDay?: Record<string, Omit<DayMetrics, 'date'>> }>(
+          '/analytics/creators/demo/daily',
+        );
+        const perDay = json.perDay || {};
         const arr: DayMetrics[] = Object.entries(perDay)
           .map(([date, metrics]) => ({
             date,
@@ -43,7 +46,17 @@ const Analytics = () => {
             churn: last.subscriber_churn - prev.subscriber_churn,
           });
         }
-      });
+      } catch (error) {
+        const apiError: ApiError | undefined = isApiError(error)
+          ? error
+          : undefined;
+        console.error('Failed to load analytics data', error);
+        if (apiError) {
+          console.debug('API error details:', apiError);
+        }
+      }
+    };
+    loadAnalytics();
   }, []);
 
   const tips: string[] = [];

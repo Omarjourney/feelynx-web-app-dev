@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Room, RoomEvent, Track } from 'livekit-client';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
+import { ApiError, isApiError, request } from '@/lib/api';
 
 const PKBattle = () => {
   const { battleId } = useParams<{ battleId: string }>();
@@ -37,7 +38,7 @@ const PKBattle = () => {
     const connect = async () => {
       if (!battleId) return;
       try {
-        const tokenRes = await fetch('/livekit/token', {
+        const { token } = await request<{ token: string }>('/livekit/token', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -45,8 +46,6 @@ const PKBattle = () => {
             identity: `viewer_${Date.now()}`,
           }),
         });
-        if (!tokenRes.ok) return;
-        const { token } = await tokenRes.json();
         const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL;
         if (!wsUrl) {
           throw new Error('LiveKit WebSocket URL is not configured');
@@ -73,8 +72,14 @@ const PKBattle = () => {
             console.error('Failed to parse PK battle timer update', error);
           }
         });
-      } catch (err) {
-        console.error('LiveKit connect failed', err);
+      } catch (error) {
+        const apiError: ApiError | undefined = isApiError(error)
+          ? error
+          : undefined;
+        console.error('LiveKit connect failed', error);
+        if (apiError) {
+          console.debug('API error details:', apiError);
+        }
       }
     };
     connect();
@@ -92,10 +97,18 @@ const PKBattle = () => {
 
   const updateScore = (a: number, b: number) => {
     if (!battleId) return;
-    fetch(`/pk-battles/${battleId}/scores`, {
+    request(`/pk-battles/${battleId}/scores`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ scoreA: a, scoreB: b }),
+    }).catch((error) => {
+      const apiError: ApiError | undefined = isApiError(error)
+        ? error
+        : undefined;
+      console.error('Failed to update PK battle score', error);
+      if (apiError) {
+        console.debug('API error details:', apiError);
+      }
     });
   };
 

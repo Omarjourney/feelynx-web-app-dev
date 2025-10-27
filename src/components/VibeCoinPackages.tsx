@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { vibeCoinPackages, VibeCoinPackage } from '@/data/vibecoinPackages';
 import { PaymentReceipt } from './PaymentReceipt';
+import { ApiError, isApiError, request } from '@/lib/api';
 
 interface VibeCoinPackagesProps {
   /**
@@ -29,7 +30,7 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
     try {
       console.log('Purchasing:', packageData);
 
-      const response = await fetch('/payments/create-intent', {
+      const { paymentIntentId } = await request<{ paymentIntentId: string }>('/payments/create-intent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -40,24 +41,22 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to create payment intent');
-
-      const { paymentIntentId } = await response.json();
-
-      const successRes = await fetch('/payments/success', {
+      const data = await request<{ receiptUrl: string; disputeUrl: string }>('/payments/success', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ paymentIntentId }),
       });
 
-      if (successRes.ok) {
-        const data = await successRes.json();
-        setReceipt({ receiptUrl: data.receiptUrl, disputeUrl: data.disputeUrl });
-      } else {
-        console.error('Payment verification failed');
-      }
+      setReceipt({ receiptUrl: data.receiptUrl, disputeUrl: data.disputeUrl });
     } catch (error) {
       console.error('Purchase failed:', error);
+      const apiError: ApiError | undefined = isApiError(error)
+        ? error
+        : undefined;
+      // In a real app, show error toast
+      if (apiError) {
+        console.debug('API error details:', apiError);
+      }
       // In a real app, show error toast
     }
   };

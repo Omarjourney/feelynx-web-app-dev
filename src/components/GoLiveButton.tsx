@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { requestMediaPermissions } from '@/lib/mediaPermissions';
+import { ApiError, isApiError, request } from '@/lib/api';
 
 const GoLiveButton = () => {
   const [open, setOpen] = useState(false);
@@ -37,7 +38,7 @@ const GoLiveButton = () => {
       const roomName = `live_creator_${Date.now()}`;
 
       // Create room first
-      const roomRes = await fetch('/livekit/rooms', {
+      await request('/livekit/rooms', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -47,22 +48,15 @@ const GoLiveButton = () => {
         }),
       });
 
-      if (!roomRes.ok) {
-        throw new Error('Failed to create LiveKit room');
-      }
-
       // Get token for creator
-      const tokenRes = await fetch('/livekit/token', {
+      await request('/livekit/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ room: roomName, identity: `creator_${Date.now()}` }),
       });
-      if (!tokenRes.ok) {
-        throw new Error('Failed to get LiveKit token');
-      }
 
       // Update creator status to live
-      await fetch('/creators/creator_username/status', {
+      await request('/creators/creator_username/status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isLive: true }),
@@ -71,9 +65,12 @@ const GoLiveButton = () => {
       setOpen(false);
       // Navigate to live streaming interface with room info
       window.location.href = `/live-creator?room=${roomName}`;
-    } catch (err) {
-      console.error('Failed to start stream:', err);
-      setMediaError(err instanceof Error ? err.message : String(err));
+    } catch (error) {
+      console.error('Failed to start stream:', error);
+      const apiError: ApiError | undefined = isApiError(error)
+        ? error
+        : undefined;
+      setMediaError(apiError?.message ?? (error instanceof Error ? error.message : String(error)));
     }
   };
 

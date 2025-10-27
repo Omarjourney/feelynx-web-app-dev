@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSwipeable } from 'react-swipeable';
 import { Room } from 'livekit-client';
+import { ApiError, isApiError, request } from '@/lib/api';
 
 interface Creator {
   id: number;
@@ -15,10 +16,19 @@ const Match = () => {
   const current = creators[index];
 
   const loadNext = async () => {
-    const res = await fetch(`/match/next?userId=1`);
-    const data = await res.json();
-    if (data.creator) {
-      setCreators((prev) => [...prev, data.creator]);
+    try {
+      const data = await request<{ creator?: Creator }>(`/match/next?userId=1`);
+      if (data.creator) {
+        setCreators((prev) => [...prev, data.creator]);
+      }
+    } catch (error) {
+      const apiError: ApiError | undefined = isApiError(error)
+        ? error
+        : undefined;
+      console.error('Failed to load next match', error);
+      if (apiError) {
+        console.debug('API error details:', apiError);
+      }
     }
   };
 
@@ -46,23 +56,33 @@ const Match = () => {
 
   const handleSwipe = async (liked: boolean) => {
     if (!current) return;
-    const res = await fetch('/match/swipe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId: 1, targetId: current.id, liked }),
-    });
-    const data = await res.json();
-    if (data.token) {
-      notify();
-      const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL;
-      const newRoom = new Room();
-      await newRoom.connect(wsUrl, data.token);
-      await newRoom.localParticipant.setMicrophoneEnabled(true);
-      await newRoom.localParticipant.setCameraEnabled(true);
-      setRoom(newRoom);
+    try {
+      const data = await request<{ token?: string }>('/match/swipe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: 1, targetId: current.id, liked }),
+      });
+      if (data.token) {
+        notify();
+        const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL;
+        const newRoom = new Room();
+        await newRoom.connect(wsUrl, data.token);
+        await newRoom.localParticipant.setMicrophoneEnabled(true);
+        await newRoom.localParticipant.setCameraEnabled(true);
+        setRoom(newRoom);
+      }
+    } catch (error) {
+      const apiError: ApiError | undefined = isApiError(error)
+        ? error
+        : undefined;
+      console.error('Failed to submit swipe', error);
+      if (apiError) {
+        console.debug('API error details:', apiError);
+      }
+    } finally {
+      setIndex((i) => i + 1);
+      loadNext();
     }
-    setIndex((i) => i + 1);
-    loadNext();
   };
 
   const handlers = useSwipeable({

@@ -4,6 +4,7 @@ import { Navigation } from '@/components/Navigation';
 import { SearchFilters, SearchFiltersState } from '@/components/SearchFilters';
 import { CreatorCard } from '@/components/CreatorCard';
 import type { Creator as FrontendCreator } from '@/types/creator';
+import { ApiError, isApiError, request } from '@/lib/api';
 
 interface ApiCreator {
   id: number;
@@ -49,19 +50,7 @@ const Creators = () => {
         if (filters.country !== 'all') params.set('country', filters.country);
         if (filters.specialty !== 'all') params.set('specialty', filters.specialty);
         if (filters.isLive) params.set('isLive', '1');
-        const res = await fetch(`/api/creators?${params.toString()}`);
-        if (!res.ok) throw new Error('Failed to fetch creators');
-        let data: ApiCreator[] = [];
-        const contentType = res.headers.get('Content-Type') || '';
-        if (contentType.includes('application/json')) {
-          try {
-            data = await res.json();
-          } catch (err) {
-            throw new Error('Invalid creators response');
-          }
-        } else {
-          throw new Error('Invalid creators response');
-        }
+        const data = await request<ApiCreator[]>(`/api/creators?${params.toString()}`);
         const mapped = data.map((c) => ({
           id: c.id,
           name: c.name,
@@ -84,8 +73,11 @@ const Creators = () => {
           isFeatured: false,
         }));
         setCreators(mapped);
-      } catch (err) {
-        setError((err as Error).message);
+      } catch (error) {
+        const apiError: ApiError | undefined = isApiError(error)
+          ? error
+          : undefined;
+        setError(apiError?.message ?? (error instanceof Error ? error.message : 'Failed to load creators'));
       } finally {
         setLoading(false);
       }

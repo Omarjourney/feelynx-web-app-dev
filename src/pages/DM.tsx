@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import useEncryption from '@/hooks/useEncryption';
+import { ApiError, isApiError, request } from '@/lib/api';
 
 interface Message {
   id: string;
@@ -25,27 +26,45 @@ const DM = () => {
 
   const fetchMessages = useCallback(
     async (tid: string) => {
-      const res = await fetch(`/dm/threads/${tid}/messages`);
-      const data: Message[] = await res.json();
-      const decrypted = data.map((m) => ({
-        ...m,
-        text: ready ? decrypt(m.cipher_text, m.nonce) : ''
-      }));
-      setMessages(decrypted);
+      try {
+        const data = await request<Message[]>(`/dm/threads/${tid}/messages`);
+        const decrypted = data.map((m) => ({
+          ...m,
+          text: ready ? decrypt(m.cipher_text, m.nonce) : '',
+        }));
+        setMessages(decrypted);
+      } catch (error) {
+        const apiError: ApiError | undefined = isApiError(error)
+          ? error
+          : undefined;
+        console.error('Failed to fetch messages', error);
+        if (apiError) {
+          console.debug('API error details:', apiError);
+        }
+      }
     },
     [decrypt, ready]
   );
 
   const createThread = useCallback(
     async (recipient: string) => {
-      const res = await fetch('/dm/threads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ recipientId: recipient })
-      });
-      const data = await res.json();
-      setThreadId(data.id);
-      fetchMessages(data.id);
+      try {
+        const data = await request<{ id: string }>('/dm/threads', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ recipientId: recipient })
+        });
+        setThreadId(data.id);
+        fetchMessages(data.id);
+      } catch (error) {
+        const apiError: ApiError | undefined = isApiError(error)
+          ? error
+          : undefined;
+        console.error('Failed to create DM thread', error);
+        if (apiError) {
+          console.debug('API error details:', apiError);
+        }
+      }
     },
     [fetchMessages]
   );
@@ -63,50 +82,52 @@ const DM = () => {
     }
   }, [createThread, fetchMessages]);
 
-  const createThread = async (recipient: string) => {
-    const res = await fetch('/dm/threads', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ recipientId: recipient }),
-    });
-    const data = await res.json();
-    setThreadId(data.id);
-    fetchMessages(data.id);
-  };
-
-  const fetchMessages = async (tid: string) => {
-    const res = await fetch(`/dm/threads/${tid}/messages`);
-    const data: Message[] = await res.json();
-    const decrypted = data.map((m) => ({
-      ...m,
-      text: ready ? decrypt(m.cipher_text, m.nonce) : '',
-    }));
-    setMessages(decrypted);
-  };
-
-  const send = async () => {
-    if (!threadId || !recipientId) return;
-    const { cipher, nonce } = encrypt(input);
-    await fetch(`/dm/threads/${threadId}/messages`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        cipher_text: cipher,
-        nonce,
-        recipientId,
-        burnAfterReading: burn,
-      }),
-    });
-    setInput('');
-    setBurn(false);
-    fetchMessages(threadId);
-  }, [burn, encrypt, fetchMessages, input, recipientId, threadId]);
+  const send = useCallback(
+    async () => {
+      if (!threadId || !recipientId) return;
+      const { cipher, nonce } = encrypt(input);
+      try {
+        await request(`/dm/threads/${threadId}/messages`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            cipher_text: cipher,
+            nonce,
+            recipientId,
+            burnAfterReading: burn,
+          }),
+        });
+        setInput('');
+        setBurn(false);
+        fetchMessages(threadId);
+      } catch (error) {
+        const apiError: ApiError | undefined = isApiError(error)
+          ? error
+          : undefined;
+        console.error('Failed to send message', error);
+        if (apiError) {
+          console.debug('API error details:', apiError);
+        }
+      }
+    },
+    [burn, encrypt, fetchMessages, input, recipientId, threadId]
+  );
 
   const markRead = useCallback(
     async (id: string) => {
-      await fetch(`/dm/messages/${id}/read`, { method: 'POST' });
-      if (threadId) {
-        fetchMessages(threadId);
+      try {
+        await request(`/dm/messages/${id}/read`, { method: 'POST' });
+        if (threadId) {
+          fetchMessages(threadId);
+        }
+      } catch (error) {
+        const apiError: ApiError | undefined = isApiError(error)
+          ? error
+          : undefined;
+        console.error('Failed to mark message as read', error);
+        if (apiError) {
+          console.debug('API error details:', apiError);
+        }
       }
     },
     [fetchMessages, threadId]

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { ApiError, isApiError, request } from '@/lib/api';
 
 const DMCA = () => {
   const [form, setForm] = useState({
@@ -16,12 +17,19 @@ const DMCA = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await fetch('/dmca', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form),
-    });
-    setSubmitted(true);
+    try {
+      await request('/dmca', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      setSubmitted(true);
+    } catch (error) {
+      const apiError: ApiError | undefined = isApiError(error)
+        ? error
+        : undefined;
+      alert(apiError?.message ?? (error instanceof Error ? error.message : 'Failed to submit DMCA notice'));
+    }
   };
 
   if (submitted) {
