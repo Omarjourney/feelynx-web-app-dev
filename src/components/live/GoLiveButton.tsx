@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { requestMediaPermissions } from '@/lib/mediaPermissions';
+import { createLivekitRoom, requestCreatorToken, updateCreatorLiveStatus } from '@/lib/livekit/host';
 
 const GoLiveButton = () => {
   const [open, setOpen] = useState(false);
@@ -27,62 +28,29 @@ const GoLiveButton = () => {
 
   const handleStart = async () => {
     try {
-      // Get media permissions first
       if (mediaEnabled) {
         await requestMediaPermissions();
       }
       setMediaError('');
 
-      // Create a live room for the creator
       const roomName = `live_creator_${Date.now()}`;
 
-      // Create room first
-      const roomRes = await fetch('/livekit/rooms', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: roomName,
-          emptyTimeout: 300, // 5 minutes
-          maxParticipants: 1000,
-        }),
-      });
-
-      if (!roomRes.ok) {
-        throw new Error('Failed to create LiveKit room');
-      }
-
-      // Get token for creator
-      const tokenRes = await fetch('/livekit/token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ room: roomName, identity: `creator_${Date.now()}` }),
-      });
-      if (!tokenRes.ok) {
-        throw new Error('Failed to get LiveKit token');
-      }
-
-      // Update creator status to live
-      await fetch('/creators/creator_username/status', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isLive: true }),
-      });
+      await createLivekitRoom({ name: roomName });
+      await requestCreatorToken(roomName, `creator_${Date.now()}`);
+      await updateCreatorLiveStatus('creator_username', true);
 
       setOpen(false);
-      // Navigate to live streaming interface with room info
       window.location.href = `/live-creator?room=${roomName}`;
-    } catch (err) {
-      console.error('Failed to start stream:', err);
-      setMediaError(err instanceof Error ? err.message : String(err));
+    } catch (error) {
+      console.error('Failed to start stream:', error);
+      setMediaError(error instanceof Error ? error.message : String(error));
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          className="fixed z-40 rounded-full bg-gradient-primary px-6 py-4 text-lg font-semibold text-primary-foreground shadow-glow transition hover:brightness-110 animate-pulse safe-fab-offset"
-        >
+        <Button className="fixed z-40 rounded-full bg-gradient-primary px-6 py-4 text-lg font-semibold text-primary-foreground shadow-glow transition hover:brightness-110 animate-pulse safe-fab-offset">
           Go Live
         </Button>
       </DialogTrigger>
@@ -120,10 +88,7 @@ const GoLiveButton = () => {
             </label>
           </div>
           {mediaError && <p className="text-sm text-destructive">{mediaError}</p>}
-          <Button
-            className="w-full bg-gradient-primary text-primary-foreground"
-            onClick={handleStart}
-          >
+          <Button className="w-full bg-gradient-primary text-primary-foreground" onClick={handleStart}>
             Start Stream
           </Button>
         </div>

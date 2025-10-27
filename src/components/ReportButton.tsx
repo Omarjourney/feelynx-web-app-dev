@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { submitReport } from '@/lib/moderation/report';
 
 interface ReportButtonProps {
   targetId: number | string;
@@ -9,12 +10,14 @@ const ReportButton = ({ targetId, type }: ReportButtonProps) => {
   const handleClick = async () => {
     const reason = window.prompt('Reason for report?');
     if (!reason) return;
-    await fetch('/moderation/report', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ reportedId: targetId, type, reason }),
-    });
-    alert('Report submitted');
+
+    try {
+      await submitReport({ reportedId: targetId, type, reason });
+      alert('Report submitted');
+    } catch (error) {
+      console.error('Failed to submit report:', error);
+      alert('Unable to submit report. Please try again later.');
+    }
   };
 
   return (

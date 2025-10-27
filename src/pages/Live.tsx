@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { creators } from '@/data/creators';
-import { LiveStream } from '@/components/LiveStream';
+import { LiveStream } from '@/components/live';
 import { Navigation } from '@/components/Navigation';
 
 const Live = () => {

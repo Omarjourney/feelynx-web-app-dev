@@ -36,21 +36,19 @@ const TipModal = ({ isVisible, onClose, onSubmit }: TipModalProps) => {
           ) : (
             <div className="space-y-4">
               <div className="text-center">
-                <Badge className="bg-gradient-primary text-primary-foreground">
-                  Balance: 1000💎
-                </Badge>
+                <Badge className="bg-gradient-primary text-primary-foreground">Balance: 1000💎</Badge>
               </div>
               <div className="flex space-x-2 justify-center">
-                {[10, 50, 100].map((v) => (
-                  <Button key={v} variant="secondary" onClick={() => setAmount(v)}>
-                    {v}💎
+                {[10, 50, 100].map((value) => (
+                  <Button key={value} variant="secondary" onClick={() => setAmount(value)}>
+                    {value}💎
                   </Button>
                 ))}
               </div>
               <Input
                 type="number"
                 value={amount}
-                onChange={(e) => setAmount(Number(e.target.value))}
+                onChange={(event) => setAmount(Number(event.target.value))}
                 className="text-center"
               />
               <Button className="w-full bg-gradient-primary text-primary-foreground" onClick={send}>
