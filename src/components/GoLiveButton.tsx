@@ -18,12 +18,15 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { requestMediaPermissions } from '@/lib/mediaPermissions';
+import { getUserMessage, toApiError } from '@/lib/errors';
 
 const GoLiveButton = () => {
   const [open, setOpen] = useState(false);
   const [mediaEnabled, setMediaEnabled] = useState(true);
   const [category, setCategory] = useState('chat');
   const [mediaError, setMediaError] = useState('');
+
+  const STREAM_ERROR_MESSAGE = "We couldn't start your stream. Please try again.";
 
   const handleStart = async () => {
     try {
@@ -48,7 +51,8 @@ const GoLiveButton = () => {
       });
 
       if (!roomRes.ok) {
-        throw new Error('Failed to create LiveKit room');
+        const error = await toApiError(roomRes, STREAM_ERROR_MESSAGE);
+        throw error;
       }
 
       // Get token for creator
@@ -58,22 +62,31 @@ const GoLiveButton = () => {
         body: JSON.stringify({ room: roomName, identity: `creator_${Date.now()}` }),
       });
       if (!tokenRes.ok) {
-        throw new Error('Failed to get LiveKit token');
+        const error = await toApiError(tokenRes, STREAM_ERROR_MESSAGE);
+        throw error;
       }
 
       // Update creator status to live
-      await fetch('/creators/creator_username/status', {
+      const statusRes = await fetch('/creators/creator_username/status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isLive: true }),
       });
+
+      if (!statusRes.ok) {
+        const error = await toApiError(
+          statusRes,
+          'Your stream started, but we could not update your live status. Please try again.',
+        );
+        throw error;
+      }
 
       setOpen(false);
       // Navigate to live streaming interface with room info
       window.location.href = `/live-creator?room=${roomName}`;
     } catch (err) {
       console.error('Failed to start stream:', err);
-      setMediaError(err instanceof Error ? err.message : String(err));
+      setMediaError(getUserMessage(err, STREAM_ERROR_MESSAGE));
     }
   };
 
