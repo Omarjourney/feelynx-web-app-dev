@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { requestMediaPermissions } from '@/lib/mediaPermissions';
+import { toast } from 'sonner';
 import { getUserMessage, toApiError } from '@/lib/errors';
 
 const GoLiveButton = () => {
@@ -25,68 +26,66 @@ const GoLiveButton = () => {
   const [mediaEnabled, setMediaEnabled] = useState(true);
   const [category, setCategory] = useState('chat');
   const [mediaError, setMediaError] = useState('');
+  const [isStarting, setIsStarting] = useState(false);
 
   const STREAM_ERROR_MESSAGE = "We couldn't start your stream. Please try again.";
 
   const handleStart = async () => {
+    if (isStarting) return;
+
+    setIsStarting(true);
+
     try {
-      // Get media permissions first
       if (mediaEnabled) {
         await requestMediaPermissions();
       }
       setMediaError('');
 
-      // Create a live room for the creator
       const roomName = `live_creator_${Date.now()}`;
 
-      // Create room first
       const roomRes = await fetch('/livekit/rooms', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: roomName,
-          emptyTimeout: 300, // 5 minutes
+          emptyTimeout: 300,
           maxParticipants: 1000,
         }),
       });
 
       if (!roomRes.ok) {
-        const error = await toApiError(roomRes, STREAM_ERROR_MESSAGE);
-        throw error;
+        throw await toApiError(roomRes);
       }
 
-      // Get token for creator
       const tokenRes = await fetch('/livekit/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ room: roomName, identity: `creator_${Date.now()}` }),
       });
       if (!tokenRes.ok) {
-        const error = await toApiError(tokenRes, STREAM_ERROR_MESSAGE);
-        throw error;
+        throw await toApiError(tokenRes);
       }
 
-      // Update creator status to live
       const statusRes = await fetch('/creators/creator_username/status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isLive: true }),
+        body: JSON.stringify({ isLive: true, category }),
       });
 
       if (!statusRes.ok) {
-        const error = await toApiError(
-          statusRes,
-          'Your stream started, but we could not update your live status. Please try again.',
-        );
-        throw error;
+        throw await toApiError(statusRes);
       }
 
+      toast.success('Stream is ready! Redirecting to your live room.');
       setOpen(false);
-      // Navigate to live streaming interface with room info
       window.location.href = `/live-creator?room=${roomName}`;
-    } catch (err) {
-      console.error('Failed to start stream:', err);
-      setMediaError(getUserMessage(err, STREAM_ERROR_MESSAGE));
+    } catch (error) {
+      console.error('Failed to start stream:', error);
+      const message = getUserMessage(error);
+      setMediaError(message);
+      toast.error(message);
+    } finally {
+      setIsStarting(false);
     }
   };
 
@@ -136,8 +135,9 @@ const GoLiveButton = () => {
           <Button
             className="w-full bg-gradient-primary text-primary-foreground"
             onClick={handleStart}
+            disabled={isStarting}
           >
-            Start Stream
+            {isStarting ? 'Preparing…' : 'Start Stream'}
           </Button>
         </div>
       </DialogContent>
