@@ -1,0 +1,35 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":semanticCommits",
+    ":semanticCommitTypeAll(chore)",
+    ":semanticCommitScopeDisabled"
+  ],
+  "timezone": "UTC",
+  "schedule": ["before 7am on monday"],
+  "prHourlyLimit": 2,
+  "dependencyDashboard": true,
+  "labels": ["dependencies"],
+  "packageRules": [
+    {
+      "matchManagers": ["npm"],
+      "matchDatasources": ["npm"],
+      "matchDepTypes": ["dependencies", "devDependencies", "optionalDependencies"],
+      "extends": ["schedule:weekly"],
+      "groupName": "npm packages"
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchDatasources": ["npm"],
+      "matchPackageNames": ["bun"],
+      "groupName": "bun runtime",
+      "separateMajorMinor": false
+    }
+  ],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 6am on monday"],
+    "automerge": false
+  }
+}
