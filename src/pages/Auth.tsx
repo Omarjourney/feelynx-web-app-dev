@@ -12,8 +12,12 @@ import { getUserMessage } from '@/lib/errors';
 type AuthTab = 'signin' | 'signup';
 
 export default function Auth() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [signInForm, setSignInForm] = useState({ email: '', password: '' });
+  const [signUpForm, setSignUpForm] = useState({ email: '', password: '' });
+  const [errors, setErrors] = useState({
+    signIn: { email: '', password: '' },
+    signUp: { email: '', password: '' },
+  });
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<AuthTab>('signin');
   const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
@@ -73,6 +77,7 @@ export default function Auth() {
       }
 
       toast.success('Successfully signed in!');
+      setSignInForm({ email: trimmedEmail, password: '' });
       navigate('/');
     } catch (error) {
       const message = getUserMessage(error);
