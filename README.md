@@ -38,6 +38,8 @@ A modern, full-stack web application for live streaming, creator monetization, a
 - PostgreSQL database
 - LiveKit server (included in Docker setup)
 
+See [docs/dependencies.md](docs/dependencies.md) for detailed guidance on supported package managers, lockfiles, and how we keep dependencies up to date.
+
 ## ⚡ Quick Start
 
 1. **Clone and install dependencies:**
