@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "bin": {
+    "codex": "./scripts/codex-cli.js"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -14,6 +17,7 @@
     "preview": "vite preview",
     "test": "vitest run --passWithNoTests",
     "test:e2e": "TS_NODE_TRANSPILE_ONLY=true TS_NODE_PROJECT=tsconfig.server.json node --loader ts-node/esm --test server/routes",
+    "codex": "node ./scripts/codex-cli.js",
     "prepare": "husky"
   },
   "dependencies": {
