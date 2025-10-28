@@ -31,9 +31,7 @@ const resolvedEnv = REQUIRED_ENV_VARS.reduce((acc, key) => {
 
 export const SUPABASE_URL = resolvedEnv.VITE_SUPABASE_URL;
 export const SUPABASE_ANON_KEY = resolvedEnv.VITE_SUPABASE_ANON_KEY;
-export const UNSPLASH_RANDOM_BASE_URL = normalizeBaseUrl(
-  resolvedEnv.VITE_UNSPLASH_RANDOM_BASE_URL,
-);
+export const UNSPLASH_RANDOM_BASE_URL = normalizeBaseUrl(resolvedEnv.VITE_UNSPLASH_RANDOM_BASE_URL);
 
 // Feature flags to progressively enable new sections without risking regressions
 export const FEATURES = {

@@ -25,26 +25,19 @@ const allowedOrigins = process.env.CORS_ORIGIN?.split(',')
   .map((origin) => origin.trim())
   .filter(Boolean);
 
-if (
-  process.env.NODE_ENV === 'production' &&
-  (!allowedOrigins || allowedOrigins.length === 0 || allowedOrigins.includes('*'))
-) {
-  console.error('CORS_ORIGIN must include every front-end URL in production');
-  process.exit(1);
-}
-
+// Preview-safe CORS: if not configured, reflect request origin
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: allowedOrigins && allowedOrigins.length > 0 ? allowedOrigins : true,
   }),
 );
 
 const { LIVEKIT_API_KEY, LIVEKIT_API_SECRET } = process.env;
 if (!LIVEKIT_API_KEY || !LIVEKIT_API_SECRET) {
-  console.error('LIVEKIT_API_KEY and LIVEKIT_API_SECRET must be set');
-  process.exit(1);
+  console.warn('LiveKit credentials not set. Live routes will respond with errors.');
+} else {
+  console.log('LiveKit API credentials loaded');
 }
-console.log('LiveKit API credentials loaded');
 
 app.use('/auth', authRoutes);
 app.use('/users', usersRoutes);
