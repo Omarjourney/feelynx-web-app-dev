@@ -23,7 +23,7 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const tabs = [
-    { id: 'explore', label: 'Discover' },
+    { id: 'discover', label: 'Discover' },
     FEATURES.live && { id: 'creators', label: 'Live' },
     FEATURES.calls && { id: 'calls', label: 'Calls' },
     FEATURES.content && { id: 'content', label: 'Content' },

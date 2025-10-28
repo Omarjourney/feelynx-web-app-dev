@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -32,7 +33,14 @@ const ContentCard = ({
   tags,
 }: ContentCardProps) => {
   const [isUnlocked, setIsUnlocked] = useState(!locked);
-  const handleUnlock = () => setIsUnlocked(true);
+  const navigate = useNavigate();
+  const handleUnlock = () => {
+    if (price) {
+      navigate('/token-shop');
+      return;
+    }
+    setIsUnlocked(true);
+  };
   const displayLocked = locked && !isUnlocked;
   const ContentIcon = mediaType === 'video' ? VideoIcon : ImageIcon;
 

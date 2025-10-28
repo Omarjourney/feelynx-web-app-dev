@@ -12,7 +12,7 @@ import type { Creator } from '@/types/creator';
 
 const Explore = () => {
   const navigate = useNavigate();
-  const handleTab = (t: string) => navigate(t === 'explore' ? '/explore' : `/${t}`);
+  const handleTab = (t: string) => navigate(t === 'discover' ? '/discover' : `/${t}`);
 
   const [filters, setFilters] = useState<SearchFiltersState>({
     search: '',
@@ -50,7 +50,7 @@ const Explore = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation activeTab="explore" onTabChange={handleTab} />
+      <Navigation activeTab="discover" onTabChange={handleTab} />
       <div className="container mx-auto p-4 space-y-6">
         <StoryBubbles
           creators={creators

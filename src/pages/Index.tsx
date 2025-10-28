@@ -12,7 +12,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 const Index = () => {
   const creators = useCreatorLive();
-  const [activeTab, setActiveTab] = useState('explore');
+  const [activeTab, setActiveTab] = useState('discover');
   const navigate = useNavigate();
   const { user } = useAuth();
   const [filters, setFilters] = useState<SearchFiltersState>({
@@ -36,7 +36,7 @@ const Index = () => {
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'explore':
+      case 'discover':
         return (
           <div className="space-y-8">
             {/* Hero Section */}

@@ -13,7 +13,7 @@ const Live = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation activeTab="explore" onTabChange={handleTab} />
+      <Navigation activeTab="creators" onTabChange={handleTab} />
       <LiveStream
         creatorName={creator.name}
         viewers={creator.viewers || 0}
