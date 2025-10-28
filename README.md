@@ -76,6 +76,36 @@ npm run dev         # Frontend on :8080
 - Backend API: http://localhost:3001
 - LiveKit: http://localhost:7880
 
+## 🧭 Codex CLI Access
+
+The project now bundles a lightweight `codex` command-line tool that helps you inspect and navigate the repository without leaving your terminal.
+
+### Install (once per clone)
+
+```bash
+npm install
+```
+
+### Usage
+
+Run the CLI through `npx` (or `npm run codex -- <command>`):
+
+```bash
+# Show the built-in documentation
+npx codex help
+
+# Display repo metadata and useful scripts
+npx codex info
+
+# List folders relative to the repo root
+npx codex ls src
+
+# Print a file directly to the terminal
+npx codex cat README.md
+```
+
+Each command resolves paths relative to the repository root and guards against accidentally leaving the project directory.
+
 ## 🔧 Configuration
 
 ### Environment Variables
