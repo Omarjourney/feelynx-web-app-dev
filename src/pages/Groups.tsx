@@ -20,12 +20,14 @@ const Groups = () => {
           </CardHeader>
           <CardContent className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <p className="text-muted-foreground max-w-2xl">
-              Join private communities for exclusive posts, member-only chat, audio rooms, and events.
-              Upgrade tiers for perks and early access.
+              Join private communities for exclusive posts, member-only chat, audio rooms, and
+              events. Upgrade tiers for perks and early access.
             </p>
             <div className="space-x-2">
               <Button onClick={() => navigate('/shop')}>Buy Membership</Button>
-              <Button variant="secondary" onClick={goCreate}>Create Group</Button>
+              <Button variant="secondary" onClick={goCreate}>
+                Create Group
+              </Button>
             </div>
           </CardContent>
         </Card>

@@ -20,6 +20,7 @@ const CallRoom = () => {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [sessionToken, setSessionToken] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [remainingSec, setRemainingSec] = useState<number>(0);
 
   const startConsentSession = async () => {
     try {
@@ -33,7 +34,8 @@ const CallRoom = () => {
       const data = await res.json();
       setSessionId(data.id);
       setSessionToken(data.token);
-      toast({ title: 'Control session started', description: `Session ${data.id.slice(0,8)}…` });
+      setRemainingSec(durationSec);
+      toast({ title: 'Control session started', description: `Session ${data.id.slice(0, 8)}…` });
     } catch (err) {
       toast({ title: 'Failed to start control session', variant: 'destructive' });
     } finally {
@@ -52,9 +54,25 @@ const CallRoom = () => {
     } finally {
       setSessionId(null);
       setSessionToken(null);
+      setRemainingSec(0);
       setBusy(false);
     }
   };
+
+  // Countdown timer for session
+  useEffect(() => {
+    if (!sessionId || !remainingSec) return;
+    const iv = setInterval(() => {
+      setRemainingSec((s) => {
+        const n = s - 1;
+        if (n <= 0) {
+          clearInterval(iv);
+        }
+        return n;
+      });
+    }, 1000);
+    return () => clearInterval(iv);
+  }, [sessionId, remainingSec]);
 
   const startCall = async () => {
     setState('connecting');
@@ -124,20 +142,41 @@ const CallRoom = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <div className="flex justify-between text-sm mb-2"><span>Max Intensity</span><span>{maxIntensity}/20</span></div>
-                  <Slider value={[maxIntensity]} onValueChange={(v) => setMaxIntensity(Math.min(20, Math.max(0, v[0] ?? 12)))} max={20} step={1} />
+                  <div className="flex justify-between text-sm mb-2">
+                    <span>Max Intensity</span>
+                    <span>{maxIntensity}/20</span>
+                  </div>
+                  <Slider
+                    value={[maxIntensity]}
+                    onValueChange={(v) => setMaxIntensity(Math.min(20, Math.max(0, v[0] ?? 12)))}
+                    max={20}
+                    step={1}
+                  />
                 </div>
                 <div>
-                  <div className="flex justify-between text-sm mb-2"><span>Session Duration</span><span>{durationSec}s</span></div>
-                  <Slider value={[durationSec]} onValueChange={(v) => setDurationSec(Math.min(3600, Math.max(60, v[0] ?? 300)))} max={3600} min={60} step={30} />
+                  <div className="flex justify-between text-sm mb-2">
+                    <span>Session Duration</span>
+                    <span>{durationSec}s</span>
+                  </div>
+                  <Slider
+                    value={[durationSec]}
+                    onValueChange={(v) => setDurationSec(Math.min(3600, Math.max(60, v[0] ?? 300)))}
+                    max={3600}
+                    min={60}
+                    step={30}
+                  />
                 </div>
                 <div className="flex items-center gap-2">
                   {!sessionId ? (
-                    <Button onClick={startConsentSession} disabled={busy}>Start Consent Session</Button>
+                    <Button onClick={startConsentSession} disabled={busy}>
+                      Start Consent Session
+                    </Button>
                   ) : (
                     <>
-                      <Button variant="outline" onClick={endConsentSession} disabled={busy}>End Session</Button>
-                      <span className="text-xs text-muted-foreground">Session: {sessionId.slice(0,8)}…</span>
+                      <Button variant="outline" onClick={endConsentSession} disabled={busy}>
+                        End Session
+                      </Button>
+                      <span className="text-xs text-muted-foreground">Session: {sessionId.slice(0, 8)}… · {Math.max(0, remainingSec)}s</span>
                     </>
                   )}
                 </div>
