@@ -20,7 +20,9 @@ const GroupPage = () => {
               <h1 className="text-2xl font-semibold">Group not found</h1>
               <p className="text-muted-foreground">The group you are looking for does not exist.</p>
             </div>
-            <Button variant="secondary" onClick={() => navigate('/groups')}>Back to Groups</Button>
+            <Button variant="secondary" onClick={() => navigate('/groups')}>
+              Back to Groups
+            </Button>
           </div>
         </Card>
       </div>
@@ -40,7 +42,9 @@ const GroupPage = () => {
           </div>
           <div className="space-x-2">
             <Button onClick={() => navigate('/shop')}>Join / Upgrade</Button>
-            <Button variant="secondary" onClick={() => navigate('/messages')}>Message Admin</Button>
+            <Button variant="secondary" onClick={() => navigate('/messages')}>
+              Message Admin
+            </Button>
           </div>
         </div>
 
@@ -70,4 +74,3 @@ const GroupPage = () => {
 };
 
 export default GroupPage;
-

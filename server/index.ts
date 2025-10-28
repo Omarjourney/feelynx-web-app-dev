@@ -134,7 +134,20 @@ server.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
 
-cron.schedule('0 0 * * *', processPendingPayouts);
+// Schedule payouts processing only when Stripe and DB are configured (preview-safe)
+if (process.env.STRIPE_SECRET_KEY && process.env.DATABASE_URL) {
+  // Dynamically import to avoid loading modules that require secrets in preview environments
+  (async () => {
+    try {
+      const cron = await import('node-cron');
+      const mod = await import('./routes/payouts');
+      cron.schedule('0 0 * * *', mod.processPendingPayouts);
+      console.log('Payouts cron scheduled.');
+    } catch (err) {
+      console.warn('Skipping payouts cron:', err);
+    }
+  })();
+}
 
 // Handle control session subscriptions over WebSocket
 wss.on('connection', (ws: WebSocket) => {

@@ -13,7 +13,11 @@ type EnvLookup = {
 const getEnvVar = (key: RequiredEnvKey): string => {
   const value = import.meta.env[key];
   if (typeof value !== 'string' || value.length === 0) {
-    throw new Error(`Missing required environment variable: ${key}`);
+    // Provide safe defaults in hosted preview environments to avoid hard crashes
+    if (key === 'VITE_UNSPLASH_RANDOM_BASE_URL') return 'https://source.unsplash.com/random/';
+    // For Supabase, return empty string; features should handle missing config gracefully.
+    console.warn(`Missing environment variable: ${key}. Using fallback.`);
+    return '';
   }
   return value;
 };
@@ -27,7 +31,9 @@ const resolvedEnv = REQUIRED_ENV_VARS.reduce((acc, key) => {
 
 export const SUPABASE_URL = resolvedEnv.VITE_SUPABASE_URL;
 export const SUPABASE_ANON_KEY = resolvedEnv.VITE_SUPABASE_ANON_KEY;
-export const UNSPLASH_RANDOM_BASE_URL = normalizeBaseUrl(resolvedEnv.VITE_UNSPLASH_RANDOM_BASE_URL);
+export const UNSPLASH_RANDOM_BASE_URL = normalizeBaseUrl(
+  resolvedEnv.VITE_UNSPLASH_RANDOM_BASE_URL,
+);
 
 // Feature flags to progressively enable new sections without risking regressions
 export const FEATURES = {

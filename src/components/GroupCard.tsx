@@ -12,7 +12,9 @@ export const GroupCard = ({ group }: { group: Group }) => (
         {group.isLive && <Badge className="bg-live text-white">Live</Badge>}
       </div>
       <p className="text-sm text-muted-foreground line-clamp-2">{group.description}</p>
-      <div className="text-sm text-muted-foreground">👥 {group.members.toLocaleString()} members</div>
+      <div className="text-sm text-muted-foreground">
+        👥 {group.members.toLocaleString()} members
+      </div>
       <Link to={`/groups/${group.id}`}>
         <Button size="sm" className="w-full bg-gradient-primary text-primary-foreground">
           Open

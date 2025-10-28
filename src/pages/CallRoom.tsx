@@ -176,7 +176,9 @@ const CallRoom = () => {
                       <Button variant="outline" onClick={endConsentSession} disabled={busy}>
                         End Session
                       </Button>
-                      <span className="text-xs text-muted-foreground">Session: {sessionId.slice(0, 8)}… · {Math.max(0, remainingSec)}s</span>
+                      <span className="text-xs text-muted-foreground">
+                        Session: {sessionId.slice(0, 8)}… · {Math.max(0, remainingSec)}s
+                      </span>
                     </>
                   )}
                 </div>
