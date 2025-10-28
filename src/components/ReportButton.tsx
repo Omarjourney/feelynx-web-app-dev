@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { submitReport } from '@/lib/moderation/report';
 import { toast } from 'sonner';
-import { getUserMessage, toApiError } from '@/lib/errors';
 
 interface ReportButtonProps {
   targetId: number | string;
@@ -18,22 +18,12 @@ const ReportButton = ({ targetId, type }: ReportButtonProps) => {
     if (!reason) return;
 
     setIsSubmitting(true);
-
     try {
-      const response = await fetch('/moderation/report', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reportedId: targetId, type, reason }),
-      });
-
-      if (!response.ok) {
-        throw await toApiError(response);
-      }
-
+      await submitReport({ reportedId: targetId, type, reason });
       toast.success('Report submitted. Thank you for keeping the community safe.');
     } catch (error) {
-      console.error('Failed to submit report', error);
-      toast.error(getUserMessage(error));
+      console.error('Failed to submit report:', error);
+      toast.error('Unable to submit report. Please try again later.');
     } finally {
       setIsSubmitting(false);
     }

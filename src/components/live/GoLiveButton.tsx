@@ -19,7 +19,7 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { requestMediaPermissions } from '@/lib/mediaPermissions';
 import { toast } from 'sonner';
-import { getUserMessage, toApiError } from '@/lib/errors';
+import { createLivekitRoom, requestCreatorToken, updateCreatorLiveStatus } from '@/lib/livekit/host';
 
 const GoLiveButton = () => {
   const [open, setOpen] = useState(false);
@@ -43,45 +43,16 @@ const GoLiveButton = () => {
 
       const roomName = `live_creator_${Date.now()}`;
 
-      const roomRes = await fetch('/livekit/rooms', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: roomName,
-          emptyTimeout: 300,
-          maxParticipants: 1000,
-        }),
-      });
-
-      if (!roomRes.ok) {
-        throw await toApiError(roomRes);
-      }
-
-      const tokenRes = await fetch('/livekit/token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ room: roomName, identity: `creator_${Date.now()}` }),
-      });
-      if (!tokenRes.ok) {
-        throw await toApiError(tokenRes);
-      }
-
-      const statusRes = await fetch('/creators/creator_username/status', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isLive: true, category }),
-      });
-
-      if (!statusRes.ok) {
-        throw await toApiError(statusRes);
-      }
+      await createLivekitRoom({ name: roomName });
+      await requestCreatorToken(roomName, `creator_${Date.now()}`);
+      await updateCreatorLiveStatus('creator_username', true);
 
       toast.success('Stream is ready! Redirecting to your live room.');
       setOpen(false);
       window.location.href = `/live-creator?room=${roomName}`;
     } catch (error) {
       console.error('Failed to start stream:', error);
-      const message = getUserMessage(error);
+      const message = error instanceof Error ? error.message : String(error);
       setMediaError(message);
       toast.error(message);
     } finally {

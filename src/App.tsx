@@ -28,7 +28,7 @@ import PatternEditor from './features/patterns/PatternEditor';
 import ControlRemote from './features/remote/ControlRemote';
 import CompanionsHome from './features/companions/CompanionsHome';
 import ContestsFeed from './features/contests/ContestsFeed';
-import GoLiveButton from '@/components/GoLiveButton';
+import { GoLiveButton } from '@/components/live';
 
 const queryClient = new QueryClient();
 
