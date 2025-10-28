@@ -14,6 +14,42 @@ const ControlRemote: React.FC = () => {
   const [maxIntensity, setMaxIntensity] = useState(12); // safety cap (0-20)
   const [durationSec, setDurationSec] = useState(300); // consent duration
   const [busy, setBusy] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [sessionToken, setSessionToken] = useState<string | null>(null);
+
+  const startConsentSession = async () => {
+    try {
+      setBusy(true);
+      const res = await fetch('/control/sessions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ maxIntensity, durationSec }),
+      });
+      if (!res.ok) throw new Error('Failed to start session');
+      const data = await res.json();
+      setSessionId(data.id);
+      setSessionToken(data.token);
+    } catch (err) {
+      console.error(err);
+      alert('Could not start consent session');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const revokeConsentSession = async () => {
+    if (!sessionId) return;
+    try {
+      setBusy(true);
+      await fetch(`/control/sessions/${sessionId}/revoke`, { method: 'POST' });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSessionId(null);
+      setSessionToken(null);
+      setBusy(false);
+    }
+  };
 
   const handlePair = async () => {
     try {
@@ -44,6 +80,18 @@ const ControlRemote: React.FC = () => {
   const applyVibration = async (value: number[]) => {
     const target = Math.min(Math.max(0, value[0] ?? 0), maxIntensity);
     setIntensity(target);
+    // Send to backend if a consent session exists
+    if (sessionId && sessionToken) {
+      try {
+        await fetch(`/control/sessions/${sessionId}/command`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sessionToken}` },
+          body: JSON.stringify({ intensity: target }),
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
     if (!paired) return;
     try {
       await toy.vibrate(target);
@@ -123,6 +171,20 @@ const ControlRemote: React.FC = () => {
               <p className="text-xs text-muted-foreground">
                 These caps are local safeguards; enforce server-side for shared/control sessions.
               </p>
+              <div className="flex gap-2 pt-2 items-center">
+                {!sessionId ? (
+                  <Button onClick={startConsentSession} disabled={busy}>
+                    Start Consent Session
+                  </Button>
+                ) : (
+                  <>
+                    <Button variant="outline" onClick={revokeConsentSession} disabled={busy}>
+                      End Session
+                    </Button>
+                    <span className="text-xs text-muted-foreground">Session: {sessionId.slice(0, 8)}…</span>
+                  </>
+                )}
+              </div>
             </CardContent>
           </Card>
         </div>
