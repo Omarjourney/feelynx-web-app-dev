@@ -21,6 +21,11 @@ import LiveCreator from './pages/LiveCreator';
 import Stories from './pages/Stories';
 import PKBattle from './pages/PKBattle';
 import NotFound from './pages/NotFound';
+import SettingsPrivacy from './pages/SettingsPrivacy';
+import PatternsLibrary from './features/patterns/PatternsLibrary';
+import ControlRemote from './features/remote/ControlRemote';
+import CompanionsHome from './features/companions/CompanionsHome';
+import ContestsFeed from './features/contests/ContestsFeed';
 import GoLiveButton from '@/components/GoLiveButton';
 
 const queryClient = new QueryClient();
@@ -46,8 +51,15 @@ const App = () => (
             <Route path="/live-creator" element={<LiveCreator />} />
             <Route path="/stories" element={<Stories />} />
             <Route path="/token-shop" element={<TokenShop />} />
+            <Route path="/coins" element={<TokenShop />} />
+            <Route path="/settings" element={<SettingsPrivacy />} />
+            <Route path="/patterns" element={<PatternsLibrary />} />
+            <Route path="/remote" element={<ControlRemote />} />
+            <Route path="/companions" element={<CompanionsHome />} />
+            <Route path="/contests" element={<ContestsFeed />} />
             <Route path="/call-room" element={<CallRoom />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
           <GoLiveButton />
         </BrowserRouter>

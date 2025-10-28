@@ -2,6 +2,15 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ChevronDown, Globe, Menu } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { FEATURES } from '@/config';
 import feelynxLogo from '@/assets/feelynx-logo.png';
 
 interface NavigationProps {
@@ -13,14 +22,14 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
   const [coins] = useState(2547);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const tabs = [
-    { id: 'explore', label: 'Explore' },
-    { id: 'creators', label: 'Creators' },
-    { id: 'content', label: 'Content' },
-    { id: 'calls', label: 'Calls' },
-    { id: 'groups', label: 'Groups' },
-    { id: 'coins', label: 'VibeCoins' },
-  ];
+  const tabs = ([
+    { id: 'explore', label: 'Discover' },
+    FEATURES.live && { id: 'creators', label: 'Live' },
+    FEATURES.calls && { id: 'calls', label: 'Calls' },
+    FEATURES.content && { id: 'content', label: 'Content' },
+    { id: 'dm', label: 'Messages' },
+    { id: 'dashboard', label: 'Profile' },
+  ].filter(Boolean)) as Array<{ id: string; label: string }>;
 
   return (
     <>
@@ -78,10 +87,39 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
                 💎 {coins.toLocaleString()}
               </Badge>
 
-              {/* Profile */}
-              <Button variant="outline" size="default" className="md:size-sm min-h-11 rounded-full">
-                Profile
-              </Button>
+              {/* More menu */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="default" className="md:size-sm min-h-11 rounded-full">
+                    More
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>More</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {FEATURES.groups && (
+                    <DropdownMenuItem onClick={() => onTabChange('groups')}>Groups</DropdownMenuItem>
+                  )}
+                  {FEATURES.patterns && (
+                    <DropdownMenuItem onClick={() => onTabChange('patterns')}>Patterns</DropdownMenuItem>
+                  )}
+                  {FEATURES.remote && (
+                    <DropdownMenuItem onClick={() => onTabChange('remote')}>Remote</DropdownMenuItem>
+                  )}
+                  {FEATURES.companions && (
+                    <DropdownMenuItem onClick={() => onTabChange('companions')}>Companions</DropdownMenuItem>
+                  )}
+                  {FEATURES.contests && (
+                    <DropdownMenuItem onClick={() => onTabChange('contests')}>Contests</DropdownMenuItem>
+                  )}
+                  {FEATURES.shop && (
+                    <DropdownMenuItem onClick={() => onTabChange('token-shop')}>Shop</DropdownMenuItem>
+                  )}
+                  {FEATURES.settings && (
+                    <DropdownMenuItem onClick={() => onTabChange('settings')}>Settings</DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
 
               {/* Mobile Menu Button */}
               <button
