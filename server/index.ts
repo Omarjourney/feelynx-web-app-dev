@@ -159,3 +159,15 @@ wss.on('connection', (ws: WebSocket) => {
     }
   });
 });
+
+// Lightweight health endpoint for previews
+app.get('/health', (_req: Request, res: Response) => {
+  res.json({
+    ok: true,
+    features: {
+      livekitConfigured: Boolean(process.env.LIVEKIT_API_KEY && process.env.LIVEKIT_API_SECRET),
+      stripeConfigured: Boolean(process.env.STRIPE_SECRET_KEY),
+      dbConfigured: Boolean(process.env.DATABASE_URL),
+    },
+  });
+});

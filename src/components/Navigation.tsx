@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { FEATURES } from '@/config';
 import feelynxLogo from '@/assets/feelynx-logo.png';
+import PreviewBanner from '@/components/PreviewBanner';
 
 interface NavigationProps {
   activeTab: string;
@@ -174,6 +175,8 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
           )}
         </div>
       </nav>
+      {/* Preview banner shows environment/feature availability for hosted previews */}
+      <PreviewBanner />
     </>
   );
 };
