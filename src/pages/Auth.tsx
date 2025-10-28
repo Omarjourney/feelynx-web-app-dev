@@ -155,7 +155,9 @@ export default function Auth() {
           }}
           aria-invalid={Boolean(fieldErrors.password)}
           aria-describedby={fieldErrors.password ? `${mode}-password-error` : undefined}
-          className={cn(fieldErrors.password && 'border-destructive focus-visible:ring-destructive')}
+          className={cn(
+            fieldErrors.password && 'border-destructive focus-visible:ring-destructive',
+          )}
           required
           minLength={6}
         />
@@ -171,7 +173,13 @@ export default function Auth() {
         </p>
       )}
       <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? (mode === 'signin' ? 'Signing in...' : 'Creating account...') : mode === 'signin' ? 'Sign In' : 'Sign Up'}
+        {loading
+          ? mode === 'signin'
+            ? 'Signing in...'
+            : 'Creating account...'
+          : mode === 'signin'
+            ? 'Sign In'
+            : 'Sign Up'}
       </Button>
     </form>
   );

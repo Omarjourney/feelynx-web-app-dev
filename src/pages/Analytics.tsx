@@ -47,9 +47,7 @@ const Analytics = () => {
           });
         }
       } catch (error) {
-        const apiError: ApiError | undefined = isApiError(error)
-          ? error
-          : undefined;
+        const apiError: ApiError | undefined = isApiError(error) ? error : undefined;
         console.error('Failed to load analytics data', error);
         if (apiError) {
           console.debug('API error details:', apiError);

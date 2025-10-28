@@ -198,11 +198,11 @@ docker-compose up -d
 
 CI runs a trio of security-focused jobs. You can execute the same checks locally before pushing changes:
 
-| Check | Command | Purpose |
-| --- | --- | --- |
-| Security lint | `npm run lint:security` | Runs ESLint with additional accessibility and security rules (`eslint-plugin-security`, `eslint-plugin-jsx-a11y`). |
-| Dependency audit | `npm audit --production --audit-level=high` | Fails if production dependencies contain high or critical vulnerabilities. |
-| Secret scan | `npx gitleaks detect --source=. --no-git --redact` | Scans the working tree for leaked secrets using Gitleaks. |
+| Check            | Command                                            | Purpose                                                                                                            |
+| ---------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Security lint    | `npm run lint:security`                            | Runs ESLint with additional accessibility and security rules (`eslint-plugin-security`, `eslint-plugin-jsx-a11y`). |
+| Dependency audit | `npm audit --production --audit-level=high`        | Fails if production dependencies contain high or critical vulnerabilities.                                         |
+| Secret scan      | `npx gitleaks detect --source=. --no-git --redact` | Scans the working tree for leaked secrets using Gitleaks.                                                          |
 
 The CI workflow will fail if any of the above commands report an issue. Remediate vulnerabilities or false positives before opening a pull request, and document any accepted risks in code comments or the issue tracker.
 

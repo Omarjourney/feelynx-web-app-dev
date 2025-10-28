@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSwipeable } from 'react-swipeable';
 import { Room } from 'livekit-client';
 import { toast } from 'sonner';
@@ -12,11 +12,11 @@ interface Creator {
 const Match = () => {
   const [creators, setCreators] = useState<Creator[]>([]);
   const [index, setIndex] = useState(0);
-  const [room, setRoom] = useState<Room | null>(null);
   const [isFetching, setIsFetching] = useState(false);
   const [isSwiping, setIsSwiping] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
+  const roomRef = useRef<Room | null>(null);
 
   const current = creators[index];
 
@@ -50,7 +50,8 @@ const Match = () => {
   useEffect(() => {
     loadNext();
     return () => {
-      room?.disconnect();
+      roomRef.current?.disconnect();
+      roomRef.current = null;
     };
   }, [loadNext]);
 
@@ -86,7 +87,7 @@ const Match = () => {
       const data = await res.json();
       if (data.token) {
         notify();
-        toast.success('It\'s a match! Connecting you now.');
+        toast.success("It's a match! Connecting you now.");
         const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL;
         if (!wsUrl) {
           throw new Error('LiveKit WebSocket URL is not configured');
@@ -95,12 +96,10 @@ const Match = () => {
         await newRoom.connect(wsUrl, data.token);
         await newRoom.localParticipant.setMicrophoneEnabled(true);
         await newRoom.localParticipant.setCameraEnabled(true);
-        setRoom((prev) => {
-          prev?.disconnect();
-          return newRoom;
-        });
+        roomRef.current?.disconnect();
+        roomRef.current = newRoom;
       } else if (liked) {
-        toast.success('Interest noted! We\'ll let you know if it\'s a match.');
+        toast.success("Interest noted! We'll let you know if it's a match.");
       }
 
       setIndex((i) => i + 1);

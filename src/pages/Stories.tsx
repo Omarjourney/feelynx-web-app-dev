@@ -25,9 +25,7 @@ const Stories = () => {
         const data = await request<Story[]>('/stories');
         setStories(data);
       } catch (error) {
-        const apiError: ApiError | undefined = isApiError(error)
-          ? error
-          : undefined;
+        const apiError: ApiError | undefined = isApiError(error) ? error : undefined;
         console.error('Failed to load stories', error);
         if (apiError) {
           console.debug('API error details:', apiError);

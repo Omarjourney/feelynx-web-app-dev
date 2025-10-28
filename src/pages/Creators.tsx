@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { SearchFilters, SearchFiltersState } from '@/components/SearchFilters';
 import { CreatorCard } from '@/components/CreatorCard';
-import { createClientError, getUserMessage, toApiError } from '@/lib/errors';
+import { getUserMessage } from '@/lib/errors';
 import type { Creator as FrontendCreator } from '@/types/creator';
-import { ApiError, isApiError, request } from '@/lib/api';
+import { request } from '@/lib/api';
 
 interface ApiCreator {
   id: number;
@@ -18,8 +18,7 @@ interface ApiCreator {
   followers: number;
 }
 
-const LOAD_CREATORS_ERROR_MESSAGE =
-  "We couldn't load creators right now. Please try again later.";
+const LOAD_CREATORS_ERROR_MESSAGE = "We couldn't load creators right now. Please try again later.";
 
 const Creators = () => {
   const navigate = useNavigate();
@@ -54,21 +53,7 @@ const Creators = () => {
         if (filters.country !== 'all') params.set('country', filters.country);
         if (filters.specialty !== 'all') params.set('specialty', filters.specialty);
         if (filters.isLive) params.set('isLive', '1');
-        const res = await fetch(`/api/creators?${params.toString()}`);
-        if (!res.ok) {
-          throw await toApiError(res, LOAD_CREATORS_ERROR_MESSAGE);
-        }
-        let data: ApiCreator[] = [];
-        const contentType = res.headers.get('Content-Type') || '';
-        if (contentType.includes('application/json')) {
-          try {
-            data = await res.json();
-          } catch (err) {
-            throw createClientError(LOAD_CREATORS_ERROR_MESSAGE, { cause: err });
-          }
-        } else {
-          throw createClientError(LOAD_CREATORS_ERROR_MESSAGE);
-        }
+        const data = await request<ApiCreator[]>(`/api/creators?${params.toString()}`);
         const mapped = data.map((c) => ({
           id: c.id,
           name: c.name,
@@ -92,7 +77,8 @@ const Creators = () => {
         }));
         setCreators(mapped);
       } catch (err) {
-        setError(getUserMessage(err, LOAD_CREATORS_ERROR_MESSAGE));
+        const message = getUserMessage(err);
+        setError(message || LOAD_CREATORS_ERROR_MESSAGE);
       } finally {
         setLoading(false);
       }

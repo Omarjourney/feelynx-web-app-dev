@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { isApiError, request } from '@/lib/api';
 import { requestMediaPermissions } from '@/lib/mediaPermissions';
 import { toast } from 'sonner';
 import { getUserMessage, toApiError } from '@/lib/errors';
@@ -43,15 +44,13 @@ const LiveCreator = () => {
       await requestMediaPermissions();
       setIsVideoReady(false);
 
+      const identity = `creator_${Date.now()}`;
       // Get token for creator
       const { token } = await request<{ token: string }>('/livekit/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ room: roomName, identity: `creator_${Date.now()}` }),
+        body: JSON.stringify({ room: roomName, identity }),
       });
-      if (!tokenRes.ok) throw await toApiError(tokenRes);
-
-      const { token } = await tokenRes.json();
 
       const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL;
       if (!wsUrl) {
@@ -86,6 +85,7 @@ const LiveCreator = () => {
       });
     } catch (error) {
       console.error('Failed to start live stream:', error);
+      const apiError = isApiError(error) ? error : undefined;
       let description = getUserMessage(error);
       let action: { label: string; onClick: () => void } | undefined;
 
@@ -111,7 +111,6 @@ const LiveCreator = () => {
         }
       }
 
-      setMediaError(description);
       toast.error('Stream failed to start', {
         description,
         action,

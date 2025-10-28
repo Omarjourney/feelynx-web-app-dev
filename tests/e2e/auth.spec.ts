@@ -17,7 +17,9 @@ test.describe('Authentication flow', () => {
     await submitButton.click();
 
     await expect(page).toHaveURL(/\/$/);
-    await expect(page.getByRole('heading', { name: 'Join the Hottest Creators Now' })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Join the Hottest Creators Now' }),
+    ).toBeVisible();
   });
 
   test('allows switching between sign-in and sign-up modes', async ({ page }) => {

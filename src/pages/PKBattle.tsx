@@ -73,9 +73,7 @@ const PKBattle = () => {
           }
         });
       } catch (error) {
-        const apiError: ApiError | undefined = isApiError(error)
-          ? error
-          : undefined;
+        const apiError: ApiError | undefined = isApiError(error) ? error : undefined;
         console.error('LiveKit connect failed', error);
         if (apiError) {
           console.debug('API error details:', apiError);
@@ -102,9 +100,7 @@ const PKBattle = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ scoreA: a, scoreB: b }),
     }).catch((error) => {
-      const apiError: ApiError | undefined = isApiError(error)
-        ? error
-        : undefined;
+      const apiError: ApiError | undefined = isApiError(error) ? error : undefined;
       console.error('Failed to update PK battle score', error);
       if (apiError) {
         console.debug('API error details:', apiError);
@@ -115,10 +111,22 @@ const PKBattle = () => {
   return (
     <div className="p-4 space-y-4">
       <div className="flex space-x-4">
-        <video ref={videoARef} className="w-1/2 bg-black" autoPlay playsInline aria-label="Creator A live feed">
+        <video
+          ref={videoARef}
+          className="w-1/2 bg-black"
+          autoPlay
+          playsInline
+          aria-label="Creator A live feed"
+        >
           <track kind="captions" label="Creator A captions" srcLang="en" src="data:," default />
         </video>
-        <video ref={videoBRef} className="w-1/2 bg-black" autoPlay playsInline aria-label="Creator B live feed">
+        <video
+          ref={videoBRef}
+          className="w-1/2 bg-black"
+          autoPlay
+          playsInline
+          aria-label="Creator B live feed"
+        >
           <track kind="captions" label="Creator B captions" srcLang="en" src="data:," default />
         </video>
       </div>

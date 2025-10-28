@@ -17,10 +17,10 @@ const Payouts = () => {
       });
       setAmount('');
     } catch (error) {
-      const apiError: ApiError | undefined = isApiError(error)
-        ? error
-        : undefined;
-      alert(apiError?.message ?? (error instanceof Error ? error.message : 'Failed to request payout'));
+      const apiError: ApiError | undefined = isApiError(error) ? error : undefined;
+      alert(
+        apiError?.message ?? (error instanceof Error ? error.message : 'Failed to request payout'),
+      );
     }
   };
 

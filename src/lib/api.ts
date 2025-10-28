@@ -64,18 +64,20 @@ export async function request<T>(input: RequestInfo | URL, init?: RequestInit): 
   }
 
   if (!response.ok) {
-    const bodyAsRecord = (parsedBody && typeof parsedBody === 'object') ? (parsedBody as Record<string, unknown>) : undefined;
-    const messageFromBody = bodyAsRecord && typeof bodyAsRecord.message === 'string' ? bodyAsRecord.message : undefined;
-    const codeFromBody = bodyAsRecord && typeof bodyAsRecord.code === 'string' ? bodyAsRecord.code : undefined;
+    const bodyAsRecord =
+      parsedBody && typeof parsedBody === 'object'
+        ? (parsedBody as Record<string, unknown>)
+        : undefined;
+    const messageFromBody =
+      bodyAsRecord && typeof bodyAsRecord.message === 'string' ? bodyAsRecord.message : undefined;
+    const codeFromBody =
+      bodyAsRecord && typeof bodyAsRecord.code === 'string' ? bodyAsRecord.code : undefined;
 
-    throw createApiError(
-      messageFromBody ?? `Request failed with status ${response.status}`,
-      {
-        status: response.status,
-        code: codeFromBody ?? `http_${response.status}`,
-        details: parsedBody ?? rawBody || undefined,
-      }
-    );
+    throw createApiError(messageFromBody ?? `Request failed with status ${response.status}`, {
+      status: response.status,
+      code: codeFromBody ?? `http_${response.status}`,
+      details: parsedBody ?? (rawBody || undefined),
+    });
   }
 
   if (parseError) {

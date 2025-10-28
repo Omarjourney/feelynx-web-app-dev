@@ -20,9 +20,7 @@ const AdminDMCA = () => {
         const data = await request<Notice[]>('/dmca');
         setNotices(data);
       } catch (error) {
-        const apiError: ApiError | undefined = isApiError(error)
-          ? error
-          : undefined;
+        const apiError: ApiError | undefined = isApiError(error) ? error : undefined;
         console.error('Failed to load DMCA notices', error);
         if (apiError) {
           console.debug('API error details:', apiError);
@@ -42,9 +40,7 @@ const AdminDMCA = () => {
       });
       setNotices((n) => n.map((notice) => (notice.id === id ? updated : notice)));
     } catch (error) {
-      const apiError: ApiError | undefined = isApiError(error)
-        ? error
-        : undefined;
+      const apiError: ApiError | undefined = isApiError(error) ? error : undefined;
       console.error('Failed to resolve DMCA notice', error);
       if (apiError) {
         console.debug('API error details:', apiError);

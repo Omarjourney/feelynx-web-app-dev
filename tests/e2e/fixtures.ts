@@ -48,7 +48,7 @@ async function fulfillJson(route: Route, body: unknown, status = 200) {
 }
 
 export const test = base.extend({
-  page: async ({ page }, use) => {
+  page: async ({ page }, run) => {
     await page.addInitScript(() => {
       class MockWebSocket {
         static CONNECTING = 0;
@@ -121,7 +121,7 @@ export const test = base.extend({
       await fulfillJson(route, {});
     });
 
-    await use(page);
+    await run(page);
   },
 });
 

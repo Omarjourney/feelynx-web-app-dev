@@ -5,7 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { vibeCoinPackages, VibeCoinPackage } from '@/data/vibecoinPackages';
 import { PaymentReceipt } from './PaymentReceipt';
 import { toast } from 'sonner';
-import { getUserMessage, toApiError } from '@/lib/errors';
+import { request } from '@/lib/api';
+import { getUserMessage } from '@/lib/errors';
 
 interface VibeCoinPackagesProps {
   /**
@@ -52,32 +53,25 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
       setLoadingPackageId(packageData.id);
       console.log('Purchasing:', packageData);
 
-      const { paymentIntentId } = await request<{ paymentIntentId: string }>('/payments/create-intent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount: packageData.price,
-          coins: packageData.tokens,
-          currency: 'usd',
-          userId: 1,
-        }),
-      });
+      const { paymentIntentId } = await request<{ paymentIntentId: string }>(
+        '/payments/create-intent',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            amount: packageData.price,
+            coins: packageData.tokens,
+            currency: 'usd',
+            userId: 1,
+          }),
+        },
+      );
 
-      if (!response.ok) throw await toApiError(response);
-
-      const { paymentIntentId } = await response.json();
-
-      const successRes = await fetch('/payments/success', {
+      const data = await request<{ receiptUrl: string; disputeUrl: string }>('/payments/success', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ paymentIntentId }),
       });
-
-      if (!successRes.ok) {
-        throw await toApiError(successRes);
-      }
-
-      const data = await successRes.json();
       setReceipt({ receiptUrl: data.receiptUrl, disputeUrl: data.disputeUrl });
       toast.success('Purchase complete! Your receipt is ready.');
     } catch (error) {

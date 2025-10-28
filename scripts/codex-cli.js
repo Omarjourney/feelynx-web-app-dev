@@ -2,12 +2,7 @@
 
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve, relative, sep } from 'node:path';
-import {
-  existsSync,
-  readdirSync,
-  readFileSync,
-  statSync
-} from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -42,7 +37,7 @@ const commands = {
           console.log(`  - docs/${entry}`);
         }
       }
-    }
+    },
   },
   ls: {
     description: 'List files relative to the repository root.',
@@ -61,7 +56,7 @@ const commands = {
         const indicator = entryStat.isDirectory() ? '/' : '';
         console.log(entry + indicator);
       }
-    }
+    },
   },
   cat: {
     description: 'Print the contents of a file in the repository.',
@@ -80,12 +75,12 @@ const commands = {
         return;
       }
       process.stdout.write(readFileSync(targetPath, 'utf8'));
-    }
+    },
   },
   help: {
     description: 'Show available commands and usage information.',
-    run: showHelp
-  }
+    run: showHelp,
+  },
 };
 
 function resolvePath(pathArg) {

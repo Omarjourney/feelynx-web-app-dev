@@ -81,9 +81,7 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
       setIsConnected(true);
     } catch (error) {
       console.error('Connection failed:', error);
-      const apiError: ApiError | undefined = isApiError(error)
-        ? error
-        : undefined;
+      const apiError: ApiError | undefined = isApiError(error) ? error : undefined;
       alert(apiError?.message ?? (error instanceof Error ? error.message : 'Failed to connect'));
     }
   };
@@ -97,7 +95,7 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
         request(`/rooms/${roomName}/leave`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ role: 'viewer', identity }),
+          body: JSON.stringify({ role: 'viewer', identity: participantIdentity }),
         }).catch(() => {});
         activeRoom.disconnect();
       }
@@ -139,7 +137,21 @@ export const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) =>
         <Card className="lg:col-span-3 bg-gradient-card">
           <CardContent className="p-0">
             <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
-              <video ref={videoRef} className="w-full h-full object-cover" autoPlay playsInline />
+              <video
+                ref={videoRef}
+                className="w-full h-full object-cover"
+                autoPlay
+                playsInline
+                aria-label="Live stream video player"
+              >
+                <track
+                  kind="captions"
+                  src="/captions/live-stream.vtt"
+                  srcLang="en"
+                  label="English captions"
+                  default
+                />
+              </video>
               {!isConnected ? (
                 <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary-glow/10">
                   <div className="text-center space-y-4">

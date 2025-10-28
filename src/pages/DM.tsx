@@ -187,7 +187,12 @@ const DM = () => {
           <div key={m.id} className="border p-2 rounded">
             <div>{m.text}</div>
             <div className="text-xs text-gray-500 flex gap-2">
-              <span>{new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+              <span>
+                {new Date(m.created_at).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </span>
               {m.read_at ? (
                 <span>Read</span>
               ) : (

@@ -38,9 +38,7 @@ const Creator = () => {
         window.location.href = json.url;
       }
     } catch (error) {
-      const apiError: ApiError | undefined = isApiError(error)
-        ? error
-        : undefined;
+      const apiError: ApiError | undefined = isApiError(error) ? error : undefined;
       alert(apiError?.message ?? (error instanceof Error ? error.message : 'Failed to subscribe'));
     }
   };
@@ -53,10 +51,11 @@ const Creator = () => {
         body: JSON.stringify({ tierId }),
       });
     } catch (error) {
-      const apiError: ApiError | undefined = isApiError(error)
-        ? error
-        : undefined;
-      alert(apiError?.message ?? (error instanceof Error ? error.message : 'Failed to cancel subscription'));
+      const apiError: ApiError | undefined = isApiError(error) ? error : undefined;
+      alert(
+        apiError?.message ??
+          (error instanceof Error ? error.message : 'Failed to cancel subscription'),
+      );
     }
   };
 

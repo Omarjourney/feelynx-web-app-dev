@@ -117,7 +117,9 @@ const DMCA = () => {
             onChange={handleChange}
             aria-invalid={Boolean(errors.reporterName)}
             aria-describedby={errors.reporterName ? 'reporterName-error' : undefined}
-            className={cn(errors.reporterName && 'border-destructive focus-visible:ring-destructive')}
+            className={cn(
+              errors.reporterName && 'border-destructive focus-visible:ring-destructive',
+            )}
           />
           {errors.reporterName && (
             <p id="reporterName-error" className="text-sm text-destructive">
@@ -134,7 +136,9 @@ const DMCA = () => {
             onChange={handleChange}
             aria-invalid={Boolean(errors.reporterEmail)}
             aria-describedby={errors.reporterEmail ? 'reporterEmail-error' : undefined}
-            className={cn(errors.reporterEmail && 'border-destructive focus-visible:ring-destructive')}
+            className={cn(
+              errors.reporterEmail && 'border-destructive focus-visible:ring-destructive',
+            )}
           />
           {errors.reporterEmail && (
             <p id="reporterEmail-error" className="text-sm text-destructive">
@@ -150,7 +154,9 @@ const DMCA = () => {
             onChange={handleChange}
             aria-invalid={Boolean(errors.contentLink)}
             aria-describedby={errors.contentLink ? 'contentLink-error' : undefined}
-            className={cn(errors.contentLink && 'border-destructive focus-visible:ring-destructive')}
+            className={cn(
+              errors.contentLink && 'border-destructive focus-visible:ring-destructive',
+            )}
           />
           {errors.contentLink && (
             <p id="contentLink-error" className="text-sm text-destructive">
