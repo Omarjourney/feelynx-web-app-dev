@@ -3,6 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LovenseToy } from '@/lib/lovense';
+import { Input } from '@/components/ui/input';
+import { getServerWsUrl } from '@/lib/ws';
 
 const ControlRemote: React.FC = () => {
   const toyRef = useRef<LovenseToy>();
@@ -16,6 +18,8 @@ const ControlRemote: React.FC = () => {
   const [busy, setBusy] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [sessionToken, setSessionToken] = useState<string | null>(null);
+  const [listenSessionId, setListenSessionId] = useState<string>('');
+  const wsRef = useRef<WebSocket | null>(null);
 
   const startConsentSession = async () => {
     try {
@@ -109,6 +113,56 @@ const ControlRemote: React.FC = () => {
     }
   };
 
+  const startListening = () => {
+    if (!listenSessionId) return alert('Enter a session id to listen');
+    if (wsRef.current) wsRef.current.close();
+    const wsUrl = getServerWsUrl().replace(/^http/, 'ws');
+    const ws = new WebSocket(wsUrl);
+    ws.onopen = () => {
+      ws.send(JSON.stringify({ type: 'subscribeControl', sessionId: listenSessionId }));
+    };
+    ws.onmessage = async (ev) => {
+      try {
+        const msg = JSON.parse(String(ev.data));
+        if (msg?.type === 'controlCommand' && msg.sessionId === listenSessionId) {
+          const target = Math.min(Math.max(0, Number(msg.intensity) || 0), maxIntensity);
+          setIntensity(target);
+          try {
+            await toy.vibrate(target);
+          } catch (err) {
+            // ignore if not paired
+          }
+        } else if (msg?.type === 'controlEnded' && msg.sessionId === listenSessionId) {
+          try {
+            await killSwitch();
+          } catch (err) {
+            // ignore
+          }
+        }
+      } catch (err) {
+        // ignore malformed
+      }
+    };
+    ws.onclose = () => {
+      wsRef.current = null;
+    };
+    wsRef.current = ws;
+  };
+
+  const stopListening = () => {
+    if (wsRef.current && listenSessionId) {
+      try {
+        wsRef.current.send(
+          JSON.stringify({ type: 'unsubscribeControl', sessionId: listenSessionId }),
+        );
+      } catch (err) {
+        // ignore
+      }
+      wsRef.current.close();
+      wsRef.current = null;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-4 space-y-4">
@@ -181,7 +235,9 @@ const ControlRemote: React.FC = () => {
                     <Button variant="outline" onClick={revokeConsentSession} disabled={busy}>
                       End Session
                     </Button>
-                    <span className="text-xs text-muted-foreground">Session: {sessionId.slice(0, 8)}…</span>
+                    <span className="text-xs text-muted-foreground">
+                      Session: {sessionId.slice(0, 8)}…
+                    </span>
                   </>
                 )}
               </div>
@@ -206,6 +262,22 @@ const ControlRemote: React.FC = () => {
               max={maxIntensity}
               step={1}
             />
+            <div className="grid gap-2 pt-4">
+              <div className="text-sm font-medium">Listen to Session (performer)</div>
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Enter session id"
+                  value={listenSessionId}
+                  onChange={(e) => setListenSessionId(e.target.value)}
+                />
+                <Button variant="secondary" onClick={startListening} disabled={!listenSessionId}>
+                  Listen
+                </Button>
+                <Button variant="outline" onClick={stopListening}>
+                  Stop
+                </Button>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>

@@ -4,6 +4,7 @@ import type { Request, Response } from 'express';
 import cors from 'cors';
 import { createServer } from 'http';
 import { WebSocketServer, WebSocket } from 'ws';
+import { subscribe as subscribeControl, unsubscribe as unsubscribeControl } from './wsControl';
 import authRoutes from './routes/auth';
 import usersRoutes from './routes/users';
 import postsRoutes from './routes/posts';
@@ -134,3 +135,21 @@ server.listen(port, () => {
 });
 
 cron.schedule('0 0 * * *', processPendingPayouts);
+
+// Handle control session subscriptions over WebSocket
+wss.on('connection', (ws: WebSocket) => {
+  ws.on('message', (raw) => {
+    try {
+      const msg = JSON.parse(String(raw));
+      if (msg?.type === 'subscribeControl' && typeof msg.sessionId === 'string') {
+        subscribeControl(ws, msg.sessionId);
+        ws.send(JSON.stringify({ type: 'subscribed', sessionId: msg.sessionId }));
+      } else if (msg?.type === 'unsubscribeControl' && typeof msg.sessionId === 'string') {
+        unsubscribeControl(ws, msg.sessionId);
+        ws.send(JSON.stringify({ type: 'unsubscribed', sessionId: msg.sessionId }));
+      }
+    } catch (err) {
+      // ignore malformed
+    }
+  });
+});

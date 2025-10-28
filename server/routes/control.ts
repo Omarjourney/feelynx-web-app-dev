@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import crypto from 'crypto';
+import { publishCommand, publishEnd } from '../wsControl';
 
 const router = Router();
 
@@ -22,7 +23,11 @@ function randId(prefix: string) {
 
 // Create a consented control session (performer-side action)
 router.post('/sessions', (req, res) => {
-  const { ownerId = 'owner_demo', maxIntensity = 12, durationSec = 300 } = (req.body || {}) as Partial<ControlSession>;
+  const {
+    ownerId = 'owner_demo',
+    maxIntensity = 12,
+    durationSec = 300,
+  } = (req.body || {}) as Partial<ControlSession>;
   const id = randId('sess');
   const token = randId('ctok');
   const sess: ControlSession = {
@@ -35,7 +40,13 @@ router.post('/sessions', (req, res) => {
     revoked: false,
   };
   SESSIONS.set(id, sess);
-  res.status(201).json({ id: sess.id, token: sess.token, maxIntensity: sess.maxIntensity, durationSec: sess.durationSec, createdAt: sess.createdAt });
+  res.status(201).json({
+    id: sess.id,
+    token: sess.token,
+    maxIntensity: sess.maxIntensity,
+    durationSec: sess.durationSec,
+    createdAt: sess.createdAt,
+  });
 });
 
 // Revoke session early
@@ -45,6 +56,7 @@ router.post('/sessions/:id/revoke', (req, res) => {
   if (!sess) return res.status(404).json({ error: 'not_found' });
   sess.revoked = true;
   SESSIONS.set(id, sess);
+  publishEnd(id);
   res.json({ ok: true });
 });
 
@@ -60,9 +72,8 @@ router.post('/sessions/:id/command', (req, res) => {
   const elapsed = (Date.now() - sess.createdAt) / 1000;
   if (elapsed > sess.durationSec) return res.status(403).json({ error: 'expired' });
   const bounded = Math.max(0, Math.min(sess.maxIntensity, Number(intensity) || 0));
-  // In a real system, forward bounded intensity to the performer via RTC/WebSocket.
+  publishCommand(id, bounded);
   return res.json({ ok: true, intensity: bounded });
 });
 
 export default router;
-
