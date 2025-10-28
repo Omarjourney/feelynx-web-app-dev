@@ -10,4 +10,5 @@ export async function requestBluetoothDevice(
   const device = await (navigator as any).bluetooth.requestDevice(
     options ?? { acceptAllDevices: true },
   );
+  return device as BluetoothDevice;
 }

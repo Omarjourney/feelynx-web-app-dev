@@ -19,4 +19,3 @@ const ContestsFeed: React.FC = () => {
 };
 
 export default ContestsFeed;
-

@@ -22,14 +22,14 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
   const [coins] = useState(2547);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const tabs = ([
+  const tabs = [
     { id: 'explore', label: 'Discover' },
     FEATURES.live && { id: 'creators', label: 'Live' },
     FEATURES.calls && { id: 'calls', label: 'Calls' },
     FEATURES.content && { id: 'content', label: 'Content' },
     { id: 'dm', label: 'Messages' },
     { id: 'dashboard', label: 'Profile' },
-  ].filter(Boolean)) as Array<{ id: string; label: string }>;
+  ].filter(Boolean) as Array<{ id: string; label: string }>;
 
   return (
     <>
@@ -90,7 +90,11 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
               {/* More menu */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="default" className="md:size-sm min-h-11 rounded-full">
+                  <Button
+                    variant="outline"
+                    size="default"
+                    className="md:size-sm min-h-11 rounded-full"
+                  >
                     More
                   </Button>
                 </DropdownMenuTrigger>
@@ -98,25 +102,39 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
                   <DropdownMenuLabel>More</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   {FEATURES.groups && (
-                    <DropdownMenuItem onClick={() => onTabChange('groups')}>Groups</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onTabChange('groups')}>
+                      Groups
+                    </DropdownMenuItem>
                   )}
                   {FEATURES.patterns && (
-                    <DropdownMenuItem onClick={() => onTabChange('patterns')}>Patterns</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onTabChange('patterns')}>
+                      Patterns
+                    </DropdownMenuItem>
                   )}
                   {FEATURES.remote && (
-                    <DropdownMenuItem onClick={() => onTabChange('remote')}>Remote</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onTabChange('remote')}>
+                      Remote
+                    </DropdownMenuItem>
                   )}
                   {FEATURES.companions && (
-                    <DropdownMenuItem onClick={() => onTabChange('companions')}>Companions</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onTabChange('companions')}>
+                      Companions
+                    </DropdownMenuItem>
                   )}
                   {FEATURES.contests && (
-                    <DropdownMenuItem onClick={() => onTabChange('contests')}>Contests</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onTabChange('contests')}>
+                      Contests
+                    </DropdownMenuItem>
                   )}
                   {FEATURES.shop && (
-                    <DropdownMenuItem onClick={() => onTabChange('token-shop')}>Shop</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onTabChange('token-shop')}>
+                      Shop
+                    </DropdownMenuItem>
                   )}
                   {FEATURES.settings && (
-                    <DropdownMenuItem onClick={() => onTabChange('settings')}>Settings</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onTabChange('settings')}>
+                      Settings
+                    </DropdownMenuItem>
                   )}
                 </DropdownMenuContent>
               </DropdownMenu>
