@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ChevronDown, Globe, Menu } from 'lucide-react';
@@ -13,6 +13,7 @@ import {
 import { FEATURES } from '@/config';
 import feelynxLogo from '@/assets/feelynx-logo.png';
 import PreviewBanner from '@/components/PreviewBanner';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 interface NavigationProps {
   activeTab: string;
@@ -22,15 +23,33 @@ interface NavigationProps {
 export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
   const [coins] = useState(2547);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
 
-  const tabs = [
-    { id: 'discover', label: 'Discover' },
-    FEATURES.live && { id: 'creators', label: 'Live' },
-    FEATURES.calls && { id: 'calls', label: 'Calls' },
-    FEATURES.content && { id: 'content', label: 'Content' },
-    { id: 'dm', label: 'Messages' },
-    { id: 'dashboard', label: 'Profile' },
-  ].filter(Boolean) as Array<{ id: string; label: string }>;
+  const tabs = useMemo(
+    () =>
+      [
+        { id: 'discover', label: 'Discover', to: '/discover' },
+        FEATURES.live && { id: 'creators', label: 'Live', to: '/creators' },
+        FEATURES.calls && { id: 'calls', label: 'Calls', to: '/calls' },
+        FEATURES.content && { id: 'content', label: 'Content', to: '/content' },
+        { id: 'dm', label: 'Messages', to: '/dm' },
+        { id: 'dashboard', label: 'Profile', to: '/dashboard' },
+      ].filter(Boolean) as Array<{ id: string; label: string; to: string }>,
+    [pathname],
+  );
+
+  const activeId = useMemo(() => {
+    if (activeTab) return activeTab;
+    if (pathname.startsWith('/discover') || pathname === '/' || pathname.startsWith('/explore'))
+      return 'discover';
+    if (pathname.startsWith('/creators') || pathname.startsWith('/live')) return 'creators';
+    if (pathname.startsWith('/calls') || pathname.startsWith('/call-room')) return 'calls';
+    if (pathname.startsWith('/content')) return 'content';
+    if (pathname.startsWith('/dm')) return 'dm';
+    if (pathname.startsWith('/dashboard') || pathname.startsWith('/settings')) return 'dashboard';
+    return '';
+  }, [activeTab, pathname]);
 
   return (
     <>
@@ -53,11 +72,14 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
               {tabs.map((tab) => (
                 <Button
                   key={tab.id}
-                  variant={activeTab === tab.id ? 'default' : 'ghost'}
+                  variant={activeId === tab.id ? 'default' : 'ghost'}
                   size="default"
-                  onClick={() => onTabChange(tab.id)}
+                  onClick={() => {
+                    onTabChange?.(tab.id);
+                    navigate(tab.to);
+                  }}
                   className={`min-h-11 min-w-11 rounded-full ${
-                    activeTab === tab.id
+                    activeId === tab.id
                       ? 'bg-gradient-primary text-primary-foreground shadow-glow'
                       : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
                   }`}
@@ -103,42 +125,38 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
                   <DropdownMenuLabel>More</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   {FEATURES.groups && (
-                    <DropdownMenuItem onClick={() => onTabChange('groups')}>
-                      Groups
-                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/groups')}>Groups</DropdownMenuItem>
                   )}
                   {FEATURES.patterns && (
-                    <DropdownMenuItem onClick={() => onTabChange('patterns')}>
+                    <DropdownMenuItem onClick={() => navigate('/patterns')}>
                       Patterns
                     </DropdownMenuItem>
                   )}
                   {FEATURES.remote && (
-                    <DropdownMenuItem onClick={() => onTabChange('remote')}>
-                      Remote
-                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/remote')}>Remote</DropdownMenuItem>
                   )}
                   {FEATURES.companions && (
-                    <DropdownMenuItem onClick={() => onTabChange('companions')}>
+                    <DropdownMenuItem onClick={() => navigate('/companions')}>
                       Companions
                     </DropdownMenuItem>
                   )}
                   {FEATURES.contests && (
-                    <DropdownMenuItem onClick={() => onTabChange('contests')}>
+                    <DropdownMenuItem onClick={() => navigate('/contests')}>
                       Contests
                     </DropdownMenuItem>
                   )}
                   {FEATURES.shop && (
-                    <DropdownMenuItem onClick={() => onTabChange('token-shop')}>
+                    <DropdownMenuItem onClick={() => navigate('/token-shop')}>
                       Shop
                     </DropdownMenuItem>
                   )}
                   {FEATURES.settings && (
-                    <DropdownMenuItem onClick={() => onTabChange('settings')}>
+                    <DropdownMenuItem onClick={() => navigate('/settings')}>
                       Settings
                     </DropdownMenuItem>
                   )}
                   {FEATURES.styleguide && (
-                    <DropdownMenuItem onClick={() => onTabChange('styleguide')}>
+                    <DropdownMenuItem onClick={() => navigate('/styleguide')}>
                       Styleguide
                     </DropdownMenuItem>
                   )}
