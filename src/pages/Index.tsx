@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
-import { HeroSection } from '@/components/HeroSection';
+import HeroLogoReveal from '../../components/brand/HeroLogoReveal';
 import { SearchFilters, SearchFiltersState } from '@/components/SearchFilters';
 import { CreatorCard } from '@/components/CreatorCard';
 import { VibeCoinPackages } from '@/components/VibeCoinPackages';
@@ -10,6 +10,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { groups } from '@/data/groups';
 import { MessageCircle, Radio, Sparkles, Users, Workflow, Video } from 'lucide-react';
+import FeelynxLogo from '@/components/brand/FeelynxLogo';
+import { BRAND } from '@/config';
 
 const Index = () => {
   const creators = useCreatorLive();
@@ -126,10 +128,7 @@ const Index = () => {
     <div className="min-h-screen bg-background md:flex">
       <Navigation activeTab="home" onTabChange={() => undefined} />
       <main id="main-content" className="flex-1 overflow-x-hidden pb-24 md:pb-12">
-        <HeroSection
-          onExplore={() => navigate('/discover')}
-          onGoLive={() => navigate('/call-room')}
-        />
+        <HeroLogoReveal />
 
         <section className="mx-auto mt-12 w-full max-w-6xl space-y-8 px-4">
           <section aria-labelledby="feature-hub" className="space-y-4">
@@ -366,6 +365,13 @@ const Index = () => {
         </section>
 
         <footer className="mt-16 px-4 text-center text-sm text-muted-foreground">
+          <div className="flex flex-col items-center gap-3 pb-3">
+            {BRAND.v2Wordmark ? (
+              <FeelynxLogo size={180} glow={false} tagline="Feel. Connect. Sync." />
+            ) : (
+              <span className="text-lg font-semibold text-foreground">Feelynx</span>
+            )}
+          </div>
           <Link to="/dmca">DMCA Notice</Link>
         </footer>
       </main>

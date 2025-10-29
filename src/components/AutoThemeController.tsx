@@ -50,4 +50,3 @@ const AutoThemeController = () => {
 };
 
 export default AutoThemeController;
-

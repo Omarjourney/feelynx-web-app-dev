@@ -10,6 +10,11 @@
     --background: 248 34% 8%;
     --foreground: 0 0% 100%;
 
+    --feelynx-pink: #e8338b;
+    --feelynx-cyan: #5cc8ff;
+    --feelynx-ink: #0b0720;
+    --feelynx-outline: #1b1230;
+
     --card: 252 28% 13%;
     --card-foreground: 0 0% 100%;
 
@@ -80,6 +85,11 @@
   .dark {
     --background: 248 34% 6%;
     --foreground: 0 0% 100%;
+
+    --feelynx-pink: #e8338b;
+    --feelynx-cyan: #5cc8ff;
+    --feelynx-ink: #0e0a16;
+    --feelynx-outline: #1b1230;
     --card: 247 33% 10%;
     --card-foreground: 0 0% 98%;
     --popover: 247 33% 10%;

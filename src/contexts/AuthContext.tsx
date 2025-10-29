@@ -68,8 +68,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       const mode = localStorage.getItem('ivibes:themeMode');
       const stored =
-        localStorage.getItem(`ivibes:theme:${uid}`) ||
-        localStorage.getItem(`feelynx:theme:${uid}`);
+        localStorage.getItem(`ivibes:theme:${uid}`) || localStorage.getItem(`feelynx:theme:${uid}`);
       if (mode === 'auto') {
         const hours = new Date().getHours();
         const preferred = hours >= 7 && hours < 19 ? 'light' : 'dark';

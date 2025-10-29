@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UNSPLASH_RANDOM_BASE_URL } from '@/config';
+import { UNSPLASH_RANDOM_BASE_URL, BRAND } from '@/config';
 import { Navigation } from '@/components/Navigation';
 import { SearchFilters, SearchFiltersState } from '@/components/SearchFilters';
 import LiveStreamCard from '@/components/LiveStreamCard';
@@ -13,6 +13,7 @@ import { Progress } from '@/components/ui/progress';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { creators as creatorsData } from '@/data/creators';
+import FeelynxLogo from '@/components/brand/FeelynxLogo';
 import type { Creator } from '@/types/creator';
 
 const Explore = () => {

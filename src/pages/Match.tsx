@@ -3,6 +3,8 @@ import { useSwipeable } from 'react-swipeable';
 import { Room } from 'livekit-client';
 import { toast } from 'sonner';
 import { getUserMessage, toApiError } from '@/lib/errors';
+import FeelynxLogo from '@/components/brand/FeelynxLogo';
+import { BRAND } from '@/config';
 
 interface Creator {
   id: number;
@@ -152,7 +154,14 @@ const Match = () => {
       ) : hasMore ? (
         <p>{isFetching ? 'Loading next creator…' : 'Finding creators for you…'}</p>
       ) : (
-        <p>No more creators</p>
+        <div className="flex flex-col items-center gap-4 text-center">
+          {BRAND.v2Wordmark ? (
+            <FeelynxLogo size={180} glow={false} tagline="No more creators right now" />
+          ) : (
+            <p>No more creators right now</p>
+          )}
+          <p className="text-sm text-muted-foreground">Refresh soon to catch new matches.</p>
+        </div>
       )}
       <div className="flex gap-2">
         <button

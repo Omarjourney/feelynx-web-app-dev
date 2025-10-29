@@ -24,7 +24,9 @@ const SettingsPrivacy = () => {
     const mode = localStorage.getItem('ivibes:themeMode');
     if (mode === 'auto') return 'auto';
     const stored = localStorage.getItem('theme');
-    return stored === 'light' || stored === 'dark' || stored === 'system' ? (stored as any) : 'system';
+    return stored === 'light' || stored === 'dark' || stored === 'system'
+      ? (stored as any)
+      : 'system';
   });
   const defaultTab = useMemo(
     () => new URLSearchParams(location.search).get('tab') || 'general',

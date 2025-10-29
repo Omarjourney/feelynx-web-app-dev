@@ -4,6 +4,8 @@ import { toast } from 'sonner';
 import { getUserMessage, toApiError } from '@/lib/errors';
 import { DMMessageSkeleton, DMThreadSkeleton } from '@/components/Skeletons';
 import { useAuth } from '@/contexts/AuthContext';
+import FeelynxLogo from '@/components/brand/FeelynxLogo';
+import { BRAND } from '@/config';
 
 interface Message {
   id: string;
@@ -313,7 +315,16 @@ const DM = () => {
                 </button>
               ))}
             {!loadingThreads && threads.length === 0 && (
-              <div className="p-2 text-sm text-muted-foreground">No threads</div>
+              <div className="flex flex-col items-center gap-3 rounded-2xl border border-border/50 bg-background/70 p-4 text-center">
+                {BRAND.v2Wordmark ? (
+                  <FeelynxLogo size={140} glow={false} tagline="No threads yet" />
+                ) : (
+                  <div className="text-sm font-medium text-muted-foreground">No threads yet</div>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  Start a conversation to light up your inbox.
+                </p>
+              </div>
             )}
           </div>
         </div>
@@ -365,7 +376,14 @@ const DM = () => {
               );
             })}
             {!loadingMessages && messages.length === 0 && (
-              <p className="text-sm text-muted-foreground">No messages yet. Say hello!</p>
+              <div className="flex flex-col items-center gap-3 rounded-2xl border border-border/50 bg-background/70 p-4 text-center">
+                {BRAND.v2Wordmark ? (
+                  <FeelynxLogo size={140} glow={false} tagline="No messages yet" />
+                ) : (
+                  <p className="text-sm text-muted-foreground">No messages yet.</p>
+                )}
+                <p className="text-xs text-muted-foreground">Say hello to kick things off.</p>
+              </div>
             )}
           </div>
           <div className="flex gap-2">

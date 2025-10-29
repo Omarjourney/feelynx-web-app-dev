@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Lock } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { ApiError, isApiError, request } from '@/lib/api';
+import FeelynxLogo from '@/components/brand/FeelynxLogo';
+import { BRAND } from '@/config';
 
 interface Story {
   id: string;
@@ -72,7 +74,15 @@ const Stories = () => {
   };
 
   if (!stories.length)
-    return <div className="flex items-center justify-center h-screen">No stories</div>;
+    return (
+      <div className="flex h-screen flex-col items-center justify-center gap-6 bg-[#0B0720]/90 px-4 text-center text-foreground">
+        {BRAND.v2Wordmark ? (
+          <FeelynxLogo size={240} glow tagline="No stories yet. Check back soon." />
+        ) : (
+          <p className="text-lg font-semibold">No stories yet. Check back soon.</p>
+        )}
+      </div>
+    );
 
   const story = stories[index];
 

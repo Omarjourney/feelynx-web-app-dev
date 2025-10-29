@@ -85,7 +85,8 @@ const CallRoom = () => {
       await requestMediaPermissions();
       setState('live');
       // Flip presence to busy (if we have a public handle saved)
-      const handle = localStorage.getItem('ivibes:handle') || localStorage.getItem('feelynx:handle');
+      const handle =
+        localStorage.getItem('ivibes:handle') || localStorage.getItem('feelynx:handle');
       if (handle) {
         fetch(`/presence/${encodeURIComponent(handle)}`, {
           method: 'POST',
