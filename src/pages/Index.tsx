@@ -42,15 +42,7 @@ const Index = () => {
             {/* Hero Section */}
             <HeroSection />
 
-            {/* Security Notice for Non-Authenticated Users */}
-            {!user && (
-              <div className="bg-primary/10 p-4 text-center container mx-auto">
-                <p className="mb-2">⚠️ Sign in to access all features and secure data</p>
-                <Link to="/auth">
-                  <Button>Get Started</Button>
-                </Link>
-              </div>
-            )}
+            {/* Removed sign-in warning banner to reduce friction on landing */}
 
             {/* Search and Filters */}
             <div className="container mx-auto px-4">
