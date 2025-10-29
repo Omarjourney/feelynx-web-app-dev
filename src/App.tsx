@@ -28,7 +28,7 @@ import PatternEditor from './features/patterns/PatternEditor';
 import ControlRemote from './features/remote/ControlRemote';
 import CompanionsHome from './features/companions/CompanionsHome';
 import ContestsFeed from './features/contests/ContestsFeed';
-import { GoLiveButton } from '@/components/live';
+import GoLiveEntry from '@/components/GoLiveEntry';
 
 const queryClient = new QueryClient();
 
@@ -66,7 +66,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
-          <GoLiveButton />
+          <GoLiveEntry />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
