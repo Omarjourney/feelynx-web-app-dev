@@ -21,6 +21,16 @@ const Index = () => {
     sort: 'trending',
   });
 
+  const parseCount = (value?: string) => {
+    if (!value) return 0;
+    const normalized = value.trim().toLowerCase();
+    const numeric = Number.parseFloat(normalized.replace(/[^0-9.]/g, ''));
+    if (Number.isNaN(numeric)) return 0;
+    if (normalized.endsWith('m')) return numeric * 1_000_000;
+    if (normalized.endsWith('k')) return numeric * 1_000;
+    return numeric;
+  };
+
   const filteredCreators = useMemo(() => {
     return creators
       .filter((c) =>
@@ -33,7 +43,8 @@ const Index = () => {
       .filter((c) => (filters.isLive ? c.isLive : true))
       .sort((a, b) => {
         if (filters.sort === 'newest') return b.id - a.id;
-        if (filters.sort === 'live') return Number(b.isLive) - Number(a.isLive);
+        if (filters.sort === 'followers')
+          return parseCount(b.subscribers) - parseCount(a.subscribers);
         return (b.viewers || 0) - (a.viewers || 0);
       });
   }, [creators, filters]);
