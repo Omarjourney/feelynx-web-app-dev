@@ -1,10 +1,11 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LovenseToy } from '@/lib/lovense';
 import { Input } from '@/components/ui/input';
 import { getServerWsUrl } from '@/lib/ws';
+import { isBluetoothSupported, isSecureContextSupported } from '@/lib/bluetooth';
 
 const ControlRemote: React.FC = () => {
   const toyRef = useRef<LovenseToy>();
@@ -20,6 +21,13 @@ const ControlRemote: React.FC = () => {
   const [sessionToken, setSessionToken] = useState<string | null>(null);
   const [listenSessionId, setListenSessionId] = useState<string>('');
   const wsRef = useRef<WebSocket | null>(null);
+  const [btSupported, setBtSupported] = useState<boolean>(true);
+  const [secureCtx, setSecureCtx] = useState<boolean>(true);
+
+  useEffect(() => {
+    setBtSupported(isBluetoothSupported());
+    setSecureCtx(isSecureContextSupported());
+  }, []);
 
   const startConsentSession = async () => {
     try {
@@ -62,7 +70,10 @@ const ControlRemote: React.FC = () => {
       setPaired(true);
     } catch (err) {
       console.error(err);
-      alert((err as Error).message || 'Failed to pair device');
+      const msg = (err as Error)?.message || 'Failed to pair device';
+      alert(
+        `${msg}\n\nTips:\n• Use Chrome on desktop with Bluetooth enabled.\n• Make sure you are on HTTPS.\n• Ensure the device is on and in pairing mode.`,
+      );
     } finally {
       setBusy(false);
     }
@@ -164,21 +175,29 @@ const ControlRemote: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-4 space-y-4">
+    <div className="bg-background">
+      <div className="space-y-4">
         <h1 className="text-2xl font-semibold">Universal Toy Remote</h1>
         <p className="text-muted-foreground">
-          Connect devices, set safety caps, and control sessions. Emergency stop always available.
+          Connect devices, set safety caps, and control sessions.
         </p>
 
+        {(!btSupported || !secureCtx) && (
+          <div className="rounded-md border border-amber-300 bg-amber-50 text-amber-900 p-3 text-sm">
+            {!btSupported && <div>Web Bluetooth is not supported in this browser.</div>}
+            {!secureCtx && <div>Bluetooth requires a secure context (HTTPS).</div>}
+            <div className="mt-1 opacity-80">Try Chrome desktop and ensure you’re on HTTPS.</div>
+          </div>
+        )}
+
         <div className="grid gap-4 md:grid-cols-2">
-          <Card>
+          <Card className="border border-border/60">
             <CardHeader>
               <CardTitle>Device</CardTitle>
             </CardHeader>
             <CardContent className="space-x-2 space-y-2">
               {!paired ? (
-                <Button onClick={handlePair} disabled={busy}>
+                <Button onClick={handlePair} disabled={busy || !btSupported || !secureCtx}>
                   Pair Lovense
                 </Button>
               ) : (
@@ -192,7 +211,7 @@ const ControlRemote: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border border-border/60">
             <CardHeader>
               <CardTitle>Consent & Safety</CardTitle>
             </CardHeader>
@@ -245,7 +264,7 @@ const ControlRemote: React.FC = () => {
           </Card>
         </div>
 
-        <Card>
+        <Card className="border border-border/60">
           <CardHeader>
             <CardTitle>Control</CardTitle>
           </CardHeader>
