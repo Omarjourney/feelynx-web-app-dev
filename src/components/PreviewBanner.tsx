@@ -11,13 +11,18 @@ type Health = {
 };
 
 export default function PreviewBanner() {
+  // Hide banner by default; enable only when explicitly requested
+  const show = (import.meta as any).env?.VITE_SHOW_PREVIEW_BANNER === 'true';
   const [health, setHealth] = useState<Health | null>(null);
   useEffect(() => {
+    if (!show) return;
     fetch('/health')
       .then((r) => r.json())
       .then((data) => setHealth(data))
       .catch(() => setHealth({ ok: false }));
-  }, []);
+  }, [show]);
+
+  if (!show) return null;
 
   if (!health) return null;
 
