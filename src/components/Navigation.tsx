@@ -22,7 +22,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Slider } from '@/components/ui/slider';
-import FeelynxLogo from '../../components/brand/FeelynxLogo';
+import ivibesWordmark from '@/assets/ivibes-wordmark.svg';
 import PreviewBanner from '@/components/PreviewBanner';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ReactiveMascot from '@/components/ReactiveMascot';
@@ -133,8 +133,12 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
       </a>
       <aside className="hidden md:flex md:h-screen md:w-72 md:flex-shrink-0 md:flex-col md:border-r md:border-border/60 md:bg-sidebar-background/80 md:backdrop-blur-xl md:pt-safe">
         <div className="flex items-center gap-3 px-6 pt-8 pb-6">
-          <div className="relative h-12 w-40">
-            <FeelynxLogo size={180} theme="auto" animate glow />
+          <div className="relative rounded-2xl bg-gradient-primary p-2 shadow-glow">
+            <img src={ivibesWordmark} alt="iVibes" className="h-10 w-auto" />
+          </div>
+          <div>
+            <p className="text-sm uppercase tracking-widest text-muted-foreground">Entertainment</p>
+            <p className="text-2xl font-extrabold text-foreground">Feelynx</p>
           </div>
         </div>
 
@@ -314,9 +318,7 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-2">
-              <div className="flex h-10 w-32 items-center">
-                <FeelynxLogo size={128} theme="auto" animate glow />
-              </div>
+              <img src={ivibesWordmark} alt="iVibes" className="h-8 w-auto" />
             </div>
 
             <div className="flex items-center space-x-3">

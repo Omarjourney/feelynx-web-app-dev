@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Menu, LogOut } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import FeelynxLogo from '../../components/brand/FeelynxLogo';
+import ivibesWordmark from '@/assets/ivibes-wordmark.svg';
 
 const links = [
   { to: '/', label: 'Home' },
@@ -25,9 +25,7 @@ const Navbar = () => {
     <nav className="bg-background/95 backdrop-blur-sm border-b border-border sticky top-0 z-50 pt-safe px-safe">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <div className="flex h-10 w-32 items-center">
-            <FeelynxLogo size={128} theme="auto" animate glow />
-          </div>
+          <img src={ivibesWordmark} alt="iVibes" className="h-8 w-auto" />
         </div>
         <div className="hidden md:flex items-center space-x-2">
           {links.map((l) => (
