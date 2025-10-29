@@ -3,7 +3,11 @@ import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './styles.css';
 import { AuthProvider } from './contexts/AuthContext';
+import { enableDemoMocks } from './lib/demo/mockFetch';
 
+if ((import.meta as any).env?.VITE_DEMO_MODE === 'true') {
+  enableDemoMocks();
+}
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>
