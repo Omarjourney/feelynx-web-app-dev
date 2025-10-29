@@ -45,44 +45,45 @@ const LiveCreator = () => {
       setIsVideoReady(false);
 
       const identity = `creator_${Date.now()}`;
-      // Get token for creator
-      const { token } = await request<{ token: string }>('/livekit/token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ room: roomName, identity }),
-      });
-
       const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL;
-      if (!wsUrl) {
-        throw new Error('LiveKit WebSocket URL is not configured');
+      const demoMode = searchParams.get('mode') === 'demo' || !wsUrl;
+      if (demoMode) {
+        // Fallback: demo preview without LiveKit connection
+        const tracks = await createLocalTracks({ audio: true, video: true });
+        const videoTrack = tracks.find((t) => t.kind === Track.Kind.Video);
+        if (videoTrack && localVideoRef.current) {
+          videoTrack.attach(localVideoRef.current);
+          setIsVideoReady(true);
+        }
+        setIsLive(true);
+        toast.success('Camera preview started (demo mode)');
+      } else {
+        // Get token for creator and connect to LiveKit
+        const { token } = await request<{ token: string }>('/livekit/token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ room: roomName, identity }),
+        });
+
+        const room = new Room();
+        await room.connect(wsUrl, token);
+        const localTracks = await createLocalTracks({ audio: true, video: true });
+        for (const track of localTracks) {
+          await room.localParticipant.publishTrack(track);
+        }
+        const videoTrack = localTracks.find((t) => t.kind === Track.Kind.Video);
+        if (videoTrack && localVideoRef.current) {
+          videoTrack.attach(localVideoRef.current);
+          setIsVideoReady(true);
+        }
+        const updateParticipants = () => setViewers(room.remoteParticipants.size);
+        room.on(RoomEvent.ParticipantConnected, updateParticipants);
+        room.on(RoomEvent.ParticipantDisconnected, updateParticipants);
+        updateParticipants();
+        roomRef.current = room;
+        setIsLive(true);
+        toast.success('You are now live!', { description: 'Viewers can now join your stream.' });
       }
-      const room = new Room();
-      await room.connect(wsUrl, token);
-
-      // Publish local tracks
-      const localTracks = await createLocalTracks({ audio: true, video: true });
-
-      // Publish each track individually
-      for (const track of localTracks) {
-        await room.localParticipant.publishTrack(track);
-      }
-
-      const videoTrack = localTracks.find((t) => t.kind === Track.Kind.Video);
-      if (videoTrack && localVideoRef.current) {
-        videoTrack.attach(localVideoRef.current);
-        setIsVideoReady(true);
-      }
-
-      const updateParticipants = () => setViewers(room.remoteParticipants.size);
-      room.on(RoomEvent.ParticipantConnected, updateParticipants);
-      room.on(RoomEvent.ParticipantDisconnected, updateParticipants);
-      updateParticipants();
-
-      roomRef.current = room;
-      setIsLive(true);
-      toast.success('You are now live!', {
-        description: 'Viewers can now join your stream.',
-      });
     } catch (error) {
       console.error('Failed to start live stream:', error);
       const apiError = isApiError(error) ? error : undefined;
@@ -123,6 +124,12 @@ const LiveCreator = () => {
     if (activeRoom) {
       activeRoom.disconnect();
       roomRef.current = null;
+    }
+    // Detach any attached video stream tracks in demo mode
+    if (localVideoRef.current && localVideoRef.current.srcObject) {
+      const ms = localVideoRef.current.srcObject as MediaStream;
+      ms.getTracks().forEach((t) => t.stop());
+      localVideoRef.current.srcObject = null;
     }
 
     // Update creator status to offline

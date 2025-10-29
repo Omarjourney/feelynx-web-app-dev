@@ -46,14 +46,20 @@ const GoLiveButton = () => {
       setMediaError('');
 
       const roomName = `live_creator_${Date.now()}`;
-
-      await createLivekitRoom({ name: roomName });
-      await requestCreatorToken(roomName, `creator_${Date.now()}`);
-      await updateCreatorLiveStatus('creator_username', true);
-
-      toast.success('Stream is ready! Redirecting to your live room.');
-      setOpen(false);
-      window.location.href = `/live-creator?room=${roomName}`;
+      const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL;
+      if (wsUrl) {
+        await createLivekitRoom({ name: roomName });
+        await requestCreatorToken(roomName, `creator_${Date.now()}`);
+        await updateCreatorLiveStatus('creator_username', true);
+        toast.success('Stream is ready! Redirecting to your live room.');
+        setOpen(false);
+        window.location.href = `/live-creator?room=${roomName}`;
+      } else {
+        // Demo mode: no LiveKit configured; navigate to creator with demo flag
+        toast.success('Starting camera preview (demo mode).');
+        setOpen(false);
+        window.location.href = `/live-creator?room=${roomName}&mode=demo`;
+      }
     } catch (error) {
       console.error('Failed to start stream:', error);
       const message = error instanceof Error ? error.message : String(error);
