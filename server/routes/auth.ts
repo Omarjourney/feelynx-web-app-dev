@@ -20,21 +20,27 @@ interface AuthRequest extends Request {
   userId?: number;
 }
 
+const GUEST_USER_ID = 0;
+
 const generateToken = (userId: number) => jwt.sign({ userId }, JWT_SECRET, { expiresIn: '1h' });
 
-export const authenticateToken = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authenticateToken = (req: AuthRequest, _res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
+
   if (!token) {
-    return res.status(401).json({ error: 'Token required' });
+    req.userId = GUEST_USER_ID;
+    return next();
   }
+
   try {
     const payload = jwt.verify(token, JWT_SECRET) as { userId: number };
     req.userId = payload.userId;
-    next();
   } catch {
-    res.status(401).json({ error: 'Invalid token' });
+    req.userId = GUEST_USER_ID;
   }
+
+  next();
 };
 
 router.post(
