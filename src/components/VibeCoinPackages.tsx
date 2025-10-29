@@ -2,11 +2,25 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { vibeCoinPackages, VibeCoinPackage } from '@/data/vibecoinPackages';
+import {
+  vibeCoinPackages,
+  VibeCoinPackage,
+  PLATFORM_MARGIN,
+  CREATOR_SHARE,
+  MIN_PLATFORM_PROFIT_PER_COIN,
+} from '@/data/vibecoinPackages';
 import { PaymentReceipt } from './PaymentReceipt';
 import { toast } from 'sonner';
 import { request } from '@/lib/api';
 import { getUserMessage } from '@/lib/errors';
+
+const formatPercent = (value: number) => {
+  if (Number.isInteger(value)) {
+    return value.toFixed(0);
+  }
+
+  return value.toFixed(1);
+};
 
 interface VibeCoinPackagesProps {
   /**
@@ -53,6 +67,8 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
       setLoadingPackageId(packageData.id);
       console.log('Purchasing:', packageData);
 
+      const tokensToCredit = platform === 'app' ? packageData.appTokens : packageData.tokens;
+
       const { paymentIntentId } = await request<{ paymentIntentId: string }>(
         '/payments/create-intent',
         {
@@ -60,7 +76,7 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             amount: packageData.price,
-            coins: packageData.tokens,
+            coins: tokensToCredit,
             currency: 'usd',
             userId: 1,
           }),
@@ -86,69 +102,107 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
 
   return (
     <div>
-      <h2 className="text-3xl font-bold mb-8 text-center">VibeCoin Packages</h2>
+      <h2 className="text-3xl font-bold mb-4 text-center">VibeCoin Packages</h2>
+      <p className="text-center text-sm text-muted-foreground mb-6 max-w-3xl mx-auto">
+        Every purchase instantly grants VibeCoins and pays creators 75% of the pack price. Feelynx
+        keeps a transparent 25% margin (at least{' '}
+        <span className="font-medium">
+          ${MIN_PLATFORM_PROFIT_PER_COIN.toFixed(3)} profit per coin
+        </span>
+        ) to operate the platform. Creators only encounter a minimal processing fee when they cash
+        out.
+      </p>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {packages.map((pkg) => (
-          <Card
-            key={pkg.id}
-            className={`relative bg-gradient-card transition-all hover:shadow-premium ${
-              pkg.popular ? 'ring-2 ring-primary shadow-premium scale-105' : ''
-            }`}
-          >
-            {pkg.popular && (
-              <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-primary text-primary-foreground px-4 py-1">
-                Most Popular
-              </Badge>
-            )}
+        {packages.map((pkg) => {
+          const displayedTokens = platform === 'app' ? pkg.appTokens : pkg.tokens;
+          const platformMarginAmount = pkg.price * PLATFORM_MARGIN;
+          const creatorEarnings = pkg.price * CREATOR_SHARE;
+          const platformProfitPerCoin = platformMarginAmount / displayedTokens;
 
-            <CardHeader className="text-center pb-4">
-              <div className="text-6xl mb-4">💎</div>
-              <CardTitle className="text-2xl font-bold">
-                {(platform === 'app' ? pkg.appTokens : pkg.tokens).toLocaleString()} VibeCoins
-              </CardTitle>
-              {platform === 'web' ? (
-                <div className="text-sm text-muted-foreground">
-                  {pkg.appTokens.toLocaleString()} in app
-                </div>
-              ) : (
-                <div className="text-sm text-muted-foreground">
-                  Get +{pkg.percentMore}% more on Feelynx.live ({pkg.tokens.toLocaleString()} total)
-                </div>
-              )}
-              {platform === 'web' && (
-                <Badge variant="secondary" className="bg-primary/20 text-primary">
-                  +{pkg.percentMore}% on web
+          if (platformProfitPerCoin < MIN_PLATFORM_PROFIT_PER_COIN) {
+            console.error(
+              `Platform profit per coin dropped below the minimum for package ${pkg.id}.`,
+            );
+          }
+
+          return (
+            <Card
+              key={pkg.id}
+              className={`relative bg-gradient-card transition-all hover:shadow-premium ${
+                pkg.popular ? 'ring-2 ring-primary shadow-premium scale-105' : ''
+              }`}
+            >
+              {pkg.popular && (
+                <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-primary text-primary-foreground px-4 py-1">
+                  Most Popular
                 </Badge>
               )}
-            </CardHeader>
 
-            <CardContent className="text-center space-y-4">
-              <div className="text-4xl font-bold text-primary">${pkg.price}</div>
+              <CardHeader className="text-center pb-4">
+                <div className="text-6xl mb-4">💎</div>
+                <CardTitle className="text-2xl font-bold">
+                  {displayedTokens.toLocaleString()} VibeCoins
+                </CardTitle>
+                {platform === 'web' ? (
+                  <div className="text-sm text-muted-foreground">
+                    {pkg.appTokens.toLocaleString()} in app
+                  </div>
+                ) : (
+                  <div className="text-sm text-muted-foreground">
+                    Get +{formatPercent(pkg.percentMore)}% more on Feelynx.live (
+                    {pkg.tokens.toLocaleString()} total)
+                  </div>
+                )}
+                {platform === 'web' && (
+                  <Badge variant="secondary" className="bg-primary/20 text-primary">
+                    +{formatPercent(pkg.percentMore)}% on web
+                  </Badge>
+                )}
+              </CardHeader>
 
-              <div className="text-xs text-muted-foreground">
-                ${(pkg.price / pkg.tokens).toFixed(3)} per VibeCoin
-              </div>
+              <CardContent className="text-center space-y-4">
+                <div className="text-4xl font-bold text-primary">${pkg.price}</div>
 
-              <Button
-                className={`w-full mt-4 ${
-                  pkg.popular
-                    ? 'bg-gradient-primary text-primary-foreground hover:shadow-glow'
-                    : 'bg-secondary hover:bg-secondary/80'
-                }`}
-                size="lg"
-                onClick={() => handlePurchase(pkg)}
-                disabled={loadingPackageId === pkg.id}
-              >
-                {loadingPackageId === pkg.id ? 'Processing…' : 'Purchase Now'}
-              </Button>
-              {platform === 'app' && (
-                <div className="text-xs text-muted-foreground mt-2">
-                  Get +{pkg.percentMore}% more VibeCoins on Feelynx.live!
+                <div className="text-xs text-muted-foreground">
+                  ${(pkg.price / displayedTokens).toFixed(3)} per VibeCoin
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        ))}
+
+                <div className="space-y-1 text-xs text-muted-foreground/90">
+                  <div>
+                    Creators receive{' '}
+                    <span className="font-medium">${creatorEarnings.toFixed(2)}</span> (
+                    {(CREATOR_SHARE * 100).toFixed(0)}%)
+                  </div>
+                  <div>
+                    Feelynx margin{' '}
+                    <span className="font-medium">${platformMarginAmount.toFixed(2)}</span> (
+                    {(PLATFORM_MARGIN * 100).toFixed(0)}%) ·{' '}
+                    <span className="font-medium">${platformProfitPerCoin.toFixed(3)}</span> per
+                    coin
+                  </div>
+                </div>
+
+                <Button
+                  className={`w-full mt-4 ${
+                    pkg.popular
+                      ? 'bg-gradient-primary text-primary-foreground hover:shadow-glow'
+                      : 'bg-secondary hover:bg-secondary/80'
+                  }`}
+                  size="lg"
+                  onClick={() => handlePurchase(pkg)}
+                  disabled={loadingPackageId === pkg.id}
+                >
+                  {loadingPackageId === pkg.id ? 'Processing…' : 'Purchase Now'}
+                </Button>
+                {platform === 'app' && (
+                  <div className="text-xs text-muted-foreground mt-2">
+                    Get +{formatPercent(pkg.percentMore)}% more VibeCoins on Feelynx.live!
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
       {purchaseError && (
         <p className="mt-4 text-sm text-center text-destructive" role="alert">
