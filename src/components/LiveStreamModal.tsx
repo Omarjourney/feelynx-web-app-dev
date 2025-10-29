@@ -1,6 +1,6 @@
 import React from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { LiveStream } from '@/components/LiveStream';
+import { LiveStream } from '@/components/live';
 import type { Creator } from '@/types/creator';
 
 interface LiveStreamModalProps {

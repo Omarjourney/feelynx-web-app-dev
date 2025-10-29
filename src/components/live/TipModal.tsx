@@ -48,25 +48,24 @@ const TipModal = ({ isVisible, onClose, onSubmit }: TipModalProps) => {
                 </Badge>
               </div>
               <div className="flex space-x-2 justify-center">
-                {[10, 50, 100].map((v) => (
+                {[10, 50, 100].map((value) => (
                   <Button
-                    key={v}
+                    key={value}
                     variant="secondary"
                     onClick={() => {
-                      setAmount(v);
+                      setAmount(value);
                       setError('');
                     }}
                   >
-                    {v}💎
+                    {value}💎
                   </Button>
                 ))}
               </div>
               <Input
                 type="number"
                 value={amount}
-                onChange={(e) => {
-                  const value = Number(e.target.value);
-                  setAmount(value);
+                onChange={(event) => {
+                  setAmount(Number(event.target.value));
                   setError('');
                 }}
                 className="text-center"
