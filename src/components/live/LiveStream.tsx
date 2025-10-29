@@ -69,10 +69,11 @@ const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) => {
   };
 
   useEffect(() => {
+    const idAtMount = participantIdRef.current;
     return () => {
       const room = roomRef.current;
       if (room) {
-        notifyRoomLeave(roomName, participantIdRef.current).catch(() => {});
+        notifyRoomLeave(roomName, idAtMount).catch(() => {});
         disconnectFromRoom(room);
       }
     };

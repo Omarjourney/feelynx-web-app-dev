@@ -35,6 +35,7 @@ jobs:
             ${{ runner.os }}-node-
       - run: npm ci
       - run: npm run lint
+      - run: npm run lint:names
       - run: npm run lint:security
       - run: npm run build
 

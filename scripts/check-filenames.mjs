@@ -14,7 +14,10 @@ function walk(dir) {
     const st = statSync(p);
     if (st.isDirectory()) walk(p);
     else if (st.isFile() && ['.tsx', '.ts'].includes(extname(p))) {
+      // Skip index files and shadcn/ui library files
+      if (/\/ui\//.test(p)) continue;
       const base = basename(p, extname(p));
+      if (base === 'index') continue;
       if (!isPascalCase(base)) {
         VIOLATIONS.push(p.replace(process.cwd() + '/', ''));
       }
