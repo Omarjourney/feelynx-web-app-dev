@@ -17,11 +17,13 @@ const GroupPage = () => {
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-semibold">Group not found</h1>
-              <p className="text-muted-foreground">The group you are looking for does not exist.</p>
+              <h1 className="text-2xl font-semibold">Crew not found</h1>
+              <p className="text-muted-foreground">
+                The Fambase crew you are looking for does not exist.
+              </p>
             </div>
             <Button variant="secondary" onClick={() => navigate('/groups')}>
-              Back to Groups
+              Back to Fambase crews
             </Button>
           </div>
         </Card>

@@ -19,12 +19,12 @@ const Groups = () => {
             <CardHeader className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div className="space-y-2">
                 <Badge className="w-fit bg-primary/30 text-primary-foreground">
-                  Crews & tribes
+                  Fambase crews (Families)
                 </Badge>
-                <CardTitle className="text-3xl font-bold">Find your people</CardTitle>
+                <CardTitle className="text-3xl font-bold">Find your Fambase</CardTitle>
                 <CardDescription className="max-w-2xl text-sm text-muted-foreground">
-                  Micro-communities rally around creators, kinks, and themes. Earn crew XP, unlock
-                  shared goals, and light up the chat with synchronized reactions.
+                  Join Fambase crews (Families) built around creators and shared vibes. Earn crew
+                  XP, unlock goals together, and light up chat with synchronized reactions.
                 </CardDescription>
               </div>
               <div className="flex flex-col gap-3 sm:flex-row">
@@ -45,7 +45,7 @@ const Groups = () => {
           <Tabs defaultValue="explore" className="space-y-6">
             <TabsList className="w-full justify-start gap-2 bg-background/60 p-1">
               <TabsTrigger value="explore" className="rounded-full px-4 py-2 text-sm">
-                Explore crews
+                Explore Fambase crews
               </TabsTrigger>
               <TabsTrigger value="mine" className="rounded-full px-4 py-2 text-sm">
                 My memberships
