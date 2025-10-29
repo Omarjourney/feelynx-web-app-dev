@@ -16,11 +16,19 @@ interface Message {
   text?: string;
 }
 
+interface ThreadSummary {
+  id: string;
+  user1_id: string;
+  user2_id: string;
+  created_at?: string;
+}
+
 const DM = () => {
   const { user } = useAuth();
   const [threadId, setThreadId] = useState<string | null>(null);
   const [recipientId, setRecipientId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [threads, setThreads] = useState<ThreadSummary[]>([]);
   const [input, setInput] = useState('');
   const [burn, setBurn] = useState(false);
   const [loadingMessages, setLoadingMessages] = useState(false);
@@ -43,7 +51,14 @@ const DM = () => {
     async (tid: string) => {
       setLoadingMessages(true);
       try {
-        const res = await fetch(`/dm/threads/${tid}/messages`);
+        const headers: Record<string, string> = {};
+        try {
+          const jwt = localStorage.getItem('token');
+          if (jwt) headers['Authorization'] = `Bearer ${jwt}`;
+        } catch {
+          // ignore storage access errors
+        }
+        const res = await fetch(`/dm/threads/${tid}/messages`, { headers });
         if (!res.ok) {
           throw await toApiError(res);
         }
@@ -66,9 +81,16 @@ const DM = () => {
   const createThread = useCallback(
     async (recipient: string) => {
       try {
+        const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+        try {
+          const jwt = localStorage.getItem('token');
+          if (jwt) headers['Authorization'] = `Bearer ${jwt}`;
+        } catch {
+          // ignore storage access errors
+        }
         const res = await fetch('/dm/threads', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify({ recipientId: recipient }),
         });
         if (!res.ok) {
@@ -96,6 +118,22 @@ const DM = () => {
     setThreadId(thread);
     setRecipientId(recipient);
 
+    // Load thread list (best effort without auth)
+    (async () => {
+      try {
+        const headers: Record<string, string> = {};
+        const jwt = localStorage.getItem('token');
+        if (jwt) headers['Authorization'] = `Bearer ${jwt}`;
+        const res = await fetch('/dm/threads', { headers });
+        if (res.ok) {
+          const list = (await res.json()) as ThreadSummary[];
+          setThreads(Array.isArray(list) ? list : []);
+        }
+      } catch {
+        setThreads([]);
+      }
+    })();
+
     if (thread) {
       fetchMessages(thread);
     } else if (recipient) {
@@ -116,9 +154,16 @@ const DM = () => {
 
     try {
       const { cipher, nonce } = encrypt(input);
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      try {
+        const jwt = localStorage.getItem('token');
+        if (jwt) headers['Authorization'] = `Bearer ${jwt}`;
+      } catch {
+        // ignore storage access errors
+      }
       const res = await fetch(`/dm/threads/${threadId}/messages`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           cipher_text: cipher,
           nonce,
@@ -148,7 +193,14 @@ const DM = () => {
   const markRead = useCallback(
     async (id: string) => {
       try {
-        const res = await fetch(`/dm/messages/${id}/read`, { method: 'POST' });
+        const headers: Record<string, string> = {};
+        try {
+          const jwt = localStorage.getItem('token');
+          if (jwt) headers['Authorization'] = `Bearer ${jwt}`;
+        } catch {
+          // ignore storage access errors
+        }
+        const res = await fetch(`/dm/messages/${id}/read`, { method: 'POST', headers });
         if (!res.ok) {
           throw await toApiError(res);
         }
