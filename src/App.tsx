@@ -30,6 +30,7 @@ import CompanionsHome from './features/companions/CompanionsHome';
 import ContestsFeed from './features/contests/ContestsFeed';
 import GoLiveEntry from '@/components/GoLiveEntry';
 import Styleguide from './pages/Styleguide';
+import MobileTabBar from '@/components/MobileTabBar';
 
 const queryClient = new QueryClient();
 
@@ -69,6 +70,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
           <GoLiveEntry />
+          <MobileTabBar />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
