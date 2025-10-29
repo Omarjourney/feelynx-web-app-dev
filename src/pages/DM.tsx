@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import useEncryption from '@/hooks/useEncryption';
 import { toast } from 'sonner';
 import { getUserMessage, toApiError } from '@/lib/errors';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Message {
   id: string;
@@ -16,6 +17,7 @@ interface Message {
 }
 
 const DM = () => {
+  const { user } = useAuth();
   const [threadId, setThreadId] = useState<string | null>(null);
   const [recipientId, setRecipientId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -183,27 +185,43 @@ const DM = () => {
 
       <div className="space-y-2">
         {loadingMessages && <p className="text-sm text-muted-foreground">Loading messages…</p>}
-        {messages.map((m) => (
-          <div key={m.id} className="border p-2 rounded">
-            <div>{m.text}</div>
-            <div className="text-xs text-gray-500 flex gap-2">
-              <span>
-                {new Date(m.created_at).toLocaleTimeString([], {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </span>
-              {m.read_at ? (
-                <span>Read</span>
-              ) : (
-                <button onClick={() => markRead(m.id)} disabled={sending}>
-                  Mark read
-                </button>
-              )}
-              {m.burn_after_reading && <span>🔥</span>}
+        {messages.map((m) => {
+          const meId = (user as any)?.id ?? 'me';
+          const isMine = String(m.sender_id) === String(meId);
+          return (
+            <div key={m.id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
+              <div
+                className={
+                  'max-w-[80%] rounded-2xl px-3 py-2 text-sm shadow ' +
+                  (isMine
+                    ? 'bg-blue-600 text-white rounded-br-md'
+                    : 'bg-green-600 text-white rounded-bl-md')
+                }
+              >
+                <div className="whitespace-pre-wrap break-words">{m.text}</div>
+                <div className="mt-1 flex items-center gap-2 opacity-80 text-[11px]">
+                  <span>
+                    {new Date(m.created_at).toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </span>
+                  {!isMine && m.burn_after_reading && <span>🔥</span>}
+                  {isMine && (m.read_at ? <span>Read</span> : <span>Sent</span>)}
+                  {!isMine && !m.read_at && (
+                    <button
+                      className="underline decoration-white/40"
+                      onClick={() => markRead(m.id)}
+                      disabled={sending}
+                    >
+                      Mark read
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
         {!loadingMessages && messages.length === 0 && (
           <p className="text-sm text-muted-foreground">No messages yet. Say hello!</p>
         )}
