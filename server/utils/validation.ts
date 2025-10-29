@@ -415,6 +415,15 @@ export const patternSchemas = {
   remove: { params: patternIdParams },
 } satisfies Record<string, ValidationSchema>;
 
+// Groups (Fambase crews)
+const groupIdParams = z.object({ id: z.coerce.number().int().positive() });
+const groupInviteVerifyBody = z.object({ code: nonEmptyString.max(120) });
+const groupInviteRequestBody = z.object({ message: z.string().max(500).optional() });
+export const groupSchemas = {
+  inviteVerify: { params: groupIdParams, body: groupInviteVerifyBody },
+  inviteRequest: { params: groupIdParams, body: groupInviteRequestBody },
+} satisfies Record<string, ValidationSchema>;
+
 // Index routes
 const creatorStatusParams = z.object({ username: safeIdentifier });
 const creatorStatusBody = z.object({ isLive: z.coerce.boolean() });

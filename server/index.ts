@@ -19,6 +19,7 @@ import moderationRoutes from './routes/moderation';
 import controlRoutes from './routes/control';
 import toysRoutes from './routes/toys';
 import patternsRoutes from './routes/patterns';
+import groupsApiRoutes from './routes/groupsApi';
 import subscriptionsRoutes from './routes/subscriptions';
 import { webhookHandler as subscriptionsWebhookHandler } from './routes/subscriptions';
 import payoutsRoutes from './routes/payouts';
@@ -76,6 +77,7 @@ app.use('/moderation', moderationRoutes);
 app.use('/control', controlRoutes);
 app.use('/toys', toysRoutes);
 app.use('/patterns', patternsRoutes);
+app.use('/api/groups', groupsApiRoutes);
 
 const port = process.env.PORT || 3001;
 

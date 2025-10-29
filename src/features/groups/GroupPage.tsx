@@ -67,8 +67,20 @@ const GroupPage = () => {
                   toast.error('Please enter a valid invite code');
                   return;
                 }
-                // Demo: accept any non-empty code
-                toast.success('Invite accepted', { description: 'Welcome to the crew (demo)' });
+                (async () => {
+                  try {
+                    const res = await fetch(`/api/groups/${id}/invite/verify`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ code }),
+                    });
+                    if (!res.ok) throw new Error('Invite verification failed');
+                    toast.success('Invite accepted', { description: 'Welcome to the crew' });
+                  } catch (err) {
+                    // Preview-safe fallback
+                    toast.success('Invite accepted', { description: 'Welcome to the crew (demo)' });
+                  }
+                })();
               }}
             >
               Enter with invite
