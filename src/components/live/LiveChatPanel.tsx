@@ -39,9 +39,7 @@ const LiveChatPanel = ({ messages, messageDraft, onChange, onSend }: LiveChatPan
               <div
                 key={msg.id}
                 className={`p-2 rounded-lg text-sm ${
-                  msg.isHighlight
-                    ? 'bg-gradient-primary text-primary-foreground'
-                    : 'bg-secondary'
+                  msg.isHighlight ? 'bg-gradient-primary text-primary-foreground' : 'bg-secondary'
                 }`}
               >
                 <div className="font-medium">{msg.username}</div>
@@ -52,7 +50,12 @@ const LiveChatPanel = ({ messages, messageDraft, onChange, onSend }: LiveChatPan
           </div>
         </ScrollArea>
         <div className="flex space-x-2">
-          <Input value={messageDraft} onChange={onChange} placeholder="Type a message..." onKeyDown={handleKeyDown} />
+          <Input
+            value={messageDraft}
+            onChange={onChange}
+            placeholder="Type a message..."
+            onKeyDown={handleKeyDown}
+          />
           <Button onClick={onSend} size="sm">
             Send
           </Button>

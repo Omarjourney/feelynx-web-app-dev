@@ -41,7 +41,8 @@ export const subscribeToRoomParticipants = (
         });
       }
     } catch (error) {
-      const message = error instanceof Error ? error : new Error('Failed to parse participants update');
+      const message =
+        error instanceof Error ? error : new Error('Failed to parse participants update');
       onError?.(message);
     }
   };

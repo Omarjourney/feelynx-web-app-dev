@@ -19,7 +19,11 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { requestMediaPermissions } from '@/lib/mediaPermissions';
 import { toast } from 'sonner';
-import { createLivekitRoom, requestCreatorToken, updateCreatorLiveStatus } from '@/lib/livekit/host';
+import {
+  createLivekitRoom,
+  requestCreatorToken,
+  updateCreatorLiveStatus,
+} from '@/lib/livekit/host';
 
 const GoLiveButton = () => {
   const [open, setOpen] = useState(false);
