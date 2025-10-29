@@ -18,6 +18,7 @@ import Connect from './pages/Connect';
 import Match from './pages/Match';
 import Groups from './pages/Groups';
 import GroupPage from './features/groups/GroupPage';
+import GroupAdmin from './features/groups/GroupAdmin';
 import DM from './pages/DM';
 import Live from './pages/Live';
 import LiveCreator from './pages/LiveCreator';
@@ -58,6 +59,7 @@ const App = () => (
               <Route path="/match" element={<Match />} />
               <Route path="/groups" element={<Groups />} />
               <Route path="/groups/:groupId" element={<GroupPage />} />
+              <Route path="/groups/:groupId/admin" element={<GroupAdmin />} />
               <Route path="/dm" element={<DM />} />
               <Route path="/live/:username" element={<Live />} />
               <Route path="/live-creator" element={<LiveCreator />} />

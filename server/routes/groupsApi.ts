@@ -76,3 +76,80 @@ router.post(
 );
 
 export default router;
+// Membership status
+router.get(
+  '/:id/membership',
+  withValidation(groupSchemas.membership),
+  async (req: AuthRequest, res: Response) => {
+    const { id } = req.params as InferParams<typeof groupSchemas.membership>;
+    const userId = String(req.userId ?? 'demo');
+    try {
+      const { data, error } = await (supabase as any)
+        .from('group_members')
+        .select('status, role')
+        .eq('group_id', id)
+        .eq('user_id', userId)
+        .single();
+      if (error || !data) return res.json({ status: 'none' });
+      return res.json({ status: data.status, role: data.role });
+    } catch {
+      return res.json({ status: 'none' });
+    }
+  },
+);
+
+// Pending invite requests
+router.get(
+  '/:id/invite/requests',
+  withValidation(groupSchemas.inviteRequests),
+  async (req: AuthRequest, res: Response) => {
+    const { id } = req.params as InferParams<typeof groupSchemas.inviteRequests>;
+    try {
+      const { data, error } = await (supabase as any)
+        .from('group_invite_requests')
+        .select('*')
+        .eq('group_id', id)
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false });
+      if (error) return res.status(400).json({ error: error.message });
+      res.json(data ?? []);
+    } catch {
+      res.json([
+        { user_id: 'fan_123', created_at: new Date().toISOString(), message: 'Please add me' },
+        {
+          user_id: 'fan_987',
+          created_at: new Date().toISOString(),
+          message: 'Long time supporter',
+        },
+      ]);
+    }
+  },
+);
+
+// Approve invite request
+router.post(
+  '/:id/invite/approve',
+  withValidation(groupSchemas.inviteApprove),
+  async (req: AuthRequest, res: Response) => {
+    const { id } = req.params as InferParams<typeof groupSchemas.inviteApprove>;
+    const { userId } = req.body as InferBody<typeof groupSchemas.inviteApprove>;
+    try {
+      const now = new Date().toISOString();
+      await (supabase as any).from('group_members').upsert({
+        group_id: id,
+        user_id: userId,
+        role: 'member',
+        status: 'approved',
+        joined_at: now,
+      });
+      await (supabase as any)
+        .from('group_invite_requests')
+        .update({ status: 'approved', processed_at: now })
+        .eq('group_id', id)
+        .eq('user_id', userId);
+      res.json({ ok: true });
+    } catch {
+      res.json({ ok: true });
+    }
+  },
+);

@@ -9,6 +9,8 @@ export function enableDemoMocks() {
   const store = {
     threads: [] as Array<{ id: string; user1_id: string; user2_id: string; created_at: string }>,
     messages: new Map<string, Array<any>>(),
+    memberships: new Map<string, 'approved' | 'pending' | 'none'>(),
+    requests: new Map<string, Array<{ user_id: string; message?: string; created_at: string }>>(),
   };
 
   const originalFetch = window.fetch.bind(window);
@@ -111,6 +113,40 @@ export function enableDemoMocks() {
       const markRead = pathname.match(/^\/dm\/messages\/([^/]+)\/read$/);
       if (markRead && method === 'POST') {
         return jsonResponse({ read: true });
+      }
+
+      // Groups API (demo)
+      const grpMembership = pathname.match(/^\/api\/groups\/(\d+)\/membership$/);
+      if (grpMembership && method === 'GET') {
+        const gid = grpMembership[1];
+        const status = store.memberships.get(gid) || 'none';
+        return jsonResponse({ status });
+      }
+      const grpVerify = pathname.match(/^\/api\/groups\/(\d+)\/invite\/verify$/);
+      if (grpVerify && method === 'POST') {
+        const gid = grpVerify[1];
+        store.memberships.set(gid, 'approved');
+        return jsonResponse({ ok: true, membership: 'approved' });
+      }
+      const grpRequest = pathname.match(/^\/api\/groups\/(\d+)\/invite\/request$/);
+      if (grpRequest && method === 'POST') {
+        const gid = grpRequest[1];
+        const arr = store.requests.get(gid) || [];
+        arr.unshift({ user_id: 'demo', created_at: new Date().toISOString() });
+        store.requests.set(gid, arr);
+        store.memberships.set(gid, 'pending');
+        return jsonResponse({ ok: true, status: 'pending' });
+      }
+      const grpRequests = pathname.match(/^\/api\/groups\/(\d+)\/invite\/requests$/);
+      if (grpRequests && method === 'GET') {
+        const gid = grpRequests[1];
+        return jsonResponse(store.requests.get(gid) || []);
+      }
+      const grpApprove = pathname.match(/^\/api\/groups\/(\d+)\/invite\/approve$/);
+      if (grpApprove && method === 'POST') {
+        const gid = grpApprove[1];
+        store.memberships.set(gid, 'approved');
+        return jsonResponse({ ok: true });
       }
 
       // Let everything else go through

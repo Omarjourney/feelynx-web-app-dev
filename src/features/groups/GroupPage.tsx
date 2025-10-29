@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { groups } from '@/data/groups';
 import { Card, CardContent } from '@/components/ui/card';
@@ -12,6 +12,18 @@ const GroupPage = () => {
   const navigate = useNavigate();
   const id = Number(groupId);
   const group = useMemo(() => groups.find((g) => g.id === id), [id]);
+  const [membership, setMembership] = useState<'approved' | 'pending' | 'none'>('none');
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch(`/api/groups/${id}/membership`);
+        const data = await res.json();
+        setMembership((data?.status as any) || 'none');
+      } catch {
+        setMembership('none');
+      }
+    })();
+  }, [id]);
 
   if (!group) {
     return (
@@ -88,7 +100,21 @@ const GroupPage = () => {
           </div>
         </div>
 
-        <Tabs defaultValue="posts">
+        {/* Membership gating */}
+        {membership !== 'approved' && (
+          <Card className="border border-border/60 bg-background/70 p-4 text-sm text-muted-foreground">
+            {membership === 'pending' ? (
+              <div>
+                Your invite request is pending approval. You will be notified when approved. You can
+                still message the admin with any questions.
+              </div>
+            ) : (
+              <div>This crew is private. Use an invite code or request an invite to join.</div>
+            )}
+          </Card>
+        )}
+
+        <Tabs defaultValue="posts" disabled={membership !== 'approved'}>
           <TabsList className="mb-4">
             <TabsTrigger value="posts">Posts</TabsTrigger>
             <TabsTrigger value="channels">Channels</TabsTrigger>

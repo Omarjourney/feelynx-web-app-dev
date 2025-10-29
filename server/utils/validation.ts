@@ -422,6 +422,12 @@ const groupInviteRequestBody = z.object({ message: z.string().max(500).optional(
 export const groupSchemas = {
   inviteVerify: { params: groupIdParams, body: groupInviteVerifyBody },
   inviteRequest: { params: groupIdParams, body: groupInviteRequestBody },
+  inviteApprove: {
+    params: groupIdParams,
+    body: z.object({ userId: nonEmptyString.max(120) }),
+  },
+  membership: { params: groupIdParams },
+  inviteRequests: { params: groupIdParams },
 } satisfies Record<string, ValidationSchema>;
 
 // Index routes
