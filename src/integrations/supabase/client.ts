@@ -5,6 +5,15 @@ import type { Database } from './types';
 
 type Stub = {
   from: () => any;
+  auth: {
+    onAuthStateChange: (cb: (event: any, session: any) => void) => {
+      data: { subscription: { unsubscribe: () => void } };
+    };
+    getSession: () => Promise<{ data: { session: any }; error: null }>;
+    signUp: (args: any) => Promise<{ data: { user: any; session: any }; error: null }>;
+    signInWithPassword: (args: any) => Promise<{ data: { user: any; session: any }; error: null }>;
+    signOut: () => Promise<{ error: null }>;
+  };
 };
 
 function createStub(): Stub {
@@ -26,6 +35,18 @@ function createStub(): Stub {
   builder.finally = (cb: () => unknown) => resolved.finally(cb);
   return {
     from: () => builder,
+    auth: {
+      onAuthStateChange: (_cb) => ({
+        data: { subscription: { unsubscribe: () => {} } },
+      }),
+      getSession: async () => ({ data: { session: null }, error: null }),
+      signUp: async (_args: any) => ({ data: { user: null, session: null }, error: null }),
+      signInWithPassword: async (_args: any) => ({
+        data: { user: null, session: null },
+        error: null,
+      }),
+      signOut: async () => ({ error: null }),
+    },
   };
 }
 
