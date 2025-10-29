@@ -6,9 +6,10 @@ import { SearchFilters, SearchFiltersState } from '@/components/SearchFilters';
 import { CreatorCard } from '@/components/CreatorCard';
 import { VibeCoinPackages } from '@/components/VibeCoinPackages';
 import { useCreatorLive } from '@/hooks/useCreatorLive';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { groups } from '@/data/groups';
+import { MessageCircle, Radio, Sparkles, Users, Workflow, Video } from 'lucide-react';
 
 const Index = () => {
   const creators = useCreatorLive();
@@ -52,6 +53,64 @@ const Index = () => {
   const liveCreators = filteredCreators.filter((c) => c.isLive).slice(0, 8);
   const featuredCreators = filteredCreators.slice(0, 12);
 
+  const quickLinks = [
+    {
+      id: 'tophy-control',
+      title: 'Tophy control room',
+      badge: 'Interactive toys',
+      description: 'Sync toys, launch interactive patterns, and run playbooks in one tap.',
+      icon: Workflow,
+      action: () => navigate('/call-room'),
+      actionLabel: 'Open control',
+    },
+    {
+      id: 'messages',
+      title: 'Messages & threads',
+      badge: 'Community',
+      description: 'Keep DMs, fan mail, and unlockable replies in one focused inbox.',
+      icon: MessageCircle,
+      action: () => navigate('/dm'),
+      actionLabel: 'Go to inbox',
+    },
+    {
+      id: 'content',
+      title: 'Premium content',
+      badge: 'Vault',
+      description: 'Drop clips, galleries, and vault packs with smart sorting for fans.',
+      icon: Video,
+      action: () => navigate('/content'),
+      actionLabel: 'Browse library',
+    },
+    {
+      id: 'groups',
+      title: 'Fambase crews',
+      badge: 'Groups',
+      description: 'Join curated micro-communities with live chat boosts and shared quests.',
+      icon: Users,
+      action: () => navigate('/groups'),
+      actionLabel: 'View crews',
+    },
+  ];
+
+  const liveTools = [
+    {
+      id: 'go-live',
+      title: 'Launch a live session',
+      description: 'Guided checklist with camera, Lovense, and goal presets.',
+      icon: Radio,
+      action: () => navigate('/live-creator'),
+      actionLabel: 'Creator studio',
+    },
+    {
+      id: 'contests',
+      title: 'Tophy contests',
+      description: 'Host bracket matches, PK battles, and story-led events.',
+      icon: Sparkles,
+      action: () => navigate('/contests'),
+      actionLabel: 'See events',
+    },
+  ];
+
   const handleViewProfile = (creatorId: number) => {
     const creator = creators.find((c) => c.id === creatorId);
     if (creator?.isLive) {
@@ -72,53 +131,106 @@ const Index = () => {
           onGoLive={() => navigate('/call-room')}
         />
 
-        <section className="mx-auto mt-12 w-full max-w-6xl space-y-6 px-4">
-          <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
-            <Card className="border border-border/60 bg-background/80 backdrop-blur">
-              <CardHeader className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                <div>
-                  <CardTitle className="text-2xl font-semibold">Discover live creators</CardTitle>
-                  <p className="text-sm text-muted-foreground">
-                    Use smart filters to find the perfect vibe. Swipe on mobile to jump instantly
-                    between shows.
-                  </p>
-                </div>
-                <Button
-                  variant="secondary"
-                  className="button-ripple"
-                  onClick={() => navigate('/creators')}
-                >
-                  Open full directory
-                </Button>
-              </CardHeader>
-              <CardContent>
-                <SearchFilters {...filters} onChange={handleFiltersChange} />
-              </CardContent>
-            </Card>
+        <section className="mx-auto mt-12 w-full max-w-6xl space-y-8 px-4">
+          <section aria-labelledby="feature-hub" className="space-y-4">
+            <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+              <div>
+                <h2 id="feature-hub" className="text-3xl font-bold text-foreground">
+                  Your experience hub
+                </h2>
+                <p className="max-w-2xl text-sm text-muted-foreground">
+                  Everything we prototyped for Tophy, messages, premium content, and Fambase
+                  crews—now grouped in one clean panel so you can jump right back in.
+                </p>
+              </div>
+              <Button
+                variant="secondary"
+                className="button-ripple"
+                onClick={() => navigate('/dashboard')}
+              >
+                View all modules
+              </Button>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              {quickLinks.map(
+                ({ id, title, badge, description, icon: Icon, action, actionLabel }) => (
+                  <Card
+                    key={id}
+                    className="flex flex-col justify-between border border-border/60 bg-background/80 p-4 backdrop-blur"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2 text-primary">
+                        <Icon className="h-5 w-5" aria-hidden />
+                        <span className="text-xs uppercase tracking-widest">{badge}</span>
+                      </div>
+                      <CardTitle className="text-xl text-foreground">{title}</CardTitle>
+                      <CardDescription className="text-sm text-muted-foreground">
+                        {description}
+                      </CardDescription>
+                    </div>
+                    <Button className="mt-6 button-ripple" size="sm" onClick={action}>
+                      {actionLabel}
+                    </Button>
+                  </Card>
+                ),
+              )}
+            </div>
+          </section>
 
-            <Card className="border border-border/60 bg-background/80 backdrop-blur">
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between text-lg">
-                  Smart onboarding
-                  <span className="text-xs font-medium text-primary">Guided</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 text-sm text-muted-foreground">
-                <div className="rounded-2xl border border-primary/30 bg-primary/10 p-3">
-                  <p className="font-semibold text-primary-foreground">Step 1 · Join / Sign in</p>
-                  <p>Earn double XP on your first login each day.</p>
-                </div>
-                <div className="rounded-2xl border border-primary/20 bg-background/60 p-3">
-                  <p className="font-semibold text-foreground">Step 2 · Choose your vibe</p>
-                  <p>Pick a crew or swipe Discover to see trending tribes.</p>
-                </div>
-                <div className="rounded-2xl border border-primary/20 bg-background/60 p-3">
-                  <p className="font-semibold text-foreground">Step 3 · Go live</p>
-                  <p>Follow the guided checklist for cams, Lovense, and token goals.</p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <section aria-labelledby="live-tools" className="space-y-4">
+            <h2 id="live-tools" className="text-2xl font-semibold text-foreground">
+              Go live faster
+            </h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              {liveTools.map(({ id, title, description, icon: Icon, action, actionLabel }) => (
+                <Card
+                  key={id}
+                  className="flex flex-col justify-between border border-border/60 bg-background/80 p-4 backdrop-blur"
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2 text-primary">
+                      <Icon className="h-5 w-5" aria-hidden />
+                      <span className="text-xs uppercase tracking-widest">Creator tools</span>
+                    </div>
+                    <CardTitle className="text-xl text-foreground">{title}</CardTitle>
+                    <CardDescription className="text-sm text-muted-foreground">
+                      {description}
+                    </CardDescription>
+                  </div>
+                  <Button
+                    className="mt-6 button-ripple"
+                    size="sm"
+                    variant="secondary"
+                    onClick={action}
+                  >
+                    {actionLabel}
+                  </Button>
+                </Card>
+              ))}
+            </div>
+          </section>
+
+          <Card className="border border-border/60 bg-background/80 backdrop-blur">
+            <CardHeader className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+              <div>
+                <CardTitle className="text-2xl font-semibold">Discover live creators</CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Use smart filters to find the perfect vibe. Swipe on mobile to jump instantly
+                  between shows.
+                </p>
+              </div>
+              <Button
+                variant="secondary"
+                className="button-ripple"
+                onClick={() => navigate('/creators')}
+              >
+                Open full directory
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <SearchFilters {...filters} onChange={handleFiltersChange} />
+            </CardContent>
+          </Card>
 
           <section aria-labelledby="live-now" className="space-y-4">
             <div className="flex items-center justify-between">
