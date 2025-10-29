@@ -1,16 +1,19 @@
 import { Router } from 'express';
 import { prisma } from '../db/prisma';
 import { AccessToken } from 'livekit-server-sdk';
+import {
+  matchSchemas,
+  type InferQuery,
+  type MatchSwipeBody,
+  withValidation,
+} from '../utils/validation';
 
 const router = Router();
 
 // Fetch next creator based on simple exclusion logic
-router.get('/next', async (req, res) => {
-  const { userId } = req.query as { userId?: string };
-  if (!userId) {
-    return res.status(400).json({ error: 'userId required' });
-  }
-  const id = Number(userId);
+router.get('/next', withValidation(matchSchemas.next), async (req, res) => {
+  const { userId } = req.query as InferQuery<typeof matchSchemas.next>;
+  const id = userId;
 
   const swiped = await prisma.matchSwipe.findMany({
     where: { swiperId: id },
@@ -26,15 +29,8 @@ router.get('/next', async (req, res) => {
 });
 
 // Record a swipe and handle mutual matches
-router.post('/swipe', async (req, res) => {
-  const { userId, targetId, liked } = req.body as {
-    userId?: number;
-    targetId?: number;
-    liked?: boolean;
-  };
-  if (!userId || !targetId || typeof liked !== 'boolean') {
-    return res.status(400).json({ error: 'userId, targetId and liked are required' });
-  }
+router.post('/swipe', withValidation(matchSchemas.swipe), async (req, res) => {
+  const { userId, targetId, liked } = req.body as MatchSwipeBody;
 
   const swipe = await prisma.matchSwipe.create({
     data: { swiperId: userId, swipedId: targetId, liked },

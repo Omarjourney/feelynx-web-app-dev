@@ -1,6 +1,12 @@
 import { Router } from 'express';
 import { AccessToken, RoomServiceClient } from 'livekit-server-sdk';
 import { supabase } from '../db/supabase';
+import {
+  livekitSchemas,
+  type InferBody,
+  type InferParams,
+  withValidation,
+} from '../utils/validation';
 
 const router = Router();
 
@@ -15,16 +21,12 @@ if (apiKey && apiSecret && wsUrl) {
 }
 
 // Generate access token for a user to join a room
-router.post('/token', async (req, res) => {
+router.post('/token', withValidation(livekitSchemas.token), async (req, res) => {
   if (!apiKey || !apiSecret) {
     return res.status(500).json({ error: 'LiveKit credentials not configured' });
   }
 
-  const { room, identity } = req.body as { room?: string; identity?: string };
-
-  if (!room || !identity) {
-    return res.status(400).json({ error: 'room and identity are required' });
-  }
+  const { room, identity } = req.body as InferBody<typeof livekitSchemas.token>;
 
   try {
     const at = new AccessToken(apiKey, apiSecret, { identity });
@@ -37,20 +39,14 @@ router.post('/token', async (req, res) => {
   }
 });
 
-router.post('/rooms', async (req, res) => {
+router.post('/rooms', withValidation(livekitSchemas.createRoom), async (req, res) => {
   if (!roomService) {
     return res.status(500).json({ error: 'LiveKit room service not configured' });
   }
 
-  const { name, emptyTimeout, maxParticipants } = req.body as {
-    name?: string;
-    emptyTimeout?: number;
-    maxParticipants?: number;
-  };
-
-  if (!name) {
-    return res.status(400).json({ error: 'name is required' });
-  }
+  const { name, emptyTimeout, maxParticipants } = req.body as InferBody<
+    typeof livekitSchemas.createRoom
+  >;
 
   try {
     const room = await roomService.createRoom({ name, emptyTimeout, maxParticipants });
@@ -72,12 +68,13 @@ router.get('/rooms', async (_req, res) => {
   }
 });
 
-router.delete('/rooms/:room', async (req, res) => {
+router.delete('/rooms/:room', withValidation(livekitSchemas.deleteRoom), async (req, res) => {
   if (!roomService) {
     return res.status(500).json({ error: 'LiveKit room service not configured' });
   }
   try {
-    await roomService.deleteRoom(req.params.room);
+    const { room } = req.params as InferParams<typeof livekitSchemas.deleteRoom>;
+    await roomService.deleteRoom(room);
     res.json({ ok: true });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
@@ -85,16 +82,8 @@ router.delete('/rooms/:room', async (req, res) => {
 });
 
 // LiveKit webhook endpoint for analytics
-router.post('/webhook', async (req, res) => {
-  const event = req.body as {
-    event?: string;
-    room?: { name?: string };
-    participant?: { identity?: string };
-  };
-
-  if (!event.event) {
-    return res.status(400).json({ error: 'invalid webhook payload' });
-  }
+router.post('/webhook', withValidation(livekitSchemas.webhook), async (req, res) => {
+  const event = req.body as InferBody<typeof livekitSchemas.webhook>;
 
   try {
     switch (event.event) {

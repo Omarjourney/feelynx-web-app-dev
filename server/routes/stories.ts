@@ -1,6 +1,12 @@
 import { Router } from 'express';
 import cron from 'node-cron';
 import { prisma } from '../db/prisma';
+import {
+  storySchemas,
+  type InferBody,
+  type InferParams,
+  withValidation,
+} from '../utils/validation';
 
 const router = Router();
 
@@ -13,7 +19,7 @@ cron.schedule('0 * * * *', async () => {
   }
 });
 
-router.get('/', async (_req, res) => {
+router.get('/', withValidation(storySchemas.list), async (_req, res) => {
   try {
     const stories = await prisma.story.findMany({ orderBy: { expiresAt: 'desc' } });
     res.json(stories);
@@ -23,11 +29,10 @@ router.get('/', async (_req, res) => {
   }
 });
 
-router.post('/', async (req, res) => {
-  const { creatorId, mediaUrl, expiresAt, visibility, tierId } = req.body;
-  if (!creatorId || !mediaUrl || !expiresAt || !visibility) {
-    return res.status(400).json({ error: 'Missing required fields' });
-  }
+router.post('/', withValidation(storySchemas.create), async (req, res) => {
+  const { creatorId, mediaUrl, expiresAt, visibility, tierId } = req.body as InferBody<
+    typeof storySchemas.create
+  >;
   try {
     const story = await prisma.story.create({
       data: {
@@ -45,8 +50,8 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.delete('/:id', async (req, res) => {
-  const { id } = req.params;
+router.delete('/:id', withValidation(storySchemas.remove), async (req, res) => {
+  const { id } = req.params as InferParams<typeof storySchemas.remove>;
   try {
     await prisma.story.delete({ where: { id } });
     res.json({ ok: true });

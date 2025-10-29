@@ -1,4 +1,11 @@
 import { Router } from 'express';
+import {
+  giftSchemas,
+  type GiftSendBody,
+  type InferBody,
+  type InferParams,
+  withValidation,
+} from '../utils/validation';
 
 const router = Router();
 
@@ -12,19 +19,19 @@ const gifts = [
 const balances: Record<string, number> = {};
 const transactions: Array<{ from: string; to: string; giftId: number; createdAt: Date }> = [];
 
-router.get('/catalog', (req, res) => {
+router.get('/catalog', withValidation(giftSchemas.catalog), (_req, res) => {
   res.json(gifts);
 });
 
-router.post('/balance/:userId/purchase', (req, res) => {
-  const { userId } = req.params;
-  const { amount } = req.body as { amount: number };
+router.post('/balance/:userId/purchase', withValidation(giftSchemas.purchase), (req, res) => {
+  const { userId } = req.params as InferParams<typeof giftSchemas.purchase>;
+  const { amount } = req.body as InferBody<typeof giftSchemas.purchase>;
   balances[userId] = (balances[userId] || 0) + amount;
   res.json({ balance: balances[userId] });
 });
 
-router.post('/send', (req, res) => {
-  const { from, to, giftId } = req.body as { from: string; to: string; giftId: number };
+router.post('/send', withValidation(giftSchemas.send), (req, res) => {
+  const { from, to, giftId } = req.body as GiftSendBody;
   const gift = gifts.find((g) => g.id === giftId);
   if (!gift) return res.status(400).json({ error: 'Invalid gift' });
   const currentBalance = balances[from] || 0;
@@ -36,8 +43,8 @@ router.post('/send', (req, res) => {
   res.json({ success: true, balance: balances[from] });
 });
 
-router.get('/leaderboard/:creatorId', (req, res) => {
-  const { creatorId } = req.params;
+router.get('/leaderboard/:creatorId', withValidation(giftSchemas.leaderboard), (req, res) => {
+  const { creatorId } = req.params as InferParams<typeof giftSchemas.leaderboard>;
   const leaderboard = transactions
     .filter((t) => t.to === creatorId)
     .reduce<Record<string, number>>((acc, t) => {

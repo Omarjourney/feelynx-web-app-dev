@@ -29,6 +29,7 @@ import ControlRemote from './features/remote/ControlRemote';
 import CompanionsHome from './features/companions/CompanionsHome';
 import ContestsFeed from './features/contests/ContestsFeed';
 import GoLiveEntry from '@/components/GoLiveEntry';
+import Styleguide from './pages/Styleguide';
 
 const queryClient = new QueryClient();
 
@@ -62,6 +63,7 @@ const App = () => (
             <Route path="/remote" element={<ControlRemote />} />
             <Route path="/companions" element={<CompanionsHome />} />
             <Route path="/contests" element={<ContestsFeed />} />
+            <Route path="/styleguide" element={<Styleguide />} />
             <Route path="/call-room" element={<CallRoom />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="*" element={<NotFound />} />

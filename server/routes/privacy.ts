@@ -1,10 +1,16 @@
 import { Router } from 'express';
 import { prisma } from '../db/prisma';
+import {
+  privacySchemas,
+  type InferBody,
+  type InferParams,
+  withValidation,
+} from '../utils/validation';
 
 const router = Router();
 
-router.get('/:userId', async (req, res) => {
-  const userId = Number(req.params.userId);
+router.get('/:userId', withValidation(privacySchemas.get), async (req, res) => {
+  const { userId } = req.params as InferParams<typeof privacySchemas.get>;
   try {
     const settings = await prisma.privacySettings.findUnique({
       where: { userId },
@@ -15,9 +21,11 @@ router.get('/:userId', async (req, res) => {
   }
 });
 
-router.post('/:userId', async (req, res) => {
-  const userId = Number(req.params.userId);
-  const { profileVisibility, allowDMs, dataRetentionDays } = req.body;
+router.post('/:userId', withValidation(privacySchemas.set), async (req, res) => {
+  const { userId } = req.params as InferParams<typeof privacySchemas.set>;
+  const { profileVisibility, allowDMs, dataRetentionDays } = req.body as InferBody<
+    typeof privacySchemas.set
+  >;
   try {
     const settings = await prisma.privacySettings.upsert({
       where: { userId },

@@ -1,5 +1,12 @@
 import { Router } from 'express';
 import { prisma } from '../db/prisma';
+import {
+  dmcaSchemas,
+  type DmcaCreateBody,
+  type InferBody,
+  type InferParams,
+  withValidation,
+} from '../utils/validation';
 
 const router = Router();
 
@@ -8,12 +15,8 @@ async function sendEmail(to: string, subject: string, body: string) {
   console.log(`Email to ${to}: ${subject} - ${body}`);
 }
 
-router.post('/', async (req, res) => {
-  const { reporterName, reporterEmail, contentLink } = req.body as {
-    reporterName: string;
-    reporterEmail: string;
-    contentLink: string;
-  };
+router.post('/', withValidation(dmcaSchemas.create), async (req, res) => {
+  const { reporterName, reporterEmail, contentLink } = req.body as DmcaCreateBody;
   try {
     const notice = await prisma.dmcaNotice.create({
       data: { reporterName, reporterEmail, contentLink },
@@ -26,7 +29,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.get('/', async (_req, res) => {
+router.get('/', withValidation(dmcaSchemas.list), async (_req, res) => {
   try {
     const notices = await prisma.dmcaNotice.findMany();
     res.json(notices);
@@ -35,15 +38,12 @@ router.get('/', async (_req, res) => {
   }
 });
 
-router.post('/:id/resolve', async (req, res) => {
-  const { id } = req.params;
-  const { status, resolution } = req.body as {
-    status: string;
-    resolution: string;
-  };
+router.post('/:id/resolve', withValidation(dmcaSchemas.resolve), async (req, res) => {
+  const { id } = req.params as InferParams<typeof dmcaSchemas.resolve>;
+  const { status, resolution } = req.body as InferBody<typeof dmcaSchemas.resolve>;
   try {
     const notice = await prisma.dmcaNotice.update({
-      where: { id: Number(id) },
+      where: { id },
       data: { status, resolution },
     });
     await sendEmail(notice.reporterEmail, 'DMCA Notice Update', `Your notice status: ${status}`);

@@ -137,6 +137,11 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
                       Settings
                     </DropdownMenuItem>
                   )}
+                  {FEATURES.styleguide && (
+                    <DropdownMenuItem onClick={() => onTabChange('styleguide')}>
+                      Styleguide
+                    </DropdownMenuItem>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
 

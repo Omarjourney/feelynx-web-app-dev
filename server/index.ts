@@ -8,7 +8,7 @@ import { subscribe as subscribeControl, unsubscribe as unsubscribeControl } from
 import authRoutes from './routes/auth';
 import usersRoutes from './routes/users';
 import postsRoutes from './routes/posts';
-import paymentsRoutes, { webhookHandler as stripeWebhookHandler } from './routes/payments';
+import paymentsRoutes from './routes/payments';
 import livekitRoutes from './routes/livekit';
 import creatorsRoutes from './routes/creators';
 import streamRoutes from './routes/stream';
@@ -18,8 +18,9 @@ import moderationRoutes from './routes/moderation';
 import controlRoutes from './routes/control';
 import { roomParticipants } from './roomParticipants';
 import { securityHeaders } from './middleware/securityHeaders';
+import { indexSchemas, type InferBody, type InferParams, withValidation } from './utils/validation';
 
-const app = express();
+export const app = express();
 app.disable('x-powered-by');
 app.set('trust proxy', 1);
 app.use(securityHeaders);
@@ -92,48 +93,60 @@ function broadcastParticipants(room: string) {
   });
 }
 
-app.post('/creators/:username/status', (req: Request, res: Response) => {
-  const { username } = req.params;
-  const { isLive } = req.body as { isLive: boolean };
-  creatorStatus[username] = isLive;
-  broadcastStatus({ username, isLive });
-  res.json({ ok: true });
-});
+app.post(
+  '/creators/:username/status',
+  withValidation(indexSchemas.creatorStatus),
+  (req: Request, res: Response) => {
+    const { username } = req.params as InferParams<typeof indexSchemas.creatorStatus>;
+    const { isLive } = req.body as InferBody<typeof indexSchemas.creatorStatus>;
+    creatorStatus[username] = isLive;
+    broadcastStatus({ username, isLive });
+    res.json({ ok: true });
+  },
+);
 
-app.post('/rooms/:room/join', (req: Request, res: Response) => {
-  const { room } = req.params;
-  const { role, identity } = req.body as { role: 'host' | 'viewer'; identity: string };
-  if (!roomParticipants[room]) {
-    roomParticipants[room] = { hosts: new Set(), viewers: new Set() };
-  }
-  const set = role === 'host' ? roomParticipants[room].hosts : roomParticipants[room].viewers;
-  set.add(identity);
-  broadcastParticipants(room);
-  res.json({ ok: true });
-});
-
-app.post('/rooms/:room/leave', (req: Request, res: Response) => {
-  const { room } = req.params;
-  const { role, identity } = req.body as { role: 'host' | 'viewer'; identity: string };
-  const participants = roomParticipants[room];
-  if (participants) {
-    const set = role === 'host' ? participants.hosts : participants.viewers;
-    set.delete(identity);
-    if (participants.hosts.size === 0 && participants.viewers.size === 0) {
-      delete roomParticipants[room];
+app.post(
+  '/rooms/:room/join',
+  withValidation(indexSchemas.roomJoin),
+  (req: Request, res: Response) => {
+    const { room } = req.params as InferParams<typeof indexSchemas.roomJoin>;
+    const { role, identity } = req.body as InferBody<typeof indexSchemas.roomJoin>;
+    if (!roomParticipants[room]) {
+      roomParticipants[room] = { hosts: new Set(), viewers: new Set() };
     }
-  }
-  broadcastParticipants(room);
-  res.json({ ok: true });
-});
+    const set = role === 'host' ? roomParticipants[room].hosts : roomParticipants[room].viewers;
+    set.add(identity);
+    broadcastParticipants(room);
+    res.json({ ok: true });
+  },
+);
 
+app.post(
+  '/rooms/:room/leave',
+  withValidation(indexSchemas.roomLeave),
+  (req: Request, res: Response) => {
+    const { room } = req.params as InferParams<typeof indexSchemas.roomLeave>;
+    const { role, identity } = req.body as InferBody<typeof indexSchemas.roomLeave>;
+    const participants = roomParticipants[room];
+    if (participants) {
+      const set = role === 'host' ? participants.hosts : participants.viewers;
+      set.delete(identity);
+      if (participants.hosts.size === 0 && participants.viewers.size === 0) {
+        delete roomParticipants[room];
+      }
+    }
+    broadcastParticipants(room);
+    res.json({ ok: true });
+  },
+);
+
+// Start server
 server.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
 
 // Schedule payouts processing only when Stripe and DB are configured (preview-safe)
 if (process.env.STRIPE_SECRET_KEY && process.env.DATABASE_URL) {
-  // Dynamically import to avoid loading modules that require secrets in preview environments
   (async () => {
     try {
       const cron = await import('node-cron');

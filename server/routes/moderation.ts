@@ -1,5 +1,11 @@
 import { Router } from 'express';
 import { prisma } from '../db/prisma';
+import {
+  moderationSchemas,
+  type ModerationActionBody,
+  type ModerationReportBody,
+  withValidation,
+} from '../utils/validation';
 
 const router = Router();
 
@@ -21,12 +27,8 @@ async function scanContent(content: string) {
   }
 }
 
-router.post('/report', async (req, res) => {
-  const { reportedId, type, reason } = req.body as {
-    reportedId: number;
-    type: string;
-    reason: string;
-  };
+router.post('/report', withValidation(moderationSchemas.report), async (req, res) => {
+  const { reportedId, type, reason } = req.body as ModerationReportBody;
   const scan = await scanContent(reason);
   const report = await prisma.report.create({
     data: { reportedId, type, reason, status: 'pending' },
@@ -39,12 +41,8 @@ router.get('/reports', async (_req, res) => {
   res.json(reports);
 });
 
-router.post('/actions', async (req, res) => {
-  const { reportId, action, moderatorId } = req.body as {
-    reportId: number;
-    action: string;
-    moderatorId?: number;
-  };
+router.post('/actions', withValidation(moderationSchemas.actions), async (req, res) => {
+  const { reportId, action, moderatorId } = req.body as ModerationActionBody;
   const record = await prisma.moderationAction.create({ data: { reportId, action, moderatorId } });
   await prisma.report.update({ where: { id: reportId }, data: { status: 'resolved' } });
   if (action === 'ban') {

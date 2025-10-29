@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { prisma } from '../db/prisma';
 import { RoomServiceClient, DataPacket_Kind } from 'livekit-server-sdk';
+import { gameSchemas, type InferBody, type InferParams, withValidation } from '../utils/validation';
 
 const router = Router();
 
@@ -18,12 +19,12 @@ if (apiKey && apiSecret && wsUrl) {
 const wallets: Record<number, number> = {};
 
 // Start a game session and notify room participants
-router.post('/start', async (req, res) => {
+router.post('/start', withValidation(gameSchemas.start), async (req, res) => {
   if (!roomService) {
     return res.status(500).json({ error: 'LiveKit room service not configured' });
   }
 
-  const { gameId, room } = req.body as { gameId: number; room: string };
+  const { gameId, room } = req.body as InferBody<typeof gameSchemas.start>;
 
   try {
     const session = await prisma.gameSession.create({ data: { gameId, room } });
@@ -39,20 +40,17 @@ router.post('/start', async (req, res) => {
 });
 
 // End a game session, reward the winner, and notify participants
-router.post('/:id/end', async (req, res) => {
+router.post('/:id/end', withValidation(gameSchemas.end), async (req, res) => {
   if (!roomService) {
     return res.status(500).json({ error: 'LiveKit room service not configured' });
   }
 
-  const sessionId = Number(req.params.id);
-  const { winnerId, reward } = req.body as {
-    winnerId?: number;
-    reward?: number;
-  };
+  const { id } = req.params as InferParams<typeof gameSchemas.end>;
+  const { winnerId, reward } = req.body as InferBody<typeof gameSchemas.end>;
 
   try {
     const session = await prisma.gameSession.update({
-      where: { id: sessionId },
+      where: { id },
       data: { endedAt: new Date() },
     });
 
@@ -66,7 +64,7 @@ router.post('/:id/end', async (req, res) => {
       Buffer.from(
         JSON.stringify({
           type: 'game-end',
-          sessionId,
+          sessionId: id,
           winnerId,
           reward,
         }),
@@ -81,8 +79,8 @@ router.post('/:id/end', async (req, res) => {
 });
 
 // Retrieve wallet balance for a user
-router.get('/wallet/:userId', (req, res) => {
-  const userId = Number(req.params.userId);
+router.get('/wallet/:userId', withValidation(gameSchemas.wallet), (req, res) => {
+  const { userId } = req.params as InferParams<typeof gameSchemas.wallet>;
   res.json({ balance: wallets[userId] || 0 });
 });
 

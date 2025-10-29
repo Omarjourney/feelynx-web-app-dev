@@ -2,6 +2,12 @@ import { Router, Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../db/prisma.js';
+import {
+  authSchemas,
+  type AuthLoginBody,
+  type AuthRegisterBody,
+  withValidation,
+} from '../utils/validation';
 
 const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'secret';
@@ -27,36 +33,28 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
   }
 };
 
-router.post('/register', async (req: Request, res: Response) => {
-  const { email, password } = req.body as {
-    email?: string;
-    password?: string;
-  };
-  if (typeof email !== 'string' || typeof password !== 'string') {
-    return res.status(400).json({ error: 'Email and password are required' });
-  }
-  try {
-    const existing = await prisma.user.findUnique({ where: { email } });
-    if (existing) {
-      return res.status(409).json({ error: 'User already exists' });
+router.post(
+  '/register',
+  withValidation(authSchemas.register),
+  async (req: Request, res: Response) => {
+    const { email, password } = req.body as AuthRegisterBody;
+    try {
+      const existing = await prisma.user.findUnique({ where: { email } });
+      if (existing) {
+        return res.status(409).json({ error: 'User already exists' });
+      }
+      const hashed = await bcrypt.hash(password, 10);
+      const user = await prisma.user.create({ data: { email, password: hashed } });
+      const token = generateToken(user.id);
+      res.status(201).json({ token });
+    } catch (err) {
+      res.status(500).json({ error: 'Internal server error' });
     }
-    const hashed = await bcrypt.hash(password, 10);
-    const user = await prisma.user.create({ data: { email, password: hashed } });
-    const token = generateToken(user.id);
-    res.status(201).json({ token });
-  } catch (err) {
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
+  },
+);
 
-router.post('/login', async (req: Request, res: Response) => {
-  const { email, password } = req.body as {
-    email?: string;
-    password?: string;
-  };
-  if (typeof email !== 'string' || typeof password !== 'string') {
-    return res.status(400).json({ error: 'Email and password are required' });
-  }
+router.post('/login', withValidation(authSchemas.login), async (req: Request, res: Response) => {
+  const { email, password } = req.body as AuthLoginBody;
   try {
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {

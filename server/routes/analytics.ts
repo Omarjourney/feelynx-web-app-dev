@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { supabase } from '../db/supabase';
+import { analyticsSchemas, type InferParams, withValidation } from '../utils/validation';
 
 interface StreamStat {
   viewer_count: number | null;
@@ -11,8 +12,8 @@ interface StreamStat {
 const router = Router();
 
 // Aggregate metrics for a single stream
-router.get('/streams/:streamId', async (req, res) => {
-  const { streamId } = req.params;
+router.get('/streams/:streamId', withValidation(analyticsSchemas.stream), async (req, res) => {
+  const { streamId } = req.params as InferParams<typeof analyticsSchemas.stream>;
 
   const { data, error } = await supabase.from('stream_stats').select('*').eq('stream_id', streamId);
 
@@ -34,34 +35,38 @@ router.get('/streams/:streamId', async (req, res) => {
 });
 
 // Aggregate metrics per day for a creator
-router.get('/creators/:creatorId/daily', async (req, res) => {
-  const { creatorId } = req.params;
+router.get(
+  '/creators/:creatorId/daily',
+  withValidation(analyticsSchemas.creatorDaily),
+  async (req, res) => {
+    const { creatorId } = req.params as InferParams<typeof analyticsSchemas.creatorDaily>;
 
-  const { data, error } = await supabase
-    .from('stream_stats')
-    .select('*')
-    .eq('creator_id', creatorId);
+    const { data, error } = await supabase
+      .from('stream_stats')
+      .select('*')
+      .eq('creator_id', creatorId);
 
-  if (error) {
-    return res.status(500).json({ error: error.message });
-  }
-
-  const perDay: Record<
-    string,
-    { viewer_count: number; gift_revenue: number; subscriber_churn: number }
-  > = {};
-
-  (data as StreamStat[] | null)?.forEach((row) => {
-    const day = (row.created_at || '').slice(0, 10);
-    if (!perDay[day]) {
-      perDay[day] = { viewer_count: 0, gift_revenue: 0, subscriber_churn: 0 };
+    if (error) {
+      return res.status(500).json({ error: error.message });
     }
-    perDay[day].viewer_count += row.viewer_count || 0;
-    perDay[day].gift_revenue += row.gift_revenue || 0;
-    perDay[day].subscriber_churn += row.subscriber_churn || 0;
-  });
 
-  res.json({ creatorId, perDay });
-});
+    const perDay: Record<
+      string,
+      { viewer_count: number; gift_revenue: number; subscriber_churn: number }
+    > = {};
+
+    (data as StreamStat[] | null)?.forEach((row) => {
+      const day = (row.created_at || '').slice(0, 10);
+      if (!perDay[day]) {
+        perDay[day] = { viewer_count: 0, gift_revenue: 0, subscriber_churn: 0 };
+      }
+      perDay[day].viewer_count += row.viewer_count || 0;
+      perDay[day].gift_revenue += row.gift_revenue || 0;
+      perDay[day].subscriber_churn += row.subscriber_churn || 0;
+    });
+
+    res.json({ creatorId, perDay });
+  },
+);
 
 export default router;

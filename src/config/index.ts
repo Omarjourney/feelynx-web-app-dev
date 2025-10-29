@@ -45,4 +45,5 @@ export const FEATURES = {
   contests: true,
   shop: true,
   settings: true,
+  styleguide: true,
 } as const;
