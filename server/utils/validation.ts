@@ -388,6 +388,33 @@ export const dmcaSchemas = {
   resolve: { params: dmcaResolveParams, body: dmcaResolveBody },
 } satisfies Record<string, ValidationSchema>;
 
+// Toys
+const toyCreateBody = z.object({
+  name: nonEmptyString.max(120).optional(),
+  brand: z.enum(['Lovense', 'Demo']),
+});
+const toyIdParams = z.object({ id: nonEmptyString.max(120) });
+export const toySchemas = {
+  list: {},
+  create: { body: toyCreateBody },
+  remove: { params: toyIdParams },
+} satisfies Record<string, ValidationSchema>;
+
+// Patterns
+const patternCreateBody = z.object({
+  name: nonEmptyString.max(120),
+  durationSec: z.coerce.number().int().min(1).max(3600).default(60),
+  tags: z.array(nonEmptyString.max(32)).default([]),
+});
+const patternIdParams = z.object({ id: nonEmptyString.max(120) });
+const patternRenameBody = z.object({ name: nonEmptyString.max(120) });
+export const patternSchemas = {
+  list: {},
+  create: { body: patternCreateBody },
+  rename: { params: patternIdParams, body: patternRenameBody },
+  remove: { params: patternIdParams },
+} satisfies Record<string, ValidationSchema>;
+
 // Index routes
 const creatorStatusParams = z.object({ username: safeIdentifier });
 const creatorStatusBody = z.object({ isLive: z.coerce.boolean() });

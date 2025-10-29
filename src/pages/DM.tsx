@@ -164,6 +164,7 @@ const DM = () => {
     [fetchMessages, threadId],
   );
 
+  // Inbox + messages layout
   return (
     <div className="p-4 space-y-4">
       {error && (
@@ -183,63 +184,119 @@ const DM = () => {
         </div>
       )}
 
-      <div className="space-y-2">
-        {loadingMessages && <p className="text-sm text-muted-foreground">Loading messages…</p>}
-        {messages.map((m) => {
-          const meId = (user as any)?.id ?? 'me';
-          const isMine = String(m.sender_id) === String(meId);
-          return (
-            <div key={m.id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
-              <div
-                className={
-                  'max-w-[80%] rounded-2xl px-3 py-2 text-sm shadow ' +
-                  (isMine
-                    ? 'bg-blue-600 text-white rounded-br-md'
-                    : 'bg-green-600 text-white rounded-bl-md')
+      <div className="grid gap-4 md:grid-cols-3">
+        <div className="space-y-2 md:col-span-1">
+          <div className="flex gap-2">
+            <input
+              className="border flex-1 p-2"
+              placeholder="Start new chat with… (recipient id)"
+              onKeyDown={async (e) => {
+                if (e.key === 'Enter') {
+                  const v = (e.target as HTMLInputElement).value;
+                  if (v) {
+                    await createThread(v);
+                    (e.target as HTMLInputElement).value = '';
+                  }
                 }
+              }}
+            />
+            <button
+              className="border px-3"
+              onClick={() => {
+                const el = document.querySelector<HTMLInputElement>(
+                  'input[placeholder^="Start new chat"]',
+                );
+                if (el && el.value.trim()) {
+                  createThread(el.value.trim());
+                  el.value = '';
+                }
+              }}
+            >
+              New
+            </button>
+          </div>
+          <div className="border rounded">
+            {threads.map((t) => (
+              <button
+                key={t.id}
+                className={`w-full text-left p-2 border-b last:border-b-0 ${threadId === t.id ? 'bg-secondary' : ''}`}
+                onClick={() => {
+                  setThreadId(t.id);
+                  fetchMessages(t.id);
+                }}
               >
-                <div className="whitespace-pre-wrap break-words">{m.text}</div>
-                <div className="mt-1 flex items-center gap-2 opacity-80 text-[11px]">
-                  <span>
-                    {new Date(m.created_at).toLocaleTimeString([], {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </span>
-                  {!isMine && m.burn_after_reading && <span>🔥</span>}
-                  {isMine && (m.read_at ? <span>Read</span> : <span>Sent</span>)}
-                  {!isMine && !m.read_at && (
-                    <button
-                      className="underline decoration-white/40"
-                      onClick={() => markRead(m.id)}
-                      disabled={sending}
-                    >
-                      Mark read
-                    </button>
-                  )}
+                <div className="text-sm font-medium truncate">Thread {t.id}</div>
+                <div className="text-xs text-muted-foreground truncate">
+                  {t.user1_id} ↔ {t.user2_id}
                 </div>
-              </div>
-            </div>
-          );
-        })}
-        {!loadingMessages && messages.length === 0 && (
-          <p className="text-sm text-muted-foreground">No messages yet. Say hello!</p>
-        )}
-      </div>
-      <div className="flex gap-2">
-        <input
-          className="border flex-1 p-2"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Type a message"
-        />
-        <label className="flex items-center gap-1">
-          <input type="checkbox" checked={burn} onChange={(e) => setBurn(e.target.checked)} />
-          Burn
-        </label>
-        <button className="border px-4" onClick={send} disabled={!ready || sending}>
-          {sending ? 'Sending…' : 'Send'}
-        </button>
+              </button>
+            ))}
+            {threads.length === 0 && (
+              <div className="p-2 text-sm text-muted-foreground">No threads</div>
+            )}
+          </div>
+        </div>
+
+        <div className="md:col-span-2 space-y-2">
+          <div className="space-y-2">
+            {loadingMessages && <p className="text-sm text-muted-foreground">Loading messages…</p>}
+            {messages.map((m) => {
+              const meId = (user as any)?.id ?? 'me';
+              const isMine = String(m.sender_id) === String(meId);
+              return (
+                <div key={m.id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
+                  <div
+                    className={
+                      'max-w-[80%] rounded-2xl px-3 py-2 text-sm shadow ' +
+                      (isMine
+                        ? 'bg-blue-600 text-white rounded-br-md'
+                        : 'bg-green-600 text-white rounded-bl-md')
+                    }
+                  >
+                    <div className="whitespace-pre-wrap break-words">{m.text}</div>
+                    <div className="mt-1 flex items-center gap-2 opacity-80 text-[11px]">
+                      <span>
+                        {new Date(m.created_at).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </span>
+                      {!isMine && m.burn_after_reading && <span>🔥</span>}
+                      {isMine && (m.read_at ? <span>Read</span> : <span>Sent</span>)}
+                      {!isMine && !m.read_at && (
+                        <button
+                          className="underline decoration-white/40"
+                          onClick={() => markRead(m.id)}
+                          disabled={sending}
+                        >
+                          Mark read
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+            {!loadingMessages && messages.length === 0 && (
+              <p className="text-sm text-muted-foreground">No messages yet. Say hello!</p>
+            )}
+          </div>
+          <div className="flex gap-2">
+            <input
+              className="border flex-1 p-2"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type a message"
+            />
+            <label className="flex items-center gap-1">
+              <input type="checkbox" checked={burn} onChange={(e) => setBurn(e.target.checked)} />
+              Burn
+            </label>
+            <button className="border px-4" onClick={send} disabled={!ready || sending}>
+              {sending ? 'Sending…' : 'Send'}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

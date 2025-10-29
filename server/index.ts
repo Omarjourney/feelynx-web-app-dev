@@ -16,6 +16,8 @@ import giftsRoutes from './routes/gifts';
 import roomsRoutes from './routes/rooms';
 import moderationRoutes from './routes/moderation';
 import controlRoutes from './routes/control';
+import toysRoutes from './routes/toys';
+import patternsRoutes from './routes/patterns';
 import { roomParticipants } from './roomParticipants';
 import { securityHeaders } from './middleware/securityHeaders';
 import { indexSchemas, type InferBody, type InferParams, withValidation } from './utils/validation';
@@ -55,6 +57,8 @@ app.use('/gifts', giftsRoutes);
 app.use('/rooms', roomsRoutes);
 app.use('/moderation', moderationRoutes);
 app.use('/control', controlRoutes);
+app.use('/toys', toysRoutes);
+app.use('/patterns', patternsRoutes);
 
 const port = process.env.PORT || 3001;
 
