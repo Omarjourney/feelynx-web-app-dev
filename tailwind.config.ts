@@ -54,6 +54,12 @@ export default {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        feelynx: {
+          pink: 'var(--feelynx-pink)',
+          cyan: 'var(--feelynx-cyan)',
+          ink: 'var(--feelynx-ink)',
+          outline: 'var(--feelynx-outline)',
+        },
         sidebar: {
           DEFAULT: 'hsl(var(--sidebar-background))',
           foreground: 'hsl(var(--sidebar-foreground))',

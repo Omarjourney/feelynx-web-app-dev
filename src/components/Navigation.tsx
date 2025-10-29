@@ -22,10 +22,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Slider } from '@/components/ui/slider';
-import feelynxLogo from '@/assets/feelynx-logo.png';
 import PreviewBanner from '@/components/PreviewBanner';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ReactiveMascot from '@/components/ReactiveMascot';
+import FeelynxLogo from '@/components/brand/FeelynxLogo';
+import { BRAND } from '@/config';
 
 const NAV_ITEMS = [
   { id: 'home', label: 'Home', to: '/', icon: Home },
@@ -132,14 +133,25 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
         Skip to content
       </a>
       <aside className="hidden md:flex md:h-screen md:w-72 md:flex-shrink-0 md:flex-col md:border-r md:border-border/60 md:bg-sidebar-background/80 md:backdrop-blur-xl md:pt-safe">
-        <div className="flex items-center gap-3 px-6 pt-8 pb-6">
-          <div className="relative h-12 w-12 rounded-2xl bg-gradient-primary p-2 shadow-glow">
-            <img src={feelynxLogo} alt="Feelynx" className="h-full w-full object-contain" />
-          </div>
-          <div>
-            <p className="text-sm uppercase tracking-widest text-muted-foreground">Entertainment</p>
-            <p className="text-2xl font-extrabold text-foreground">Feelynx</p>
-          </div>
+        <div className="flex items-center justify-center px-6 pt-8 pb-6">
+          {BRAND.v2Wordmark ? (
+            <FeelynxLogo
+              size={220}
+              glow={false}
+              className="max-w-[11.5rem]"
+              tagline="Live entertainment"
+            />
+          ) : (
+            <div className="space-y-1 text-center">
+              <p className="text-sm uppercase tracking-widest text-muted-foreground">
+                Entertainment
+              </p>
+              <p className="text-2xl font-extrabold text-foreground">Feelynx</p>
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                Live entertainment
+              </p>
+            </div>
+          )}
         </div>
 
         <nav className="flex-1 space-y-6 px-6">
@@ -289,7 +301,7 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
           <div className="space-y-3 rounded-3xl border border-primary/30 bg-primary/10 p-4">
             <ReactiveMascot
               mood="joined"
-              message="Feely Fox says: Tap Go Live to start your show!"
+              message="Need a spark? Tap Go Live and the neon crowd will follow."
               className="w-full justify-start"
             />
             <div className="rounded-2xl bg-background/60 px-4 py-3 text-sm text-muted-foreground">
@@ -318,10 +330,21 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-2">
-              <img src={feelynxLogo} alt="Feelynx" className="w-8 h-8" />
-              <span className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                eelynx
-              </span>
+              {BRAND.v2Wordmark ? (
+                <FeelynxLogo
+                  size={140}
+                  glow={false}
+                  className="max-w-[7rem]"
+                  tagline="Feel. Connect. Sync."
+                />
+              ) : (
+                <div className="flex flex-col">
+                  <span className="text-xl font-bold text-foreground">Feelynx</span>
+                  <span className="text-xs uppercase tracking-wide text-muted-foreground">
+                    Feel. Connect. Sync.
+                  </span>
+                </div>
+              )}
             </div>
 
             <div className="flex items-center space-x-3">

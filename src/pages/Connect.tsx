@@ -4,6 +4,8 @@ import { Navigation } from '@/components/Navigation';
 import { creators } from '@/data/creators';
 import { CallCard } from '@/components/CallCard';
 import { usePresence } from '@/lib/presence';
+import FeelynxLogo from '@/components/brand/FeelynxLogo';
+import { BRAND } from '@/config';
 import {
   Select,
   SelectContent,
@@ -84,9 +86,16 @@ const Connect = () => {
           <div>
             <h2 className="text-2xl font-semibold text-foreground">Available Now</h2>
             {available.length === 0 ? (
-              <p className="rounded-2xl border border-border/60 bg-background/70 p-6 text-sm text-muted-foreground">
-                No one is available right now. Check back soon.
-              </p>
+              <div className="rounded-2xl border border-border/60 bg-background/70 p-6 text-center">
+                {BRAND.v2Wordmark ? (
+                  <FeelynxLogo size={160} glow={false} tagline="No one is available right now" />
+                ) : (
+                  <p className="text-sm text-muted-foreground">No one is available right now.</p>
+                )}
+                <p className="mt-3 text-xs text-muted-foreground">
+                  Check back soon to grab a spot.
+                </p>
+              </div>
             ) : (
               <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                 {available.map((c) => (
