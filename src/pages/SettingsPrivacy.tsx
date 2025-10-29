@@ -108,7 +108,7 @@ const SettingsPrivacy = () => {
               onChange={(e) => setHandle(e.target.value)}
             />
             <div className="flex items-center justify-between">
-              <span className="text-sm">Available for Calls</span>
+              <span className="text-sm">Available for requests</span>
               <Switch checked={available} onCheckedChange={saveAvailability} />
             </div>
           </div>

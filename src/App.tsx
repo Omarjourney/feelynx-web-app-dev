@@ -13,7 +13,8 @@ import Dashboard from './pages/Dashboard';
 import Explore from './pages/Explore';
 import Creators from './pages/Creators';
 import Content from './pages/Content';
-import Calls from './pages/Calls';
+// import Calls from './pages/Calls';
+import Connect from './pages/Connect';
 import Match from './pages/Match';
 import Groups from './pages/Groups';
 import GroupPage from './features/groups/GroupPage';
@@ -53,7 +54,7 @@ const App = () => (
               <Route path="/discover" element={<Explore />} />
               <Route path="/creators" element={<Creators />} />
               <Route path="/content" element={<Content />} />
-              <Route path="/calls" element={<Calls />} />
+              <Route path="/connect" element={<Connect />} />
               <Route path="/match" element={<Match />} />
               <Route path="/groups" element={<Groups />} />
               <Route path="/groups/:groupId" element={<GroupPage />} />
