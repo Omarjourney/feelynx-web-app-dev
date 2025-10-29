@@ -10,17 +10,21 @@ const SettingsPrivacy = () => {
   const [profilePublic, setProfilePublic] = useState(true);
   const [allowDMs, setAllowDMs] = useState(true);
   const [retention, setRetention] = useState(30);
-  const [handle, setHandle] = useState<string>(() => localStorage.getItem('feelynx:handle') || '');
+  const [handle, setHandle] = useState<string>(
+    () => localStorage.getItem('ivibes:handle') || localStorage.getItem('feelynx:handle') || '',
+  );
   const [available, setAvailable] = useState<boolean>(
-    () => localStorage.getItem('feelynx:available') === '1',
+    () =>
+      (localStorage.getItem('ivibes:available') || localStorage.getItem('feelynx:available')) ===
+      '1',
   );
   const { user } = useAuth();
   const { theme, setTheme, systemTheme } = useTheme();
-  const [themePref, setThemePref] = useState<'system' | 'light' | 'dark'>(() => {
+  const [themePref, setThemePref] = useState<'system' | 'light' | 'dark' | 'auto'>(() => {
+    const mode = localStorage.getItem('ivibes:themeMode');
+    if (mode === 'auto') return 'auto';
     const stored = localStorage.getItem('theme');
-    return stored === 'light' || stored === 'dark' || stored === 'system'
-      ? (stored as any)
-      : 'system';
+    return stored === 'light' || stored === 'dark' || stored === 'system' ? (stored as any) : 'system';
   });
   const defaultTab = useMemo(
     () => new URLSearchParams(location.search).get('tab') || 'general',
@@ -28,7 +32,7 @@ const SettingsPrivacy = () => {
   );
 
   useEffect(() => {
-    localStorage.setItem('feelynx:handle', handle);
+    localStorage.setItem('ivibes:handle', handle);
   }, [handle]);
 
   useEffect(() => {
@@ -40,7 +44,7 @@ const SettingsPrivacy = () => {
 
   const saveAvailability = async (next: boolean) => {
     setAvailable(next);
-    localStorage.setItem('feelynx:available', next ? '1' : '0');
+    localStorage.setItem('ivibes:available', next ? '1' : '0');
     if (!handle) return;
     try {
       await fetch(`/presence/${encodeURIComponent(handle)}`, {
@@ -53,14 +57,25 @@ const SettingsPrivacy = () => {
     }
   };
 
-  const saveTheme = (next: 'system' | 'light' | 'dark') => {
+  const saveTheme = (next: 'system' | 'light' | 'dark' | 'auto') => {
     setThemePref(next);
-    setTheme(next);
-    // Global key used for early paint before React mounts
-    localStorage.setItem('theme', next);
+    // When selecting 'auto', record mode and set current theme based on local time.
+    if (next === 'auto') {
+      localStorage.setItem('ivibes:themeMode', 'auto');
+      const hours = new Date().getHours();
+      const preferred = hours >= 7 && hours < 19 ? 'light' : 'dark';
+      setTheme(preferred);
+      localStorage.setItem('theme', preferred);
+    } else {
+      // Clear auto mode and set explicit theme
+      localStorage.removeItem('ivibes:themeMode');
+      setTheme(next);
+      // Global key used for early paint before React mounts
+      localStorage.setItem('theme', next);
+    }
     // Per-user preference override if authenticated
     const uid = user?.id || user?.email;
-    if (uid) localStorage.setItem(`feelynx:theme:${uid}`, next);
+    if (uid) localStorage.setItem(`ivibes:theme:${uid}`, next);
   };
 
   return (
@@ -79,6 +94,12 @@ const SettingsPrivacy = () => {
           <div className="grid gap-2">
             <div className="text-sm">Theme</div>
             <div className="flex gap-2">
+              <Button
+                variant={themePref === 'auto' ? 'default' : 'outline'}
+                onClick={() => saveTheme('auto')}
+              >
+                Automatic (day/night)
+              </Button>
               <Button
                 variant={themePref === 'system' ? 'default' : 'outline'}
                 onClick={() => saveTheme('system')}

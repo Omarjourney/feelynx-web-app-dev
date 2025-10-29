@@ -14,7 +14,8 @@ export default function IncomingCall() {
       try {
         const msg = JSON.parse(String(ev.data));
         if (msg?.type === 'ring') {
-          const myHandle = localStorage.getItem('feelynx:handle') || '';
+          const myHandle =
+            localStorage.getItem('ivibes:handle') || localStorage.getItem('feelynx:handle') || '';
           if (myHandle && msg.to === myHandle) {
             setRing({ from: msg.from, mode: msg.mode, rate: msg.rate });
             setOpen(true);

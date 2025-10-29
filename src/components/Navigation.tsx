@@ -88,10 +88,16 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
   }, [activeTab, pathname]);
 
   useEffect(() => {
-    const storedLanguage = localStorage.getItem('feelynx.language');
-    const storedTheme = localStorage.getItem('feelynx.experienceTheme');
-    const storedBrightness = localStorage.getItem('feelynx.brightness');
-    const storedFontScale = localStorage.getItem('feelynx.fontScale');
+    // Read new ivibes:* keys first, then fall back to legacy feelynx.* keys
+    const storedLanguage =
+      localStorage.getItem('ivibes.language') || localStorage.getItem('feelynx.language');
+    const storedTheme =
+      localStorage.getItem('ivibes.experienceTheme') ||
+      localStorage.getItem('feelynx.experienceTheme');
+    const storedBrightness =
+      localStorage.getItem('ivibes.brightness') || localStorage.getItem('feelynx.brightness');
+    const storedFontScale =
+      localStorage.getItem('ivibes.fontScale') || localStorage.getItem('feelynx.fontScale');
     if (storedLanguage) setLanguage(storedLanguage);
     if (storedTheme === 'midnight' || storedTheme === 'electric') setExperienceTheme(storedTheme);
     if (storedBrightness) setBrightness(Number(storedBrightness));
@@ -100,12 +106,12 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
 
   useEffect(() => {
     document.documentElement.style.setProperty('--app-brightness', brightness.toFixed(2));
-    localStorage.setItem('feelynx.brightness', brightness.toString());
+    localStorage.setItem('ivibes.brightness', brightness.toString());
   }, [brightness]);
 
   useEffect(() => {
     document.documentElement.style.setProperty('--app-font-scale', fontScale.toFixed(2));
-    localStorage.setItem('feelynx.fontScale', fontScale.toString());
+    localStorage.setItem('ivibes.fontScale', fontScale.toString());
   }, [fontScale]);
 
   useEffect(() => {
@@ -114,11 +120,11 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
     } else {
       document.documentElement.setAttribute('data-experience-theme', experienceTheme);
     }
-    localStorage.setItem('feelynx.experienceTheme', experienceTheme);
+    localStorage.setItem('ivibes.experienceTheme', experienceTheme);
   }, [experienceTheme]);
 
   useEffect(() => {
-    localStorage.setItem('feelynx.language', language);
+    localStorage.setItem('ivibes.language', language);
   }, [language]);
 
   const handleNav = (id: (typeof navItems)[number]['id'], to: string) => {
@@ -138,7 +144,7 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
           </div>
           <div>
             <p className="text-sm uppercase tracking-widest text-muted-foreground">Entertainment</p>
-            <p className="text-2xl font-extrabold text-foreground">Feelynx</p>
+            <p className="text-2xl font-extrabold text-foreground">iVibes</p>
           </div>
         </div>
 
@@ -289,7 +295,7 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
           <div className="space-y-3 rounded-3xl border border-primary/30 bg-primary/10 p-4">
             <ReactiveMascot
               mood="joined"
-              message="Feely Fox says: Tap Go Live to start your show!"
+              message="iVibes says: Tap Go Live to start your show!"
               className="w-full justify-start"
             />
             <div className="rounded-2xl bg-background/60 px-4 py-3 text-sm text-muted-foreground">

@@ -267,7 +267,7 @@ const Explore = () => {
                   <span role="img" aria-hidden="true">
                     🦊
                   </span>
-                  Feelynx says
+                  iVibes says
                 </div>
                 <CardTitle className="text-xl text-foreground">
                   Tip your crew to keep the energy meter soaring!

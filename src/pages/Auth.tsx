@@ -186,7 +186,7 @@ export default function Auth() {
       <Card className="w-full max-w-md border border-border/60 bg-background/80 backdrop-blur">
         <CardHeader className="space-y-4">
           <FlowBreadcrumb currentStep="login" />
-          <CardTitle>Welcome to Feelynx</CardTitle>
+          <CardTitle>Welcome to iVibes</CardTitle>
           <CardDescription>Sign in to your account or create a new one</CardDescription>
         </CardHeader>
         <CardContent>

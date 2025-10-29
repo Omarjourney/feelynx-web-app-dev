@@ -36,6 +36,7 @@ import IncomingCall from '@/components/IncomingCall';
 import Styleguide from './pages/Styleguide';
 import MobileTabBar from '@/components/MobileTabBar';
 import Navbar from '@/components/Navbar';
+import AutoThemeController from '@/components/AutoThemeController';
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,7 @@ const App = () => (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <TooltipProvider>
+          <AutoThemeController />
           <Toaster />
           <Sonner />
           <BrowserRouter>

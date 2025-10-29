@@ -104,7 +104,7 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
     <div>
       <h2 className="text-3xl font-bold mb-4 text-center">VibeCoin Packages</h2>
       <p className="text-center text-sm text-muted-foreground mb-6 max-w-3xl mx-auto">
-        Every purchase instantly grants VibeCoins and pays creators 75% of the pack price. Feelynx
+        Every purchase instantly grants VibeCoins and pays creators 75% of the pack price. iVibes
         keeps a transparent 25% margin (at least{' '}
         <span className="font-medium">
           ${MIN_PLATFORM_PROFIT_PER_COIN.toFixed(3)} profit per coin
@@ -149,7 +149,7 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
                   </div>
                 ) : (
                   <div className="text-sm text-muted-foreground">
-                    Get +{formatPercent(pkg.percentMore)}% more on Feelynx.live (
+                    Get +{formatPercent(pkg.percentMore)}% more on iVibes web (
                     {pkg.tokens.toLocaleString()} total)
                   </div>
                 )}
@@ -174,7 +174,7 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
                     {(CREATOR_SHARE * 100).toFixed(0)}%)
                   </div>
                   <div>
-                    Feelynx margin{' '}
+                    iVibes margin{' '}
                     <span className="font-medium">${platformMarginAmount.toFixed(2)}</span> (
                     {(PLATFORM_MARGIN * 100).toFixed(0)}%) ·{' '}
                     <span className="font-medium">${platformProfitPerCoin.toFixed(3)}</span> per
@@ -196,7 +196,7 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
                 </Button>
                 {platform === 'app' && (
                   <div className="text-xs text-muted-foreground mt-2">
-                    Get +{formatPercent(pkg.percentMore)}% more VibeCoins on Feelynx.live!
+                    Get +{formatPercent(pkg.percentMore)}% more VibeCoins on iVibes web!
                   </div>
                 )}
               </CardContent>

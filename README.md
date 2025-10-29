@@ -1,4 +1,4 @@
-# Feelynx - Premium Live Streaming Platform
+# iVibes — Premium Live Streaming Platform
 
 A modern, full-stack web application for live streaming, creator monetization, and interactive experiences built with React, TypeScript, LiveKit, and Express.
 

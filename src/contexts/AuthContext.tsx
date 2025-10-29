@@ -66,8 +66,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const uid = user.id || user.email;
     if (!uid) return;
     try {
-      const stored = localStorage.getItem(`feelynx:theme:${uid}`);
-      if (stored === 'light' || stored === 'dark' || stored === 'system') {
+      const mode = localStorage.getItem('ivibes:themeMode');
+      const stored =
+        localStorage.getItem(`ivibes:theme:${uid}`) ||
+        localStorage.getItem(`feelynx:theme:${uid}`);
+      if (mode === 'auto') {
+        const hours = new Date().getHours();
+        const preferred = hours >= 7 && hours < 19 ? 'light' : 'dark';
+        setTheme(preferred);
+      } else if (stored === 'light' || stored === 'dark' || stored === 'system') {
         setTheme(stored);
       }
     } catch {

@@ -25,7 +25,9 @@ const Navbar = () => {
     <nav className="bg-background/95 backdrop-blur-sm border-b border-border sticky top-0 z-50 pt-safe px-safe">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <img src={ivibesWordmark} alt="iVibes" className="h-8 w-auto" />
+          <Link to="/" aria-label="Go to Home">
+            <img src={ivibesWordmark} alt="iVibes" className="h-8 w-auto" />
+          </Link>
         </div>
         <div className="hidden md:flex items-center space-x-2">
           {links.map((l) => (

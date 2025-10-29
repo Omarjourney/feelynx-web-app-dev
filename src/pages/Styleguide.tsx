@@ -8,7 +8,7 @@ import { Separator } from '@/components/ui/separator';
 export default function Styleguide() {
   return (
     <div className="container mx-auto p-4 space-y-6">
-      <h1 className="text-3xl font-bold">Design System — Feelynx</h1>
+      <h1 className="text-3xl font-bold">Design System — iVibes</h1>
 
       <Card>
         <CardHeader>

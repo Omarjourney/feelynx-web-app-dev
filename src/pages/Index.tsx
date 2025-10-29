@@ -83,7 +83,7 @@ const Index = () => {
     },
     {
       id: 'groups',
-      title: 'Fambase crews',
+      title: 'Family crews',
       badge: 'Groups',
       description: 'Join curated micro-communities with live chat boosts and shared quests.',
       icon: Users,
