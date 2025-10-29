@@ -1,3 +1,7 @@
+export const PLATFORM_MARGIN = 0.25;
+export const CREATOR_SHARE = 0.75;
+export const MIN_PLATFORM_PROFIT_PER_COIN = 0.003;
+
 export const vibeCoinPackages = [
   { id: 1, tokens: 75, appTokens: 50, percentMore: 50, price: 0.99 },
   { id: 2, tokens: 400, appTokens: 275, percentMore: 45, price: 4.99 },

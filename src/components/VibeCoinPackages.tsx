@@ -8,7 +8,7 @@ import {
   PLATFORM_MARGIN,
   CREATOR_SHARE,
   MIN_PLATFORM_PROFIT_PER_COIN,
-} from '@/data/vibecoinPackages.ts';
+} from '@/data/vibecoinPackages';
 import { PaymentReceipt } from './PaymentReceipt';
 import { toast } from 'sonner';
 import { request } from '@/lib/api';
