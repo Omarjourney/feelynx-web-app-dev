@@ -1,18 +1,81 @@
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { creators } from '@/data/creators';
 import { CallCard } from '@/components/CallCard';
 import { usePresence } from '@/lib/presence';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 
 const Calls = () => {
   const navigate = useNavigate();
   const handleTab = (t: string) => navigate(t === 'calls' ? '/calls' : `/${t}`);
   const presence = usePresence();
-  const available = creators.filter((c) => presence[c.username] === 'available');
+  const [format, setFormat] = useState<'any' | 'video' | 'voice'>('any');
+  const [maxRate, setMaxRate] = useState<number | ''>('');
+  const [onlyAvailable, setOnlyAvailable] = useState(false);
+
+  const filterRate = (c: any) => {
+    const rate = format === 'voice' ? c.voiceRate : c.videoRate;
+    return maxRate === '' || rate <= Number(maxRate);
+  };
+  const filterAvail = (c: any) => !onlyAvailable || presence[c.username] === 'available';
+  const sortByAvail = (a: any, b: any) => {
+    const sa = presence[a.username] === 'available' ? 0 : 1;
+    const sb = presence[b.username] === 'available' ? 0 : 1;
+    if (sa !== sb) return sa - sb;
+    const ra = format === 'voice' ? a.voiceRate : a.videoRate;
+    const rb = format === 'voice' ? b.voiceRate : b.videoRate;
+    return ra - rb;
+  };
+  const list = creators.filter(filterRate).filter(filterAvail).slice().sort(sortByAvail);
+  const available = list.filter((c) => presence[c.username] === 'available');
   return (
     <div className="min-h-screen bg-background">
       <Navigation activeTab="calls" onTabChange={handleTab} />
       <div className="container mx-auto p-4 space-y-6">
+        <div className="flex flex-wrap items-end gap-3">
+          <div>
+            <div className="text-xs text-muted-foreground mb-1">Format</div>
+            <Select value={format} onValueChange={(v) => setFormat(v as any)}>
+              <SelectTrigger className="w-40">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="any">Any</SelectItem>
+                <SelectItem value="video">Video</SelectItem>
+                <SelectItem value="voice">Voice</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <div className="text-xs text-muted-foreground mb-1">Max rate (💎/min)</div>
+            <Input
+              className="w-28"
+              inputMode="numeric"
+              placeholder="No cap"
+              value={maxRate}
+              onChange={(e) => {
+                const v = e.target.value;
+                setMaxRate(v === '' ? '' : Number(v.replace(/[^0-9]/g, '')));
+              }}
+            />
+          </div>
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={onlyAvailable}
+              onChange={(e) => setOnlyAvailable(e.target.checked)}
+            />
+            Only available now
+          </label>
+        </div>
         <div>
           <h2 className="text-lg font-semibold mb-2">Available Now</h2>
           {available.length === 0 ? (
@@ -30,7 +93,7 @@ const Calls = () => {
         <div>
           <h2 className="text-lg font-semibold mb-2">All Creators</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {creators.map((c) => (
+            {list.map((c) => (
               <CallCard key={c.id} creator={c} status={presence[c.username]} />
             ))}
           </div>

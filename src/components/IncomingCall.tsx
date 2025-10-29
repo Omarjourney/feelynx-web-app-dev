@@ -47,7 +47,11 @@ export default function IncomingCall() {
               className="flex-1"
               onClick={() => {
                 setOpen(false);
-                window.location.href = '/call-room';
+                const qs = new URLSearchParams();
+                if (ring?.from) qs.set('from', ring.from);
+                if (ring?.mode) qs.set('mode', ring.mode);
+                if (typeof ring?.rate === 'number') qs.set('rate', String(ring.rate));
+                window.location.href = `/call-room?${qs.toString()}`;
               }}
             >
               Accept

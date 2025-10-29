@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import type { Room } from 'livekit-client';
 
 import LovenseToggle from '@/components/LovenseToggle';
@@ -10,6 +11,10 @@ import { Slider } from '@/components/ui/slider';
 
 const CallRoom = () => {
   const [state, setState] = useState<'idle' | 'connecting' | 'live' | 'ended'>('idle');
+  const [params] = useSearchParams();
+  const caller = params.get('from') || '';
+  const mode = (params.get('mode') as 'video' | 'audio' | null) || 'video';
+  const rate = params.get('rate');
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const roomRef = useRef<Room | null>(null);
   const remoteVideoRef = useRef<HTMLDivElement>(null);
@@ -79,6 +84,15 @@ const CallRoom = () => {
     try {
       await requestMediaPermissions();
       setState('live');
+      // Flip presence to busy (if we have a public handle saved)
+      const handle = localStorage.getItem('feelynx:handle');
+      if (handle) {
+        fetch(`/presence/${encodeURIComponent(handle)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'busy' }),
+        }).catch(() => {});
+      }
       toast({ title: 'Call started', description: 'You are now connected' });
     } catch (error) {
       setState('idle');
@@ -94,6 +108,15 @@ const CallRoom = () => {
     roomRef.current?.disconnect();
 
     setState('ended');
+    const handle = localStorage.getItem('feelynx:handle');
+    const wasAvailable = localStorage.getItem('feelynx:available') === '1';
+    if (handle) {
+      fetch(`/presence/${encodeURIComponent(handle)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: wasAvailable ? 'available' : 'offline' }),
+      }).catch(() => {});
+    }
   };
 
   useEffect(() => {
@@ -104,7 +127,11 @@ const CallRoom = () => {
     <div className="container mx-auto p-4 space-y-4">
       <Card className="bg-gradient-card">
         <CardHeader>
-          <CardTitle>WebRTC Call Demo</CardTitle>
+          <CardTitle>
+            {mode === 'audio' ? 'Audio Call' : 'Video Call'}
+            {caller ? ` — with ${caller}` : ''}
+            {rate ? ` • ${rate}💎/min` : ''}
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {state === 'idle' && (
