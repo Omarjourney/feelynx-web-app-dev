@@ -24,6 +24,7 @@ import PKBattle from './pages/PKBattle';
 import NotFound from './pages/NotFound';
 import SettingsPrivacy from './pages/SettingsPrivacy';
 import PatternHub from './features/patterns/PatternHub';
+import ToysHub from './features/toys/ToysHub';
 import ControlRemote from './features/remote/ControlRemote';
 import CompanionsHome from './features/companions/CompanionsHome';
 import ContestsFeed from './features/contests/ContestsFeed';
@@ -58,8 +59,9 @@ const App = () => (
             <Route path="/token-shop" element={<TokenShop />} />
             <Route path="/coins" element={<TokenShop />} />
             <Route path="/settings" element={<SettingsPrivacy />} />
-            <Route path="/patterns" element={<PatternHub />} />
-            <Route path="/remote" element={<Navigate to="/patterns?tab=long" replace />} />
+            <Route path="/patterns" element={<Navigate to="/toys" replace />} />
+            <Route path="/toys" element={<ToysHub />} />
+            <Route path="/remote" element={<Navigate to="/toys?tab=long" replace />} />
             <Route path="/companions" element={<CompanionsHome />} />
             <Route path="/contests" element={<ContestsFeed />} />
             <Route path="/styleguide" element={<Styleguide />} />

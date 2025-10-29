@@ -128,9 +128,7 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
                     <DropdownMenuItem onClick={() => navigate('/groups')}>Groups</DropdownMenuItem>
                   )}
                   {FEATURES.patterns && (
-                    <DropdownMenuItem onClick={() => navigate('/patterns')}>
-                      Patterns & Remote
-                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/toys')}>Toys</DropdownMenuItem>
                   )}
                   {FEATURES.companions && (
                     <DropdownMenuItem onClick={() => navigate('/companions')}>
