@@ -2,71 +2,74 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system matching original Feelynx. All colors MUST be HSL. */
+/* Neon nightlife design system for Feelynx. All colors remain in HSL. */
 
 @layer base {
   :root {
-    /* Light theme (day) */
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    /* Atmosphere: muted midnight base with neon gradients */
+    --background: 248 34% 8%;
+    --foreground: 0 0% 100%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card: 252 28% 13%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover: 252 28% 13%;
+    --popover-foreground: 0 0% 100%;
 
-    /* Chosen standout brand color: Hyper Cyan */
-    --primary: 190 100% 50%;
-    --primary-foreground: 0 0% 98%;
-    --primary-glow: 190 100% 60%;
+    --primary: 292 92% 65%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 210 100% 64%;
 
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+    --secondary: 229 39% 18%;
+    --secondary-foreground: 0 0% 95%;
 
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    --muted: 229 29% 22%;
+    --muted-foreground: 260 12% 72%;
 
-    --accent: 190 100% 48%;
-    --accent-foreground: 240 10% 3.9%;
+    --accent: 196 100% 64%;
+    --accent-foreground: 247 61% 8%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 4 82% 63%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 190 100% 50%;
+    --border: 247 32% 22%;
+    --input: 247 32% 22%;
+    --ring: 292 92% 65%;
 
-    --radius: 0.75rem;
+    --radius: 0.9rem;
 
-    /* Original Feelynx gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(190 100% 50%), hsl(210 100% 56%));
-    --gradient-hero: linear-gradient(
+    --gradient-primary: linear-gradient(
       135deg,
-      hsl(280 100% 70%) 0%,
-      hsl(320 100% 70%) 50%,
-      hsl(260 100% 80%) 100%
+      hsl(312 91% 68%) 0%,
+      hsl(286 87% 63%) 35%,
+      hsl(220 96% 63%) 100%
     );
-    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(0 0% 98%) 100%);
-    --gradient-border: linear-gradient(135deg, hsl(190 100% 50%) 0%, hsl(210 100% 56%) 100%);
+    --gradient-hero: linear-gradient(
+      140deg,
+      hsl(255 87% 18%) 0%,
+      hsl(282 75% 22%) 45%,
+      hsl(206 92% 27%) 100%
+    );
+    --gradient-card: linear-gradient(145deg, hsl(251 30% 14%) 0%, hsl(228 32% 11%) 100%);
+    --gradient-border: linear-gradient(120deg, hsl(312 91% 68%), hsl(198 96% 62%));
 
-    /* Premium shadows */
-    --shadow-premium: 0 25px 50px -12px hsl(190 100% 50% / 0.25);
-    --shadow-glow: 0 0 40px hsl(190 100% 60% / 0.3);
+    --shadow-premium: 0 35px 80px -20px hsl(292 92% 65% / 0.45);
+    --shadow-glow: 0 0 55px hsl(210 100% 64% / 0.4);
 
-    /* Live indicator */
-    --live-indicator: 142 76% 36%;
+    --live-indicator: 345 91% 58%;
 
-    --sidebar-background: 240 10% 3.9%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 190 100% 50%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 190 100% 50%;
+    --sidebar-background: 247 32% 11%;
+    --sidebar-foreground: 0 0% 96%;
+    --sidebar-primary: 292 92% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 229 39% 18%;
+    --sidebar-accent-foreground: 0 0% 96%;
+    --sidebar-border: 247 32% 18%;
+    --sidebar-ring: 210 100% 64%;
 
-    /* Safe area tokens */
+    --app-brightness: 1;
+    --app-font-scale: 1;
+
     --safe-area-top: env(safe-area-inset-top, 0px);
     --safe-area-right: env(safe-area-inset-right, 0px);
     --safe-area-bottom: env(safe-area-inset-bottom, 0px);
@@ -75,36 +78,34 @@
   }
 
   .dark {
-    /* Dark theme (night) */
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
+    --background: 248 34% 6%;
+    --foreground: 0 0% 100%;
+    --card: 247 33% 10%;
     --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
+    --popover: 247 33% 10%;
     --popover-foreground: 0 0% 98%;
-    /* Dark theme: keep same brand hue */
-    --primary: 190 100% 50%;
-    --primary-foreground: 0 0% 98%;
-    --primary-glow: 190 100% 60%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 190 100% 50%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 190 100% 50%;
-    --sidebar-background: 240 10% 3.9%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 190 100% 50%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 190 100% 50%;
+    --primary: 292 92% 65%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 200 100% 65%;
+    --secondary: 232 36% 16%;
+    --secondary-foreground: 0 0% 96%;
+    --muted: 232 32% 18%;
+    --muted-foreground: 257 16% 70%;
+    --accent: 196 100% 64%;
+    --accent-foreground: 248 34% 8%;
+    --destructive: 2 86% 62%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 247 32% 16%;
+    --input: 247 32% 16%;
+    --ring: 312 91% 68%;
+    --sidebar-background: 248 34% 6%;
+    --sidebar-foreground: 0 0% 96%;
+    --sidebar-primary: 292 92% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 232 36% 16%;
+    --sidebar-accent-foreground: 0 0% 96%;
+    --sidebar-border: 247 32% 18%;
+    --sidebar-ring: 210 100% 64%;
 
     --safe-area-top: env(safe-area-inset-top, 0px);
     --safe-area-right: env(safe-area-inset-right, 0px);
@@ -112,22 +113,62 @@
     --safe-area-left: env(safe-area-inset-left, 0px);
     --floating-action-gap: 1.5rem;
   }
+
+  /* Experience theme overrides */
+  [data-experience-theme='midnight'] {
+    --gradient-primary: linear-gradient(160deg, hsl(260 92% 64%), hsl(202 100% 55%));
+    --background: 232 50% 4%;
+    --card: 232 38% 10%;
+    --accent: 214 100% 70%;
+  }
+
+  [data-experience-theme='electric'] {
+    --gradient-primary: linear-gradient(
+      120deg,
+      hsl(324 94% 62%),
+      hsl(258 88% 64%),
+      hsl(176 92% 62%)
+    );
+    --primary: 324 94% 62%;
+    --primary-glow: 176 92% 62%;
+    --accent: 176 92% 62%;
+    --background: 250 40% 10%;
+  }
 }
 
 @layer base {
+  html {
+    font-size: calc(16px * var(--app-font-scale));
+  }
+
   * {
     @apply border-border;
   }
 
   body {
     @apply bg-background text-foreground;
+    font-family:
+      'Poppins',
+      'Nunito',
+      'Segoe UI',
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      'Helvetica Neue',
+      sans-serif;
+    background-image:
+      radial-gradient(circle at top, hsl(282 85% 22% / 0.45), transparent 60%),
+      radial-gradient(circle at bottom, hsl(204 92% 30% / 0.35), transparent 55%);
+    background-attachment: fixed;
     padding-right: var(--safe-area-right);
     padding-bottom: var(--safe-area-bottom);
     padding-left: var(--safe-area-left);
+    filter: brightness(var(--app-brightness));
     transition:
       background-color 300ms ease,
       color 300ms ease,
-      border-color 300ms ease;
+      border-color 300ms ease,
+      filter 300ms ease;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -144,6 +185,9 @@
   .bg-gradient-primary {
     background: var(--gradient-primary);
   }
+  .bg-gradient-hero {
+    background: var(--gradient-hero);
+  }
   .bg-live {
     background-color: hsl(var(--live-indicator));
   }
@@ -152,6 +196,56 @@
   }
   .shadow-glow {
     box-shadow: var(--shadow-glow);
+  }
+  .ring-neon {
+    box-shadow:
+      0 0 0 2px hsl(var(--primary) / 0.55),
+      0 0 25px hsl(var(--primary) / 0.35);
+  }
+  .button-ripple {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .button-ripple::after {
+    content: '';
+    position: absolute;
+    inset: -150%;
+    background: radial-gradient(circle, hsl(var(--primary) / 0.45) 0%, transparent 65%);
+    transform: scale(0);
+    opacity: 0;
+    transition:
+      transform 400ms ease,
+      opacity 400ms ease;
+    z-index: -1;
+  }
+  .button-ripple:active::after,
+  .button-ripple[data-ripple='true']::after {
+    transform: scale(1);
+    opacity: 1;
+  }
+  .hover-glow:hover {
+    box-shadow:
+      0 0 0 1px hsl(var(--primary) / 0.4),
+      0 0 35px hsl(var(--primary) / 0.35);
+  }
+  .blurred-video-preview {
+    background-size: cover;
+    background-position: center;
+    filter: blur(40px);
+    transform: scale(1.15);
+    opacity: 0.75;
+  }
+  .pulse-glow {
+    animation: pulse-glow 2.6s ease-in-out infinite;
+  }
+  .reaction-pop {
+    animation:
+      reaction-pop 220ms ease-out,
+      reaction-float 2.4s ease-in forwards;
+  }
+  .infinite-progress {
+    animation: progress-loop 1.6s linear infinite;
   }
   .pt-safe {
     padding-top: var(--safe-area-top);
@@ -169,5 +263,50 @@
   .safe-fab-offset {
     bottom: calc(var(--safe-area-bottom) + var(--floating-action-gap));
     right: calc(var(--safe-area-right) + var(--floating-action-gap));
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.55);
+  }
+  50% {
+    box-shadow: 0 0 35px 12px hsl(var(--primary) / 0.25);
+  }
+}
+
+@keyframes reaction-pop {
+  0% {
+    transform: scale(0.4) translateY(40%);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.05) translateY(-10%);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) translateY(0%);
+    opacity: 1;
+  }
+}
+
+@keyframes reaction-float {
+  0% {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-120px);
+    opacity: 0;
+  }
+}
+
+@keyframes progress-loop {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
   }
 }

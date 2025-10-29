@@ -12,13 +12,15 @@ const Live = () => {
   if (!creator) return <div className="p-4">Creator not found</div>;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background md:flex">
       <Navigation activeTab="creators" onTabChange={handleTab} />
-      <LiveStream
-        creatorName={creator.name}
-        viewers={creator.viewers || 0}
-        onBack={() => navigate(-1)}
-      />
+      <main className="flex-1 overflow-x-hidden pb-24 md:pb-12">
+        <LiveStream
+          creatorName={creator.name}
+          viewers={creator.viewers || 0}
+          onBack={() => navigate(-1)}
+        />
+      </main>
     </div>
   );
 };

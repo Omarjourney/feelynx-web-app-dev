@@ -88,27 +88,35 @@ const Creators = () => {
   }, [filters]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background md:flex">
       <Navigation activeTab="creators" onTabChange={handleTab} />
-      <div className="container mx-auto p-4 space-y-6">
-        <SearchFilters
-          {...filters}
-          onChange={(newFilters) => setFilters((prev) => ({ ...prev, ...newFilters }))}
-        />
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {loading && (
-            <>
-              {Array.from({ length: 8 }).map((_, i) => (
-                <CreatorCardSkeleton key={i} />
+      <main className="flex-1 overflow-x-hidden pb-24 md:pb-12">
+        <div className="mx-auto w-full max-w-6xl space-y-6 px-4 py-10">
+          <SearchFilters
+            {...filters}
+            onChange={(newFilters) => setFilters((prev) => ({ ...prev, ...newFilters }))}
+          />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {loading && (
+              <>
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <CreatorCardSkeleton key={i} />
+                ))}
+              </>
+            )}
+            {error && (
+              <div className="col-span-full rounded-2xl border border-border/60 bg-background/70 p-6 text-center text-destructive">
+                {error}
+              </div>
+            )}
+            {!loading &&
+              !error &&
+              creators.map((c) => (
+                <CreatorCard key={c.id} creator={c} onViewProfile={handleView} />
               ))}
-            </>
-          )}
-          {error && <div className="col-span-full text-center text-destructive py-6">{error}</div>}
-          {!loading &&
-            !error &&
-            creators.map((c) => <CreatorCard key={c.id} creator={c} onViewProfile={handleView} />)}
+          </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
