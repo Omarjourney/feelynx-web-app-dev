@@ -9,20 +9,22 @@ const JWT_SECRET = RAW_SECRET || (process.env.NODE_ENV === 'test' ? 'secret' : '
 if (!JWT_SECRET) {
   throw new Error('JWT_SECRET environment variable is required');
 }
+const GUEST_USER_ID = 0;
 const generateToken = (userId) => jwt.sign({ userId }, JWT_SECRET, { expiresIn: '1h' });
-export const authenticateToken = (req, res, next) => {
+export const authenticateToken = (req, _res, next) => {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
   if (!token) {
-    return res.status(401).json({ error: 'Token required' });
+    req.userId = GUEST_USER_ID;
+    return next();
   }
   try {
     const payload = jwt.verify(token, JWT_SECRET);
     req.userId = payload.userId;
-    next();
   } catch (_a) {
-    res.status(401).json({ error: 'Invalid token' });
+    req.userId = GUEST_USER_ID;
   }
+  next();
 };
 router.post('/register', withValidation(authSchemas.register), async (req, res) => {
   const { email, password } = req.body;
