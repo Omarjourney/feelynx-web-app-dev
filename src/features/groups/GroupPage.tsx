@@ -1,9 +1,11 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { groups } from '@/data/groups';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
 
 const GroupPage = () => {
   const { groupId } = useParams();
@@ -49,6 +51,27 @@ const GroupPage = () => {
             <Button onClick={() => navigate('/token-shop')}>Request Invite</Button>
             <Button variant="secondary" onClick={() => navigate('/dm')}>
               Message Admin
+            </Button>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-border/60 bg-background/70 p-4">
+          <p className="mb-2 text-sm font-medium text-foreground">Have an invite code?</p>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Input placeholder="Enter your invite code" className="sm:w-64" id="invite-input" />
+            <Button
+              onClick={() => {
+                const el = document.getElementById('invite-input') as HTMLInputElement | null;
+                const code = el?.value.trim();
+                if (!code) {
+                  toast.error('Please enter a valid invite code');
+                  return;
+                }
+                // Demo: accept any non-empty code
+                toast.success('Invite accepted', { description: 'Welcome to the crew (demo)' });
+              }}
+            >
+              Enter with invite
             </Button>
           </div>
         </div>

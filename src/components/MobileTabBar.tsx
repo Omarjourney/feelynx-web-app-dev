@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { Compass, Home, Radio, UserRound } from 'lucide-react';
+import { Compass, Home, Radio, UserRound, PhoneCall } from 'lucide-react';
 
 type Tab = {
   id: string;
@@ -20,6 +20,7 @@ export default function MobileTabBar() {
       [
         { id: 'home', label: 'Home', to: '/', icon: Home },
         { id: 'discover', label: 'Discover', to: '/discover', icon: Compass },
+        { id: 'connect', label: 'Connect', to: '/connect', icon: PhoneCall },
         { id: 'go-live', label: 'Go Live', to: '/call-room', icon: Radio },
         { id: 'profile', label: 'Profile', to: '/dashboard', icon: UserRound },
       ].filter(Boolean) as Tab[],
@@ -34,6 +35,7 @@ export default function MobileTabBar() {
       pathname.startsWith('/creators')
     )
       return 'discover';
+    if (pathname.startsWith('/connect')) return 'connect';
     if (
       pathname.startsWith('/live') ||
       pathname.startsWith('/call-room') ||

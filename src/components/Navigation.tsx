@@ -2,7 +2,17 @@ import { useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { Compass, Gauge, Home, Languages, Menu, Radio, Sparkles, UserRound } from 'lucide-react';
+import {
+  Compass,
+  Gauge,
+  Home,
+  Languages,
+  Menu,
+  Radio,
+  Sparkles,
+  UserRound,
+  PhoneCall,
+} from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,6 +30,7 @@ import ReactiveMascot from '@/components/ReactiveMascot';
 const NAV_ITEMS = [
   { id: 'home', label: 'Home', to: '/', icon: Home },
   { id: 'discover', label: 'Discover', to: '/discover', icon: Compass },
+  { id: 'connect', label: 'Connect', to: '/connect', icon: PhoneCall },
   { id: 'go-live', label: 'Go Live', to: '/call-room', icon: Radio },
   { id: 'profile', label: 'Profile', to: '/dashboard', icon: UserRound },
 ] as const;
@@ -30,7 +41,8 @@ const NAV_ALIAS: Record<string, (typeof NAV_ITEMS)[number]['id']> = {
   creators: 'discover',
   explore: 'discover',
   content: 'discover',
-  calls: 'discover',
+  calls: 'connect',
+  connect: 'connect',
   groups: 'discover',
   live: 'discover',
   'live-creator': 'go-live',
@@ -64,6 +76,7 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
     if (pathname.startsWith('/discover') || pathname === '/' || pathname.startsWith('/explore'))
       return 'discover';
     if (pathname.startsWith('/creators') || pathname.startsWith('/live')) return 'discover';
+    if (pathname.startsWith('/connect')) return 'connect';
     if (pathname.startsWith('/calls') || pathname.startsWith('/call-room')) return 'go-live';
     if (
       pathname.startsWith('/dashboard') ||
