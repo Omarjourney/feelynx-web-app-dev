@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -53,6 +54,8 @@ const demoPatterns: Pattern[] = [
 
 export default function PatternHub() {
   const [openMenu, setOpenMenu] = useState(false);
+  const { search } = useLocation();
+  const navigate = useNavigate();
   const [bottomTab, setBottomTab] = useState<'home' | 'long' | 'discover'>('home');
   const [tab, setTab] = useState<'forYou' | 'trending' | 'mine'>('forYou');
   const [patterns, setPatterns] = useState<Pattern[]>(demoPatterns);
@@ -101,6 +104,16 @@ export default function PatternHub() {
     navigator.clipboard?.writeText(`${name} shared a pattern: ${p.name}`);
     alert(anonymous ? 'Shared anonymously (link copied).' : 'Shared (link copied).');
   };
+
+  // Sync initial and subsequent ?tab= values with internal state
+  useEffect(() => {
+    const qs = new URLSearchParams(search);
+    const t = qs.get('tab');
+    if (t === 'home' || t === 'long' || t === 'discover') {
+      setBottomTab(t);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
 
   return (
     <div className="min-h-screen bg-background text-foreground md:max-w-sm md:mx-auto">
@@ -329,7 +342,12 @@ export default function PatternHub() {
                     'flex h-14 w-full flex-col items-center justify-center text-xs',
                     active ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
                   )}
-                  onClick={() => setBottomTab(t.id)}
+                  onClick={() => {
+                    setBottomTab(t.id);
+                    const qs = new URLSearchParams(search);
+                    qs.set('tab', t.id);
+                    navigate({ search: qs.toString() }, { replace: true });
+                  }}
                   aria-current={active ? 'page' : undefined}
                 >
                   <Icon className={cn('h-5 w-5 mb-0.5', active && 'text-primary')} />

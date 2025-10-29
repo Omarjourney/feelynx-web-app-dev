@@ -129,12 +129,7 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
                   )}
                   {FEATURES.patterns && (
                     <DropdownMenuItem onClick={() => navigate('/patterns')}>
-                      Patterns
-                    </DropdownMenuItem>
-                  )}
-                  {FEATURES.remote && (
-                    <DropdownMenuItem onClick={() => navigate('/settings?tab=devices')}>
-                      Remote
+                      Patterns & Remote
                     </DropdownMenuItem>
                   )}
                   {FEATURES.companions && (
