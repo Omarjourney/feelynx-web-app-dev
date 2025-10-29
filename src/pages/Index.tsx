@@ -286,6 +286,9 @@ const Index = () => {
                         Crew · {group.members.toLocaleString()} members
                       </p>
                     </div>
+                    <span className="hidden md:inline-flex items-center gap-1 rounded-full border border-border/60 px-2 py-0.5 text-[10px] uppercase tracking-widest text-muted-foreground">
+                      Private · Invite only
+                    </span>
                     {group.isLive && (
                       <span className="rounded-full bg-live px-3 py-1 text-xs font-semibold text-white animate-pulse">
                         Live

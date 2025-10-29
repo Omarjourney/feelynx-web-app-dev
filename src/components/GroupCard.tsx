@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Group } from '@/data/groups';
+import { Lock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const GroupCard = ({ group }: { group: Group }) => (
@@ -17,7 +18,12 @@ export const GroupCard = ({ group }: { group: Group }) => (
     <div className="relative space-y-4">
       <div className="flex items-start justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-foreground">{group.name}</h3>
+          <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+            {group.name}
+            <span className="inline-flex items-center gap-1 rounded-full border border-border/60 px-2 py-0.5 text-[10px] uppercase tracking-widest text-muted-foreground">
+              <Lock className="h-3 w-3" /> Private · Invite only
+            </span>
+          </h3>
           <p className="text-xs uppercase tracking-widest text-muted-foreground">
             Crew · {group.members.toLocaleString()} members
           </p>
@@ -43,7 +49,7 @@ export const GroupCard = ({ group }: { group: Group }) => (
       </div>
       <Link to={`/groups/${group.id}`}>
         <Button className="button-ripple w-full rounded-2xl" size="sm">
-          Enter crew space
+          Enter with invite
         </Button>
       </Link>
     </div>

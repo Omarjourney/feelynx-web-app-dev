@@ -41,10 +41,13 @@ const GroupPage = () => {
           <div>
             <h1 className="text-2xl font-bold">{group.name}</h1>
             <p className="text-muted-foreground">{group.description}</p>
+            <div className="mt-2 inline-flex items-center gap-2 rounded-full border border-border/60 px-3 py-1 text-[11px] uppercase tracking-widest text-muted-foreground">
+              <span className="inline-block h-2 w-2 rounded-full bg-border" /> Private · Invite only
+            </div>
           </div>
           <div className="space-x-2">
-            <Button onClick={() => navigate('/shop')}>Join / Upgrade</Button>
-            <Button variant="secondary" onClick={() => navigate('/messages')}>
+            <Button onClick={() => navigate('/token-shop')}>Request Invite</Button>
+            <Button variant="secondary" onClick={() => navigate('/dm')}>
               Message Admin
             </Button>
           </div>
