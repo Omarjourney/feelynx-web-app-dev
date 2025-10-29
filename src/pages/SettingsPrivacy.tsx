@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -8,10 +8,33 @@ const SettingsPrivacy = () => {
   const [profilePublic, setProfilePublic] = useState(true);
   const [allowDMs, setAllowDMs] = useState(true);
   const [retention, setRetention] = useState(30);
+  const [handle, setHandle] = useState<string>(() => localStorage.getItem('feelynx:handle') || '');
+  const [available, setAvailable] = useState<boolean>(
+    () => localStorage.getItem('feelynx:available') === '1',
+  );
   const defaultTab = useMemo(
     () => new URLSearchParams(location.search).get('tab') || 'general',
     [],
   );
+
+  useEffect(() => {
+    localStorage.setItem('feelynx:handle', handle);
+  }, [handle]);
+
+  const saveAvailability = async (next: boolean) => {
+    setAvailable(next);
+    localStorage.setItem('feelynx:available', next ? '1' : '0');
+    if (!handle) return;
+    try {
+      await fetch(`/presence/${encodeURIComponent(handle)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: next ? 'available' : 'offline' }),
+      });
+    } catch {
+      // ignore in previews
+    }
+  };
 
   return (
     <div className="container mx-auto p-4">
@@ -25,6 +48,19 @@ const SettingsPrivacy = () => {
           <div className="flex items-center justify-between">
             <span className="text-sm">Public Profile</span>
             <Switch checked={profilePublic} onCheckedChange={setProfilePublic} />
+          </div>
+          <div className="grid gap-2">
+            <div className="text-sm">Public Handle</div>
+            <input
+              className="border p-2 rounded"
+              placeholder="your_handle"
+              value={handle}
+              onChange={(e) => setHandle(e.target.value)}
+            />
+            <div className="flex items-center justify-between">
+              <span className="text-sm">Available for Calls</span>
+              <Switch checked={available} onCheckedChange={saveAvailability} />
+            </div>
           </div>
           <div className="space-x-4">
             <Button variant="outline">Download My Data</Button>

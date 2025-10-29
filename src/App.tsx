@@ -29,6 +29,7 @@ import ControlRemote from './features/remote/ControlRemote';
 import CompanionsHome from './features/companions/CompanionsHome';
 import ContestsFeed from './features/contests/ContestsFeed';
 import GoLiveEntry from '@/components/GoLiveEntry';
+import IncomingCall from '@/components/IncomingCall';
 import Styleguide from './pages/Styleguide';
 import MobileTabBar from '@/components/MobileTabBar';
 
@@ -70,6 +71,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
           <GoLiveEntry />
+          <IncomingCall />
           <MobileTabBar />
         </BrowserRouter>
       </TooltipProvider>

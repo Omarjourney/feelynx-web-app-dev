@@ -107,6 +107,13 @@ function broadcastParticipants(room: string) {
   });
 }
 
+function broadcastRing(to: string, payload: any) {
+  const msg = JSON.stringify({ type: 'ring', to, ...payload });
+  wss.clients.forEach((client: WebSocket) => {
+    if (client.readyState === WebSocket.OPEN) client.send(msg);
+  });
+}
+
 app.post(
   '/creators/:username/status',
   withValidation(indexSchemas.creatorStatus),
@@ -166,6 +173,16 @@ app.post(
     res.json({ ok: true });
   },
 );
+
+// Simple call invite broadcast (demo-safe)
+app.post('/calls/invite', (req: Request, res: Response) => {
+  const { to, from, mode = 'video', rate } = req.body || {};
+  if (typeof to !== 'string' || typeof from !== 'string') {
+    return res.status(400).json({ error: 'to and from required' });
+  }
+  broadcastRing(to, { from, mode, rate });
+  res.json({ ok: true });
+});
 
 // Start server
 server.listen(port, () => {
