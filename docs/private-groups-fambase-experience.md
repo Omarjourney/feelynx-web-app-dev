@@ -1,4 +1,4 @@
-# Private Groups: Fambase-Style Experience Specification
+# Private Groups: Family-Style Experience Specification
 
 ## Feature & UX Spec
 

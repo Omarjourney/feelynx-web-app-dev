@@ -24,7 +24,7 @@
    - Reporting, block/mute, parental or age verification.
    - Moderation tools: delete message, remove member, shadow ban, revoke invites.
 
-### Enhancements Over Fambase
+### Enhancements Over Family
 
 - Persistent threaded chat rather than announcement-only feed.
 - Rich media support including voice, polls/AMA, rewards.

@@ -415,7 +415,7 @@ export const patternSchemas = {
   remove: { params: patternIdParams },
 } satisfies Record<string, ValidationSchema>;
 
-// Groups (Fambase crews)
+// Groups (Family crews)
 const groupIdParams = z.object({ id: z.coerce.number().int().positive() });
 const groupInviteVerifyBody = z.object({ code: nonEmptyString.max(120) });
 const groupInviteRequestBody = z.object({ message: z.string().max(500).optional() });

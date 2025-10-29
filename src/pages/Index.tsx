@@ -254,7 +254,7 @@ const Index = () => {
                 Featured crews & creators
               </h2>
               <Button variant="ghost" onClick={() => navigate('/groups')}>
-                Explore Fambase crews
+                Explore Family crews
               </Button>
             </div>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
@@ -267,10 +267,10 @@ const Index = () => {
           <section aria-labelledby="crew-spotlight" className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 id="crew-spotlight" className="text-3xl font-bold text-foreground">
-                Fambase crew spotlights
+                Family crew spotlights
               </h2>
               <Button variant="ghost" onClick={() => navigate('/groups')}>
-                Join a Fambase crew
+                Join a Family crew
               </Button>
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
