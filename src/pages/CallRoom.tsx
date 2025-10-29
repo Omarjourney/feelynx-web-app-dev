@@ -19,7 +19,7 @@ const CallRoom = () => {
   const roomRef = useRef<Room | null>(null);
   const remoteVideoRef = useRef<HTMLDivElement>(null);
 
-  // Control session (Tophy-style) integration
+  // Control session (iVibes-style) integration
   const [maxIntensity, setMaxIntensity] = useState(12);
   const [durationSec, setDurationSec] = useState(300);
   const [sessionId, setSessionId] = useState<string | null>(null);

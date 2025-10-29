@@ -55,8 +55,8 @@ const Index = () => {
 
   const quickLinks = [
     {
-      id: 'tophy-control',
-      title: 'Tophy control room',
+      id: 'ivibes-control',
+      title: 'iVibes control room',
       badge: 'Interactive toys',
       description: 'Sync toys, launch interactive patterns, and run playbooks in one tap.',
       icon: Workflow,
@@ -103,7 +103,7 @@ const Index = () => {
     },
     {
       id: 'contests',
-      title: 'Tophy contests',
+      title: 'iVibes contests',
       description: 'Host bracket matches, PK battles, and story-led events.',
       icon: Sparkles,
       action: () => navigate('/contests'),
@@ -139,8 +139,8 @@ const Index = () => {
                   Your experience hub
                 </h2>
                 <p className="max-w-2xl text-sm text-muted-foreground">
-                  Everything we prototyped for Tophy, messages, premium content, and Fambase
-                  crews—now grouped in one clean panel so you can jump right back in.
+                  Everything we prototyped for iVibes, messages, premium content, and Family crews—
+                  now grouped in one clean panel so you can jump right back in.
                 </p>
               </div>
               <Button

@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Calls section transforms into a swipable, match-driven experience that combines creator discovery with instant video/voice connections. Inspired by Tophy and Who, users swipe through dynamic profile cards, match in real time, and jump into social calls with token-based billing.
+The Calls section transforms into a swipable, match-driven experience that combines creator discovery with instant video/voice connections. Inspired by iVibes and Who, users swipe through dynamic profile cards, match in real time, and jump into social calls with token-based billing.
 
 ## 1. Discovery Feed – Swipe‑to‑Call
 
