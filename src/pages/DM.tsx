@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import useEncryption from '@/hooks/useEncryption';
 import { toast } from 'sonner';
 import { getUserMessage, toApiError } from '@/lib/errors';
+import { DMMessageSkeleton, DMThreadSkeleton } from '@/components/Skeletons';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface Message {
@@ -32,6 +33,7 @@ const DM = () => {
   const [input, setInput] = useState('');
   const [burn, setBurn] = useState(false);
   const [loadingMessages, setLoadingMessages] = useState(false);
+  const [loadingThreads, setLoadingThreads] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -120,6 +122,7 @@ const DM = () => {
 
     // Load thread list (best effort without auth)
     (async () => {
+      setLoadingThreads(true);
       try {
         const headers: Record<string, string> = {};
         const jwt = localStorage.getItem('token');
@@ -131,6 +134,8 @@ const DM = () => {
         }
       } catch {
         setThreads([]);
+      } finally {
+        setLoadingThreads(false);
       }
     })();
 
@@ -154,6 +159,20 @@ const DM = () => {
 
     try {
       const { cipher, nonce } = encrypt(input);
+      // Optimistic local append
+      const meId = (user as any)?.id ?? 'me';
+      const optimistic: Message = {
+        id: `temp_${Date.now()}`,
+        sender_id: String(meId),
+        recipient_id: String(recipientId),
+        cipher_text: cipher,
+        nonce,
+        read_at: null,
+        burn_after_reading: burn,
+        created_at: new Date().toISOString(),
+        text: input,
+      };
+      setMessages((prev) => [...prev, optimistic]);
       const headers: Record<string, string> = { 'Content-Type': 'application/json' };
       try {
         const jwt = localStorage.getItem('token');
@@ -173,6 +192,8 @@ const DM = () => {
       });
 
       if (!res.ok) {
+        // Roll back optimistic
+        setMessages((prev) => prev.filter((m) => m.id !== optimistic.id));
         throw await toApiError(res);
       }
 
@@ -188,7 +209,7 @@ const DM = () => {
     } finally {
       setSending(false);
     }
-  }, [burn, encrypt, fetchMessages, input, ready, recipientId, sending, threadId]);
+  }, [burn, encrypt, fetchMessages, input, ready, recipientId, sending, threadId, user]);
 
   const markRead = useCallback(
     async (id: string) => {
@@ -268,22 +289,30 @@ const DM = () => {
             </button>
           </div>
           <div className="border rounded">
-            {threads.map((t) => (
-              <button
-                key={t.id}
-                className={`w-full text-left p-2 border-b last:border-b-0 ${threadId === t.id ? 'bg-secondary' : ''}`}
-                onClick={() => {
-                  setThreadId(t.id);
-                  fetchMessages(t.id);
-                }}
-              >
-                <div className="text-sm font-medium truncate">Thread {t.id}</div>
-                <div className="text-xs text-muted-foreground truncate">
-                  {t.user1_id} ↔ {t.user2_id}
-                </div>
-              </button>
-            ))}
-            {threads.length === 0 && (
+            {loadingThreads && (
+              <>
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <DMThreadSkeleton key={i} />
+                ))}
+              </>
+            )}
+            {!loadingThreads &&
+              threads.map((t) => (
+                <button
+                  key={t.id}
+                  className={`w-full text-left p-2 border-b last:border-b-0 ${threadId === t.id ? 'bg-secondary' : ''}`}
+                  onClick={() => {
+                    setThreadId(t.id);
+                    fetchMessages(t.id);
+                  }}
+                >
+                  <div className="text-sm font-medium truncate">Thread {t.id}</div>
+                  <div className="text-xs text-muted-foreground truncate">
+                    {t.user1_id} ↔ {t.user2_id}
+                  </div>
+                </button>
+              ))}
+            {!loadingThreads && threads.length === 0 && (
               <div className="p-2 text-sm text-muted-foreground">No threads</div>
             )}
           </div>
@@ -291,7 +320,13 @@ const DM = () => {
 
         <div className="md:col-span-2 space-y-2">
           <div className="space-y-2">
-            {loadingMessages && <p className="text-sm text-muted-foreground">Loading messages…</p>}
+            {loadingMessages && (
+              <>
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <DMMessageSkeleton key={i} align={i % 2 === 0 ? 'left' : 'right'} />
+                ))}
+              </>
+            )}
             {messages.map((m) => {
               const meId = (user as any)?.id ?? 'me';
               const isMine = String(m.sender_id) === String(meId);

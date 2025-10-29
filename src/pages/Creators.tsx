@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { SearchFilters, SearchFiltersState } from '@/components/SearchFilters';
 import { CreatorCard } from '@/components/CreatorCard';
+import { CreatorCardSkeleton } from '@/components/Skeletons';
 import { getUserMessage } from '@/lib/errors';
 import type { Creator as FrontendCreator } from '@/types/creator';
 import { request } from '@/lib/api';
@@ -95,7 +96,13 @@ const Creators = () => {
           onChange={(newFilters) => setFilters((prev) => ({ ...prev, ...newFilters }))}
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {loading && <div className="col-span-full text-center py-6">Loading...</div>}
+          {loading && (
+            <>
+              {Array.from({ length: 8 }).map((_, i) => (
+                <CreatorCardSkeleton key={i} />
+              ))}
+            </>
+          )}
           {error && <div className="col-span-full text-center text-destructive py-6">{error}</div>}
           {!loading &&
             !error &&
