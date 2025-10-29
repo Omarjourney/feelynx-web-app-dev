@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UNSPLASH_RANDOM_BASE_URL } from '@/config';
+import { UNSPLASH_RANDOM_BASE_URL, BRAND } from '@/config';
 import { Navigation } from '@/components/Navigation';
 import { SearchFilters, SearchFiltersState } from '@/components/SearchFilters';
 import LiveStreamCard from '@/components/LiveStreamCard';
@@ -13,6 +13,7 @@ import { Progress } from '@/components/ui/progress';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { creators as creatorsData } from '@/data/creators';
+import FeelynxLogo from '@/components/brand/FeelynxLogo';
 import type { Creator } from '@/types/creator';
 
 const Explore = () => {
@@ -262,13 +263,12 @@ const Explore = () => {
               </CardContent>
             </Card>
             <Card className="border border-border/60 bg-background/80 backdrop-blur">
-              <CardHeader className="space-y-2">
-                <div className="flex items-center gap-2 text-sm font-medium text-primary">
-                  <span role="img" aria-hidden="true">
-                    🦊
-                  </span>
-                  Feelynx says
-                </div>
+              <CardHeader className="space-y-3">
+                {BRAND.v2Wordmark ? (
+                  <FeelynxLogo size={180} glow={false} tagline="Community highlight" />
+                ) : (
+                  <div className="text-sm font-semibold text-primary">Feelynx spotlight</div>
+                )}
                 <CardTitle className="text-xl text-foreground">
                   Tip your crew to keep the energy meter soaring!
                 </CardTitle>

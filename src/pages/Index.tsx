@@ -10,6 +10,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { groups } from '@/data/groups';
 import { MessageCircle, Radio, Sparkles, Users, Workflow, Video } from 'lucide-react';
+import FeelynxLogo from '@/components/brand/FeelynxLogo';
+import { BRAND } from '@/config';
 
 const Index = () => {
   const creators = useCreatorLive();
@@ -363,6 +365,13 @@ const Index = () => {
         </section>
 
         <footer className="mt-16 px-4 text-center text-sm text-muted-foreground">
+          <div className="flex flex-col items-center gap-3 pb-3">
+            {BRAND.v2Wordmark ? (
+              <FeelynxLogo size={180} glow={false} tagline="Feel. Connect. Sync." />
+            ) : (
+              <span className="text-lg font-semibold text-foreground">Feelynx</span>
+            )}
+          </div>
           <Link to="/dmca">DMCA Notice</Link>
         </footer>
       </main>

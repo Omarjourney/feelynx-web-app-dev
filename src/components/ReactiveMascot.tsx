@@ -10,7 +10,7 @@ interface ReactiveMascotProps {
 }
 
 const MOOD_EMOJI: Record<MascotMood, string> = {
-  idle: '🦊',
+  idle: '✨',
   joined: '👋',
   tipped: '💖',
   hype: '⚡',
@@ -18,7 +18,7 @@ const MOOD_EMOJI: Record<MascotMood, string> = {
 };
 
 const MOOD_MESSAGES: Record<MascotMood, string> = {
-  idle: 'Feely the fox is standing by.',
+  idle: 'The neon stage is standing by.',
   joined: 'Someone just joined the party! Say hi!',
   tipped: 'Tips unlock special moves! Keep them coming!',
   hype: 'The room is heating up—bring the energy!',

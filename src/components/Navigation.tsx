@@ -26,6 +26,8 @@ import ivibesWordmark from '@/assets/ivibes-wordmark.svg';
 import PreviewBanner from '@/components/PreviewBanner';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ReactiveMascot from '@/components/ReactiveMascot';
+import FeelynxLogo from '@/components/brand/FeelynxLogo';
+import { BRAND } from '@/config';
 
 const NAV_ITEMS = [
   { id: 'home', label: 'Home', to: '/', icon: Home },
@@ -289,7 +291,7 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
           <div className="space-y-3 rounded-3xl border border-primary/30 bg-primary/10 p-4">
             <ReactiveMascot
               mood="joined"
-              message="Feely Fox says: Tap Go Live to start your show!"
+              message="Need a spark? Tap Go Live and the neon crowd will follow."
               className="w-full justify-start"
             />
             <div className="rounded-2xl bg-background/60 px-4 py-3 text-sm text-muted-foreground">
