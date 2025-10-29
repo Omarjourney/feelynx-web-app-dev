@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { getServerWsUrl } from '@/lib/ws';
 
 export interface Participant {
   name: string;
@@ -29,7 +30,8 @@ export const subscribeToRoomParticipants = (
     return () => {};
   }
 
-  const ws = new WebSocket(`ws://${window.location.host}`);
+  const base = getServerWsUrl();
+  const ws = new WebSocket(base);
 
   ws.onmessage = (event) => {
     try {

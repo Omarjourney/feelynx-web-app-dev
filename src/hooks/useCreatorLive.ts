@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { creators as initialCreators } from '@/data/creators';
 import type { Creator } from '@/types/creator';
+import { getServerWsUrl } from '@/lib/ws';
 
 /**
  * Tracks the live status of creators by subscribing to the websocket stream
@@ -18,8 +19,16 @@ export function useCreatorLive() {
 
   useEffect(() => {
     // Subscribe to backend websocket updates to keep live status in sync.
-    const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:3001';
-    const ws = new WebSocket(wsUrl);
+    const envUrl = (import.meta as any).env?.VITE_WS_URL as string | undefined;
+    let url = envUrl || getServerWsUrl();
+    if (
+      typeof window !== 'undefined' &&
+      window.location.protocol === 'https:' &&
+      url.startsWith('ws://')
+    ) {
+      url = url.replace(/^ws:/, 'wss:');
+    }
+    const ws = new WebSocket(url);
     ws.onmessage = (event) => {
       try {
         const msg = JSON.parse(event.data);
