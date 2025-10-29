@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Slider } from '@/components/ui/slider';
+import ivibesWordmark from '@/assets/ivibes-wordmark.svg';
 import PreviewBanner from '@/components/PreviewBanner';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ReactiveMascot from '@/components/ReactiveMascot';
@@ -133,25 +134,14 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
         Skip to content
       </a>
       <aside className="hidden md:flex md:h-screen md:w-72 md:flex-shrink-0 md:flex-col md:border-r md:border-border/60 md:bg-sidebar-background/80 md:backdrop-blur-xl md:pt-safe">
-        <div className="flex items-center justify-center px-6 pt-8 pb-6">
-          {BRAND.v2Wordmark ? (
-            <FeelynxLogo
-              size={220}
-              glow={false}
-              className="max-w-[11.5rem]"
-              tagline="Live entertainment"
-            />
-          ) : (
-            <div className="space-y-1 text-center">
-              <p className="text-sm uppercase tracking-widest text-muted-foreground">
-                Entertainment
-              </p>
-              <p className="text-2xl font-extrabold text-foreground">Feelynx</p>
-              <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                Live entertainment
-              </p>
-            </div>
-          )}
+        <div className="flex items-center gap-3 px-6 pt-8 pb-6">
+          <div className="relative rounded-2xl bg-gradient-primary p-2 shadow-glow">
+            <img src={ivibesWordmark} alt="iVibes" className="h-10 w-auto" />
+          </div>
+          <div>
+            <p className="text-sm uppercase tracking-widest text-muted-foreground">Entertainment</p>
+            <p className="text-2xl font-extrabold text-foreground">Feelynx</p>
+          </div>
         </div>
 
         <nav className="flex-1 space-y-6 px-6">
@@ -330,21 +320,7 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-2">
-              {BRAND.v2Wordmark ? (
-                <FeelynxLogo
-                  size={140}
-                  glow={false}
-                  className="max-w-[7rem]"
-                  tagline="Feel. Connect. Sync."
-                />
-              ) : (
-                <div className="flex flex-col">
-                  <span className="text-xl font-bold text-foreground">Feelynx</span>
-                  <span className="text-xs uppercase tracking-wide text-muted-foreground">
-                    Feel. Connect. Sync.
-                  </span>
-                </div>
-              )}
+              <img src={ivibesWordmark} alt="iVibes" className="h-8 w-auto" />
             </div>
 
             <div className="flex items-center space-x-3">

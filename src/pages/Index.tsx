@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
-import { HeroSection } from '@/components/HeroSection';
+import HeroLogoReveal from '../../components/brand/HeroLogoReveal';
 import { SearchFilters, SearchFiltersState } from '@/components/SearchFilters';
 import { CreatorCard } from '@/components/CreatorCard';
 import { VibeCoinPackages } from '@/components/VibeCoinPackages';
@@ -128,10 +128,7 @@ const Index = () => {
     <div className="min-h-screen bg-background md:flex">
       <Navigation activeTab="home" onTabChange={() => undefined} />
       <main id="main-content" className="flex-1 overflow-x-hidden pb-24 md:pb-12">
-        <HeroSection
-          onExplore={() => navigate('/discover')}
-          onGoLive={() => navigate('/call-room')}
-        />
+        <HeroLogoReveal />
 
         <section className="mx-auto mt-12 w-full max-w-6xl space-y-8 px-4">
           <section aria-labelledby="feature-hub" className="space-y-4">

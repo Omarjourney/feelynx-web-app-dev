@@ -25,6 +25,13 @@ export default {
         ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
+        feelynx: {
+          pink: '#E8338B',
+          cyan: '#5CC8FF',
+          ink: '#0B0720',
+          outline: '#1B1230',
+          light: '#F6F8FB',
+        },
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
