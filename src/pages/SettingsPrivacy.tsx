@@ -3,6 +3,8 @@ import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ControlRemote from '@/features/remote/ControlRemote';
+import { useTheme } from 'next-themes';
+import { useAuth } from '@/contexts/AuthContext';
 
 const SettingsPrivacy = () => {
   const [profilePublic, setProfilePublic] = useState(true);
@@ -12,6 +14,14 @@ const SettingsPrivacy = () => {
   const [available, setAvailable] = useState<boolean>(
     () => localStorage.getItem('feelynx:available') === '1',
   );
+  const { user } = useAuth();
+  const { theme, setTheme, systemTheme } = useTheme();
+  const [themePref, setThemePref] = useState<'system' | 'light' | 'dark'>(() => {
+    const stored = localStorage.getItem('theme');
+    return stored === 'light' || stored === 'dark' || stored === 'system'
+      ? (stored as any)
+      : 'system';
+  });
   const defaultTab = useMemo(
     () => new URLSearchParams(location.search).get('tab') || 'general',
     [],
@@ -20,6 +30,13 @@ const SettingsPrivacy = () => {
   useEffect(() => {
     localStorage.setItem('feelynx:handle', handle);
   }, [handle]);
+
+  useEffect(() => {
+    // Sync UI with active theme changes from elsewhere
+    if (theme === 'light' || theme === 'dark' || theme === 'system') {
+      setThemePref(theme);
+    }
+  }, [theme]);
 
   const saveAvailability = async (next: boolean) => {
     setAvailable(next);
@@ -36,6 +53,16 @@ const SettingsPrivacy = () => {
     }
   };
 
+  const saveTheme = (next: 'system' | 'light' | 'dark') => {
+    setThemePref(next);
+    setTheme(next);
+    // Global key used for early paint before React mounts
+    localStorage.setItem('theme', next);
+    // Per-user preference override if authenticated
+    const uid = user?.id || user?.email;
+    if (uid) localStorage.setItem(`feelynx:theme:${uid}`, next);
+  };
+
   return (
     <div className="container mx-auto p-4">
       <Tabs defaultValue={defaultTab} className="w-full">
@@ -48,6 +75,29 @@ const SettingsPrivacy = () => {
           <div className="flex items-center justify-between">
             <span className="text-sm">Public Profile</span>
             <Switch checked={profilePublic} onCheckedChange={setProfilePublic} />
+          </div>
+          <div className="grid gap-2">
+            <div className="text-sm">Theme</div>
+            <div className="flex gap-2">
+              <Button
+                variant={themePref === 'system' ? 'default' : 'outline'}
+                onClick={() => saveTheme('system')}
+              >
+                System ({systemTheme || 'auto'})
+              </Button>
+              <Button
+                variant={themePref === 'light' ? 'default' : 'outline'}
+                onClick={() => saveTheme('light')}
+              >
+                Light
+              </Button>
+              <Button
+                variant={themePref === 'dark' ? 'default' : 'outline'}
+                onClick={() => saveTheme('dark')}
+              >
+                Dark
+              </Button>
+            </div>
           </div>
           <div className="grid gap-2">
             <div className="text-sm">Public Handle</div>

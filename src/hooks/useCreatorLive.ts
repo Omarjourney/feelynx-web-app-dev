@@ -19,7 +19,8 @@ export function useCreatorLive() {
 
   useEffect(() => {
     // Subscribe to backend websocket updates to keep live status in sync.
-    const envUrl = (import.meta as any).env?.VITE_WS_URL as string | undefined;
+    // Prefer VITE_SERVER_WS_URL when provided; otherwise infer from location
+    const envUrl = (import.meta as any).env?.VITE_SERVER_WS_URL as string | undefined;
     let url = envUrl || getServerWsUrl();
     if (
       typeof window !== 'undefined' &&

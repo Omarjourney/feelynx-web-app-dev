@@ -48,9 +48,3 @@ model SuspiciousActivity {
 
   @@map("suspicious_activity")
 }
-
-
-  @@map("dm_threads")
-}
-
-}

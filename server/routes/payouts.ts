@@ -4,7 +4,7 @@ import { prisma } from '../db/prisma.js';
 import { payoutSchemas, type InferBody, withValidation } from '../utils/validation';
 
 const stripeSecret = process.env.STRIPE_SECRET_KEY;
-const stripe = stripeSecret ? new Stripe(stripeSecret, { apiVersion: '2024-04-10' }) : null;
+const stripe = stripeSecret ? new Stripe(stripeSecret) : null;
 
 export const router = Router();
 
@@ -92,6 +92,7 @@ export const webhookHandler = async (req: Request, res: Response) => {
 };
 
 export async function processPendingPayouts() {
+  if (!stripe) return;
   const pending = await prisma.payout.findMany({ where: { status: 'pending' } });
   for (const p of pending) {
     const account = await prisma.payoutAccount.findUnique({ where: { creatorId: p.creatorId } });

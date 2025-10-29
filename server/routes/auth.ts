@@ -10,7 +10,11 @@ import {
 } from '../utils/validation';
 
 const router = Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'secret';
+const RAW_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = RAW_SECRET || (process.env.NODE_ENV === 'test' ? 'secret' : '');
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable is required');
+}
 
 interface AuthRequest extends Request {
   userId?: number;

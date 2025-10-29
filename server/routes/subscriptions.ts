@@ -29,13 +29,41 @@ router.post(
   },
 );
 
+// Unverified JSON webhook (kept for backward compatibility in previews)
 router.post(
   '/webhook',
   withValidation(subscriptionSchemas.webhook),
   async (req: Request, res: Response) => {
     const event = req.body as InferBody<typeof subscriptionSchemas.webhook>;
     if (event.type === 'checkout.session.completed') {
-      const session = event.data.object as Stripe.Checkout.Session;
+      const session = (event as any).data.object as Stripe.Checkout.Session;
+      const tierId = session?.metadata?.tier_id as string | undefined;
+      const userId = session?.metadata?.user_id as string | undefined;
+      if (tierId && userId) {
+        await supabase.from('fan_subscriptions').upsert(
+          {
+            tier_id: tierId,
+            user_id: userId,
+            status: 'active',
+            renews_at: new Date(((session as any).expires_at || 0) * 1000).toISOString(),
+          },
+          { onConflict: 'tier_id,user_id' },
+        );
+      }
+    }
+    res.json({ received: true });
+  },
+);
+
+// Secure Stripe webhook handler (expects express.raw at mount site)
+export const webhookHandler = async (req: Request, res: Response) => {
+  try {
+    const sig = req.headers['stripe-signature'] as string;
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
+    const event = stripe.webhooks.constructEvent((req as any).body, sig, webhookSecret);
+
+    if (event.type === 'checkout.session.completed') {
+      const session = (event as any).data.object as Stripe.Checkout.Session;
       const tierId = session.metadata?.tier_id as string | undefined;
       const userId = session.metadata?.user_id as string | undefined;
       if (tierId && userId) {
@@ -50,9 +78,13 @@ router.post(
         );
       }
     }
+
     res.json({ received: true });
-  },
-);
+  } catch (err) {
+    console.error('Subscriptions webhook verification failed', err);
+    res.status(400).send(`Webhook Error: ${(err as Error).message}`);
+  }
+};
 
 router.post(
   '/cancel',

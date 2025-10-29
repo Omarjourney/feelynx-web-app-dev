@@ -4,6 +4,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { ThemeProvider } from 'next-themes';
 import Auth from './pages/Auth';
 import Index from './pages/Index';
 import TokenShop from './pages/TokenShop';
@@ -38,43 +39,45 @@ const queryClient = new QueryClient();
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/explore" element={<Explore />} />
-            <Route path="/discover" element={<Explore />} />
-            <Route path="/creators" element={<Creators />} />
-            <Route path="/content" element={<Content />} />
-            <Route path="/calls" element={<Calls />} />
-            <Route path="/match" element={<Match />} />
-            <Route path="/groups" element={<Groups />} />
-            <Route path="/groups/:groupId" element={<GroupPage />} />
-            <Route path="/dm" element={<DM />} />
-            <Route path="/live/:username" element={<Live />} />
-            <Route path="/live-creator" element={<LiveCreator />} />
-            <Route path="/stories" element={<Stories />} />
-            <Route path="/token-shop" element={<TokenShop />} />
-            <Route path="/coins" element={<TokenShop />} />
-            <Route path="/settings" element={<SettingsPrivacy />} />
-            <Route path="/patterns" element={<Navigate to="/toys" replace />} />
-            <Route path="/toys" element={<ToysHub />} />
-            <Route path="/remote" element={<Navigate to="/toys?tab=long" replace />} />
-            <Route path="/companions" element={<CompanionsHome />} />
-            <Route path="/contests" element={<ContestsFeed />} />
-            <Route path="/styleguide" element={<Styleguide />} />
-            <Route path="/call-room" element={<CallRoom />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <GoLiveEntry />
-          <IncomingCall />
-          <MobileTabBar />
-        </BrowserRouter>
-      </TooltipProvider>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/explore" element={<Explore />} />
+              <Route path="/discover" element={<Explore />} />
+              <Route path="/creators" element={<Creators />} />
+              <Route path="/content" element={<Content />} />
+              <Route path="/calls" element={<Calls />} />
+              <Route path="/match" element={<Match />} />
+              <Route path="/groups" element={<Groups />} />
+              <Route path="/groups/:groupId" element={<GroupPage />} />
+              <Route path="/dm" element={<DM />} />
+              <Route path="/live/:username" element={<Live />} />
+              <Route path="/live-creator" element={<LiveCreator />} />
+              <Route path="/stories" element={<Stories />} />
+              <Route path="/token-shop" element={<TokenShop />} />
+              <Route path="/coins" element={<TokenShop />} />
+              <Route path="/settings" element={<SettingsPrivacy />} />
+              <Route path="/patterns" element={<Navigate to="/toys" replace />} />
+              <Route path="/toys" element={<ToysHub />} />
+              <Route path="/remote" element={<Navigate to="/toys?tab=long" replace />} />
+              <Route path="/companions" element={<CompanionsHome />} />
+              <Route path="/contests" element={<ContestsFeed />} />
+              <Route path="/styleguide" element={<Styleguide />} />
+              <Route path="/call-room" element={<CallRoom />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            <GoLiveEntry />
+            <IncomingCall />
+            <MobileTabBar />
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   </ErrorBoundary>
 );

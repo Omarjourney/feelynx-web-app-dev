@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { useTheme } from 'next-themes';
 
 interface AuthContextType {
   user: User | null;
@@ -37,6 +38,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const { setTheme } = useTheme();
 
   useEffect(() => {
     // Set up auth state listener FIRST
@@ -57,6 +59,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Apply per-user theme preference on login if present
+  useEffect(() => {
+    if (!user) return;
+    const uid = user.id || user.email;
+    if (!uid) return;
+    try {
+      const stored = localStorage.getItem(`feelynx:theme:${uid}`);
+      if (stored === 'light' || stored === 'dark' || stored === 'system') {
+        setTheme(stored);
+      }
+    } catch {
+      // ignore
+    }
+  }, [user, setTheme]);
 
   const signUp = async (email: string, password: string) => {
     const redirectUrl = `${window.location.origin}/`;

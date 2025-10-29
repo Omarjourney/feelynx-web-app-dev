@@ -11,6 +11,8 @@
     "build": "vite build",
     "build:server": "tsc -p tsconfig.server.json",
     "build:dev": "vite build --mode development",
+    "dev:server": "TS_NODE_TRANSPILE_ONLY=true TS_NODE_PROJECT=tsconfig.server.json node --loader ts-node/esm server/index.ts",
+    "docker:up": "docker-compose up -d",
     "lint": "eslint .",
     "lint:names": "node ./scripts/check-filenames.mjs",
     "format": "prettier --check .",

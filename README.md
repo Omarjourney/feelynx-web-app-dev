@@ -62,12 +62,14 @@ cp .env.example .env
 3. **Start development servers:**
 
 ```bash
-# Start all services with Docker
-npm run docker:up
+# Start backend (Express + TS) on :3001
+npm run dev:server
 
-# Or start manually:
-npm run dev:server  # Backend on :3001
-npm run dev         # Frontend on :8080
+# Start frontend (Vite) on :8080 with proxy to backend
+npm run dev
+
+# Optional: bring up demo LiveKit via Docker Compose
+docker-compose up -d livekit
 ```
 
 4. **Access the application:**

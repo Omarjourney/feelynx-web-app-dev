@@ -21,6 +21,17 @@
   </head>
 
   <body>
+    <script>
+      try {
+        var stored = localStorage.getItem('theme');
+        var isDark = stored
+          ? stored === 'dark'
+          : window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (isDark) document.documentElement.classList.add('dark');
+      } catch (e) {
+        /* no-op */
+      }
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

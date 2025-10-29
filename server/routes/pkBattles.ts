@@ -44,7 +44,7 @@ router.post(
   '/:battleId/scores',
   withValidation(pkBattleSchemas.scores),
   (req: Request, res: Response) => {
-    const { battleId } = req.params as InferParams<typeof pkBattleSchemas.scores>;
+    const { battleId } = req.params as unknown as InferParams<typeof pkBattleSchemas.scores>;
     const { scoreA, scoreB } = req.body as InferBody<typeof pkBattleSchemas.scores>;
     const stream = streams[battleId] || { scoreA: 0, scoreB: 0, clients: [] };
     stream.scoreA = scoreA;
@@ -61,7 +61,7 @@ router.get(
   '/:battleId/stream',
   withValidation(pkBattleSchemas.stream),
   (req: Request, res: Response) => {
-    const { battleId } = req.params as InferParams<typeof pkBattleSchemas.stream>;
+    const { battleId } = req.params as unknown as InferParams<typeof pkBattleSchemas.stream>;
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
@@ -84,7 +84,7 @@ router.post(
   '/:battleId/connect',
   withValidation(pkBattleSchemas.connect),
   async (req: Request, res: Response) => {
-    const { battleId } = req.params as InferParams<typeof pkBattleSchemas.connect>;
+    const { battleId } = req.params as unknown as InferParams<typeof pkBattleSchemas.connect>;
     const { url, token } = req.body as InferBody<typeof pkBattleSchemas.connect>;
     const room = new Room();
     try {

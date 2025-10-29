@@ -10,9 +10,7 @@ import {
 } from '../utils/validation';
 
 const router = Router();
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-06-20',
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
 
 const PURCHASE_LIMIT_PER_HOUR = 5;
 
@@ -70,12 +68,23 @@ router.post(
     try {
       const { paymentIntentId } = req.body as PaymentSuccessBody;
 
-      const intent = await stripe.paymentIntents.retrieve(paymentIntentId);
+      const intent = (await stripe.paymentIntents.retrieve(
+        paymentIntentId,
+      )) as Stripe.PaymentIntent;
       if (intent.status !== 'succeeded') {
         return res.status(400).json({ error: 'Payment not completed' });
       }
 
-      const receiptUrl = intent.charges?.data[0]?.receipt_url || '';
+      let receiptUrl = '';
+      const latestChargeId = (intent as any).latest_charge as string | undefined;
+      if (latestChargeId) {
+        try {
+          const charge = await stripe.charges.retrieve(latestChargeId);
+          receiptUrl = (charge as any).receipt_url || '';
+        } catch {
+          // ignore if not retrievable
+        }
+      }
       await prisma.payment.update({
         where: { paymentIntentId },
         data: { receiptUrl },
@@ -98,11 +107,11 @@ router.get(
   withValidation(paymentSchemas.balance),
   async (req: Request, res: Response) => {
     try {
-      const { userId } = req.params as InferParams<typeof paymentSchemas.balance>;
-      const payments = await prisma.payment.findMany({
+      const { userId } = req.params as unknown as InferParams<typeof paymentSchemas.balance>;
+      const payments = (await prisma.payment.findMany({
         where: { userId },
-      });
-      const balance = payments.reduce((sum, p) => sum + p.coins, 0);
+      })) as Array<{ coins: number }>;
+      const balance = payments.reduce((sum: number, p) => sum + p.coins, 0);
       res.json({ balance, userId });
     } catch (error) {
       res.status(500).json({ error: (error as Error).message });
