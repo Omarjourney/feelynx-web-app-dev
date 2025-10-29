@@ -17,8 +17,12 @@ import roomsRoutes from './routes/rooms';
 import moderationRoutes from './routes/moderation';
 import controlRoutes from './routes/control';
 import { roomParticipants } from './roomParticipants';
+import { securityHeaders } from './middleware/securityHeaders';
 
 const app = express();
+app.disable('x-powered-by');
+app.set('trust proxy', 1);
+app.use(securityHeaders);
 
 app.use(express.json());
 const allowedOrigins = process.env.CORS_ORIGIN?.split(',')

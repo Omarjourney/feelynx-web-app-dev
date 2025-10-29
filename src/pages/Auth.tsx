@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { getUserMessage } from '@/lib/errors';
+import { validators, validateObject, FieldErrors } from '@/lib/validation';
 
 type AuthTab = 'signin' | 'signup';
 
@@ -37,23 +38,18 @@ export default function Auth() {
   };
 
   const validate = () => {
-    const errors: { email?: string; password?: string } = {};
-    const trimmedEmail = email.trim();
-
-    if (!trimmedEmail) {
-      errors.email = 'Email is required.';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
-      errors.email = 'Enter a valid email address.';
+    const obj = { email, password };
+    const rules = {
+      email: validators.email,
+      password: (v: string) => validators.password(v, { min: 6 }),
+    } as const;
+    const errs = validateObject(obj, rules as any) as FieldErrors<typeof obj>;
+    // For sign-in, relax min length check: allow any non-empty
+    if (activeTab === 'signin' && !errs.password && !password) {
+      errs.password = 'Password is required.';
     }
-
-    if (!password) {
-      errors.password = 'Password is required.';
-    } else if (activeTab === 'signup' && password.length < 6) {
-      errors.password = 'Password must be at least 6 characters.';
-    }
-
-    setFieldErrors(errors);
-    return errors;
+    setFieldErrors(errs);
+    return errs;
   };
 
   const handleSignIn = async (e: React.FormEvent) => {
