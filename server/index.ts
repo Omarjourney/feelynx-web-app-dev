@@ -185,6 +185,10 @@ app.get('/health', (_req: Request, res: Response) => {
       livekitConfigured: Boolean(process.env.LIVEKIT_API_KEY && process.env.LIVEKIT_API_SECRET),
       stripeConfigured: Boolean(process.env.STRIPE_SECRET_KEY),
       dbConfigured: Boolean(process.env.DATABASE_URL),
+      supabaseConfigured: Boolean(
+        process.env.SUPABASE_URL &&
+          (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY),
+      ),
     },
   });
 });

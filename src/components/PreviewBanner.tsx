@@ -6,6 +6,7 @@ type Health = {
     livekitConfigured?: boolean;
     stripeConfigured?: boolean;
     dbConfigured?: boolean;
+    supabaseConfigured?: boolean;
   };
 };
 
@@ -23,8 +24,9 @@ export default function PreviewBanner() {
   const serverOffline = !health.ok || !health.features;
   const liveDisabled = !serverOffline && !health.features?.livekitConfigured;
   const payDisabled = !serverOffline && !health.features?.stripeConfigured;
+  const supabaseDisabled = !serverOffline && !health.features?.supabaseConfigured;
 
-  if (!serverOffline && !liveDisabled && !payDisabled) return null;
+  if (!serverOffline && !liveDisabled && !payDisabled && !supabaseDisabled) return null;
 
   return (
     <div className="w-full bg-amber-50 border-b border-amber-200 text-amber-900">
@@ -33,8 +35,11 @@ export default function PreviewBanner() {
           <span>Preview mode: server not reachable. Live and payments are disabled.</span>
         ) : (
           <span>
-            Preview mode: {liveDisabled && 'Live '} {liveDisabled && payDisabled && 'and '}
-            {payDisabled && 'Payments '} not configured.
+            Preview mode:
+            {liveDisabled && ' Live'}
+            {payDisabled && (liveDisabled ? ' and Payments' : ' Payments')}
+            {supabaseDisabled && (liveDisabled || payDisabled ? ' and Supabase' : ' Supabase')} not
+            configured.
           </span>
         )}
       </div>
