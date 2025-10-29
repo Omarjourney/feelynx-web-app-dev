@@ -15,7 +15,7 @@ export interface SearchFiltersState {
   country: string;
   specialty: string;
   isLive: boolean;
-  sort: 'trending' | 'new' | 'followers';
+  sort: 'trending' | 'newest' | 'followers';
 }
 
 export interface SearchFiltersProps extends SearchFiltersState {
@@ -76,6 +76,15 @@ export const SearchFilters = ({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Categories</SelectItem>
+            <SelectItem value="interactive">Interactive</SelectItem>
+            <SelectItem value="roleplay">Roleplay</SelectItem>
+            <SelectItem value="fetish">Fetish</SelectItem>
+            <SelectItem value="domination">Domination</SelectItem>
+            <SelectItem value="girlfriend">Girlfriend</SelectItem>
+            <SelectItem value="vanilla">Vanilla</SelectItem>
+            <SelectItem value="milf">MILF</SelectItem>
+            <SelectItem value="french">French</SelectItem>
+            <SelectItem value="lingerie">Lingerie</SelectItem>
             <SelectItem value="lifestyle">Lifestyle</SelectItem>
             <SelectItem value="fitness">Fitness</SelectItem>
             <SelectItem value="gaming">Gaming</SelectItem>
@@ -112,7 +121,7 @@ export const SearchFilters = ({
       >
         <TabsList className="flex w-full flex-wrap gap-2">
           <TabsTrigger value="trending">Trending</TabsTrigger>
-          <TabsTrigger value="new">New</TabsTrigger>
+          <TabsTrigger value="newest">Newest</TabsTrigger>
           <TabsTrigger value="followers">Most Followers</TabsTrigger>
         </TabsList>
       </Tabs>
