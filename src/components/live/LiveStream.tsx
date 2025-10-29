@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import {
   connectToLivekitRoom,
   disconnectFromRoom,
@@ -11,6 +11,7 @@ import LiveChatPanel, { ChatMessage } from './LiveChatPanel';
 import LiveInteractiveControls from './LiveInteractiveControls';
 import ParticipantsPanel from './ParticipantsPanel';
 import TipModal from './TipModal';
+import ReactiveMascot, { MascotMood } from '@/components/ReactiveMascot';
 
 interface LiveStreamProps {
   creatorName: string;
@@ -45,12 +46,32 @@ const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) => {
   const [chatMessage, setChatMessage] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [tipOpen, setTipOpen] = useState(false);
+  const [coinBalance, setCoinBalance] = useState(1280);
+  const [milestoneProgress, setMilestoneProgress] = useState(3200);
+  const milestoneGoal = 5000;
+  const [viewerLevel] = useState(12);
+  const [xpProgress, setXpProgress] = useState(0.68);
+  const [dailyStreak] = useState(6);
+  const [mascotMood, setMascotMood] = useState<MascotMood>('idle');
+  const [reactions, setReactions] = useState<Array<{ id: number; icon: string; color: string }>>(
+    [],
+  );
+  const [thanksMessage, setThanksMessage] = useState<string | null>(null);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const roomRef = useRef<Room | null>(null);
   const participantIdRef = useRef<string>(`viewer_${Date.now()}`);
 
   const roomName = `live_${creatorName.toLowerCase().replace(/\s+/g, '_')}`;
+
+  const topFans = useMemo(
+    () => [
+      { name: 'StarBlaze', amount: 1520 },
+      { name: 'GalaxyWolf', amount: 980 },
+      { name: 'Luminous88', amount: 760 },
+    ],
+    [],
+  );
 
   const handleConnect = async () => {
     if (isConnected) return;
@@ -63,6 +84,8 @@ const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) => {
       });
       roomRef.current = room;
       setIsConnected(true);
+      setMascotMood('joined');
+      setTimeout(() => setMascotMood('idle'), 4000);
     } catch (error) {
       console.error('Connection failed:', error);
     }
@@ -91,10 +114,35 @@ const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) => {
 
     setMessages((prev) => [...prev, newMessage]);
     setChatMessage('');
+    setXpProgress((prev) => Math.min(0.99, prev + 0.02));
   };
 
   const handleMessageChange = (event: ChangeEvent<HTMLInputElement>) => {
     setChatMessage(event.target.value);
+  };
+
+  const handleQuickTip = (amount: number) => {
+    setCoinBalance((prev) => Math.max(0, prev - amount));
+    setMilestoneProgress((prev) => Math.min(milestoneGoal, prev + amount));
+    setThanksMessage(`Thank you for the ${amount}💎 tip!`);
+    setMascotMood('tipped');
+    setTimeout(() => setThanksMessage(null), 3000);
+    setTimeout(() => setMascotMood('idle'), 4000);
+  };
+
+  const handleReaction = (icon: string, color: string) => {
+    const id = Date.now();
+    setReactions((prev) => [...prev, { id, icon, color }]);
+    setTimeout(() => {
+      setReactions((prev) => prev.filter((reaction) => reaction.id !== id));
+    }, 2400);
+    setMascotMood('hype');
+    setTimeout(() => setMascotMood('idle'), 4000);
+  };
+
+  const handleInviteGuest = () => {
+    setMascotMood('guest');
+    setTimeout(() => setMascotMood('idle'), 4000);
   };
 
   return (
@@ -107,22 +155,43 @@ const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) => {
           onConnect={handleConnect}
           onOpenTip={() => setTipOpen(true)}
           videoRef={videoRef}
+          coinBalance={coinBalance}
+          milestoneProgress={milestoneProgress}
+          milestoneGoal={milestoneGoal}
+          reactions={reactions}
+          topFans={topFans}
+          thanksMessage={thanksMessage}
+          toyConnected={true}
         />
         <LiveChatPanel
           messages={messages}
           messageDraft={chatMessage}
           onChange={handleMessageChange}
           onSend={sendMessage}
+          onQuickTip={handleQuickTip}
+          coinBalance={coinBalance}
         />
         <ParticipantsPanel room={roomName} />
       </div>
 
-      <LiveInteractiveControls onOpenTip={() => setTipOpen(true)} />
+      <div className="flex justify-center">
+        <ReactiveMascot mood={mascotMood} />
+      </div>
+
+      <LiveInteractiveControls
+        onOpenTip={() => setTipOpen(true)}
+        onQuickTip={handleQuickTip}
+        onReaction={handleReaction}
+        onInviteGuest={handleInviteGuest}
+        viewerLevel={viewerLevel}
+        xpProgress={xpProgress}
+        dailyStreak={dailyStreak}
+      />
 
       <TipModal
         isVisible={tipOpen}
         onClose={() => setTipOpen(false)}
-        onSubmit={(amount) => console.log('tip', amount)}
+        onSubmit={(amount) => handleQuickTip(amount)}
       />
     </div>
   );

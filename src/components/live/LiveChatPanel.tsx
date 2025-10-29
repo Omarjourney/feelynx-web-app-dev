@@ -17,9 +17,20 @@ interface LiveChatPanelProps {
   messageDraft: string;
   onChange: ChangeEventHandler<HTMLInputElement>;
   onSend: () => void;
+  onQuickTip: (amount: number) => void;
+  coinBalance: number;
 }
 
-const LiveChatPanel = ({ messages, messageDraft, onChange, onSend }: LiveChatPanelProps) => {
+const quickTipAmounts = [5, 20, 50];
+
+const LiveChatPanel = ({
+  messages,
+  messageDraft,
+  onChange,
+  onSend,
+  onQuickTip,
+  coinBalance,
+}: LiveChatPanelProps) => {
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
@@ -28,9 +39,21 @@ const LiveChatPanel = ({ messages, messageDraft, onChange, onSend }: LiveChatPan
   };
 
   return (
-    <Card className="bg-gradient-card h-fit">
+    <Card className="h-fit border border-border/60 bg-background/80">
       <CardHeader>
-        <CardTitle className="text-lg">Live Chat</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg">Live Chat</CardTitle>
+          <span className="rounded-full bg-primary/20 px-3 py-1 text-xs text-primary-foreground">
+            Balance: {coinBalance.toLocaleString()}💎
+          </span>
+        </div>
+        <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+          <span
+            className="relative inline-flex h-3 w-3 animate-glow-pulse rounded-full bg-live"
+            aria-hidden
+          />
+          <span>NeonFox crew chat is buzzing · reactions trigger glow avatars</span>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         <ScrollArea className="h-64">
@@ -58,6 +81,27 @@ const LiveChatPanel = ({ messages, messageDraft, onChange, onSend }: LiveChatPan
           />
           <Button onClick={onSend} size="sm">
             Send
+          </Button>
+        </div>
+        <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+          {quickTipAmounts.map((amount) => (
+            <Button
+              key={amount}
+              variant="secondary"
+              size="sm"
+              className="button-ripple rounded-full"
+              onClick={() => onQuickTip(amount)}
+            >
+              +{amount}💎
+            </Button>
+          ))}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="rounded-full"
+            onClick={() => onQuickTip(200)}
+          >
+            Milestone boost +200💎
           </Button>
         </div>
       </CardContent>

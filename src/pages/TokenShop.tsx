@@ -3,6 +3,7 @@ import { VibeCoinPackages } from '@/components/VibeCoinPackages';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
 import { useHealth } from '@/lib/health';
+import FlowBreadcrumb from '@/components/FlowBreadcrumb';
 
 const TokenShop = () => {
   const [coins, setCoins] = useState(500);
@@ -19,13 +20,19 @@ const TokenShop = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
-      <Card className="bg-gradient-card text-center">
+    <div className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-6 px-4 py-10">
+      <FlowBreadcrumb currentStep="plan" />
+      <Card className="border border-border/60 bg-background/80 text-center backdrop-blur">
         <CardHeader>
-          <CardTitle>Your Balance</CardTitle>
+          <CardTitle className="text-3xl font-bold">Top up your vibe</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="text-3xl">💎 {coins.toLocaleString()}</div>
+        <CardContent className="space-y-2">
+          <div className="text-4xl font-semibold text-primary-foreground">
+            💎 {coins.toLocaleString()}
+          </div>
+          <p className="text-sm text-muted-foreground">
+            100 coins = $1.00 · Balance updates in real time
+          </p>
         </CardContent>
       </Card>
       {!loading && !paymentsEnabled && (

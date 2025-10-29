@@ -10,6 +10,7 @@ import { isApiError, request } from '@/lib/api';
 import { requestMediaPermissions } from '@/lib/mediaPermissions';
 import { toast } from 'sonner';
 import { getUserMessage, toApiError } from '@/lib/errors';
+import FlowBreadcrumb from '@/components/FlowBreadcrumb';
 
 interface ChatMessage {
   id: number;
@@ -171,7 +172,8 @@ const LiveCreator = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 space-y-4">
+    <div className="container mx-auto space-y-4 px-4 py-8">
+      <FlowBreadcrumb currentStep="go-live" />
       {/* Header */}
       <div className="flex items-center justify-between">
         <Button variant="outline" onClick={() => navigate('/')}>

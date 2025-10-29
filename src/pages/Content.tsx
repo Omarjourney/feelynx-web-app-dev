@@ -17,24 +17,36 @@ const Content = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background md:flex">
       <Navigation activeTab="content" onTabChange={handleTab} />
-      <div className="container mx-auto space-y-6 p-4">
-        <Tabs defaultValue="forYou" className="space-y-4">
-          <TabsList className="w-full justify-start overflow-x-auto">
-            <TabsTrigger value="forYou">For You</TabsTrigger>
-            <TabsTrigger value="trending">Trending</TabsTrigger>
-            <TabsTrigger value="recent">Recently Added</TabsTrigger>
-            <TabsTrigger value="top">Top Sellers</TabsTrigger>
-            <TabsTrigger value="purchased">My Purchases</TabsTrigger>
-          </TabsList>
-          <TabsContent value="forYou">{renderGrid()}</TabsContent>
-          <TabsContent value="trending">{renderGrid()}</TabsContent>
-          <TabsContent value="recent">{renderGrid()}</TabsContent>
-          <TabsContent value="top">{renderGrid()}</TabsContent>
-          <TabsContent value="purchased">{renderGrid()}</TabsContent>
-        </Tabs>
-      </div>
+      <main className="flex-1 overflow-x-hidden pb-24 md:pb-12">
+        <div className="mx-auto w-full max-w-6xl space-y-6 px-4 py-10">
+          <Tabs defaultValue="forYou" className="space-y-4">
+            <TabsList className="w-full justify-start overflow-x-auto rounded-full bg-background/80 p-1">
+              <TabsTrigger value="forYou" className="rounded-full px-4 py-2 text-sm">
+                For You
+              </TabsTrigger>
+              <TabsTrigger value="trending" className="rounded-full px-4 py-2 text-sm">
+                Trending
+              </TabsTrigger>
+              <TabsTrigger value="recent" className="rounded-full px-4 py-2 text-sm">
+                Recently Added
+              </TabsTrigger>
+              <TabsTrigger value="top" className="rounded-full px-4 py-2 text-sm">
+                Top Sellers
+              </TabsTrigger>
+              <TabsTrigger value="purchased" className="rounded-full px-4 py-2 text-sm">
+                My Purchases
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="forYou">{renderGrid()}</TabsContent>
+            <TabsContent value="trending">{renderGrid()}</TabsContent>
+            <TabsContent value="recent">{renderGrid()}</TabsContent>
+            <TabsContent value="top">{renderGrid()}</TabsContent>
+            <TabsContent value="purchased">{renderGrid()}</TabsContent>
+          </Tabs>
+        </div>
+      </main>
     </div>
   );
 };

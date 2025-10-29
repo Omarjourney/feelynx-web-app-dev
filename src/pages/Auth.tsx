@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { getUserMessage } from '@/lib/errors';
 import { validators, validateObject, FieldErrors } from '@/lib/validation';
+import FlowBreadcrumb from '@/components/FlowBreadcrumb';
 
 type AuthTab = 'signin' | 'signup';
 
@@ -181,9 +182,10 @@ export default function Auth() {
   );
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <Card className="w-full max-w-md">
-        <CardHeader>
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+      <Card className="w-full max-w-md border border-border/60 bg-background/80 backdrop-blur">
+        <CardHeader className="space-y-4">
+          <FlowBreadcrumb currentStep="login" />
           <CardTitle>Welcome to Feelynx</CardTitle>
           <CardDescription>Sign in to your account or create a new one</CardDescription>
         </CardHeader>

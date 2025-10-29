@@ -112,7 +112,6 @@ export default function PatternHub() {
     if (t === 'home' || t === 'long' || t === 'discover') {
       setBottomTab(t);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
 
   return (

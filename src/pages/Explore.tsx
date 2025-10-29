@@ -49,46 +49,58 @@ const Explore = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background md:flex">
       <Navigation activeTab="discover" onTabChange={handleTab} />
-      <div className="container mx-auto p-4 space-y-6">
-        <StoryBubbles
-          creators={creators
-            .filter((c) => c.isLive)
-            .map((c) => ({
-              username: c.username,
-              avatar: c.avatar || '',
-              isLive: c.isLive,
-              badge: c.tier,
-            }))}
-          onSelect={handleWatch}
-        />
-        <Tabs value={tab} onValueChange={setTab}>
-          <TabsList className="mb-4">
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="trending">Trending</TabsTrigger>
-            <TabsTrigger value="nearby">Nearby</TabsTrigger>
-            <TabsTrigger value="new">New</TabsTrigger>
-            <TabsTrigger value="personalized">For You</TabsTrigger>
-          </TabsList>
-        </Tabs>
-        <SearchFilters {...filters} onChange={handleFiltersChange} />
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-auto">
-          {filteredCreators.map((c) => (
-            <LiveStreamCard
-              key={c.id}
-              username={c.username}
-              avatar={c.avatar ?? ''}
-              viewerCount={c.viewers || 0}
-              isFeatured={c.isFeatured}
-              streamPreviewUrl={`${UNSPLASH_RANDOM_BASE_URL}400x300?sig=${c.id}`}
-              badge={c.isFeatured ? 'VIP' : undefined}
-              onWatch={() => handleWatch(c.username)}
-            />
-          ))}
+      <main className="flex-1 overflow-x-hidden pb-24 md:pb-12">
+        <div className="mx-auto w-full max-w-6xl space-y-6 px-4 py-10">
+          <StoryBubbles
+            creators={creators
+              .filter((c) => c.isLive)
+              .map((c) => ({
+                username: c.username,
+                avatar: c.avatar || '',
+                isLive: c.isLive,
+                badge: c.tier,
+              }))}
+            onSelect={handleWatch}
+          />
+          <Tabs value={tab} onValueChange={setTab}>
+            <TabsList className="mb-4 w-full justify-start gap-2 rounded-full bg-background/80 p-1">
+              <TabsTrigger value="all" className="rounded-full px-4 py-2 text-sm">
+                All
+              </TabsTrigger>
+              <TabsTrigger value="trending" className="rounded-full px-4 py-2 text-sm">
+                Trending
+              </TabsTrigger>
+              <TabsTrigger value="nearby" className="rounded-full px-4 py-2 text-sm">
+                Nearby
+              </TabsTrigger>
+              <TabsTrigger value="new" className="rounded-full px-4 py-2 text-sm">
+                New
+              </TabsTrigger>
+              <TabsTrigger value="personalized" className="rounded-full px-4 py-2 text-sm">
+                For You
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+          <SearchFilters {...filters} onChange={handleFiltersChange} />
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+            {filteredCreators.map((c) => (
+              <LiveStreamCard
+                key={c.id}
+                username={c.username}
+                avatar={c.avatar ?? ''}
+                viewerCount={c.viewers || 0}
+                isFeatured={c.isFeatured}
+                streamPreviewUrl={`${UNSPLASH_RANDOM_BASE_URL}400x300?sig=${c.id}`}
+                badge={c.isFeatured ? 'VIP' : undefined}
+                onWatch={() => handleWatch(c.username)}
+              />
+            ))}
+          </div>
+          <LiveStreamModal creator={modalCreator} open={open} onOpenChange={setOpen} />
         </div>
-        <LiveStreamModal creator={modalCreator} open={open} onOpenChange={setOpen} />
-      </div>
+      </main>
     </div>
   );
 };
