@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Menu, LogOut } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import feelynxLogo from '@/assets/feelynx-logo.png';
+import FeelynxLogo from '../../components/brand/FeelynxLogo';
 
 const links = [
   { to: '/', label: 'Home' },
@@ -25,10 +25,9 @@ const Navbar = () => {
     <nav className="bg-background/95 backdrop-blur-sm border-b border-border sticky top-0 z-50 pt-safe px-safe">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <img src={feelynxLogo} alt="Feelynx" className="w-8 h-8" />
-          <span className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            eelynx
-          </span>
+          <div className="flex h-10 w-32 items-center">
+            <FeelynxLogo size={128} theme="auto" animate glow />
+          </div>
         </div>
         <div className="hidden md:flex items-center space-x-2">
           {links.map((l) => (
