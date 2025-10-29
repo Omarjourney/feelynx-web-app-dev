@@ -33,6 +33,7 @@ import GoLiveEntry from '@/components/GoLiveEntry';
 import IncomingCall from '@/components/IncomingCall';
 import Styleguide from './pages/Styleguide';
 import MobileTabBar from '@/components/MobileTabBar';
+import Navbar from '@/components/Navbar';
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <Navbar />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
