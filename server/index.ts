@@ -71,9 +71,19 @@ interface StatusMessage {
 }
 
 const creatorStatus: Record<string, boolean> = {};
+const callPresence: Record<string, 'available' | 'busy' | 'offline'> = {};
 
 function broadcastStatus(data: StatusMessage) {
   const payload = JSON.stringify({ type: 'creatorStatus', ...data });
+  wss.clients.forEach((client: WebSocket) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(payload);
+    }
+  });
+}
+
+function broadcastPresence(username: string, status: 'available' | 'busy' | 'offline') {
+  const payload = JSON.stringify({ type: 'presence', username, status });
   wss.clients.forEach((client: WebSocket) => {
     if (client.readyState === WebSocket.OPEN) {
       client.send(payload);
@@ -108,6 +118,19 @@ app.post(
     res.json({ ok: true });
   },
 );
+
+// Call availability presence (for Calls)
+app.post('/presence/:username', (req: Request, res: Response) => {
+  const username = String(req.params.username);
+  const status = (req.body?.status as 'available' | 'busy' | 'offline') || 'offline';
+  callPresence[username] = status;
+  broadcastPresence(username, status);
+  res.json({ ok: true });
+});
+
+app.get('/presence', (_req: Request, res: Response) => {
+  res.json({ presence: callPresence });
+});
 
 app.post(
   '/rooms/:room/join',

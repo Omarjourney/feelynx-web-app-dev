@@ -2,6 +2,7 @@ import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import CallSession from './CallSession';
+import { PresenceStatus } from '@/lib/presence';
 
 interface Creator {
   id: number;
@@ -12,7 +13,7 @@ interface Creator {
   videoRate: number;
 }
 
-export const CallCard = ({ creator }: { creator: Creator }) => (
+export const CallCard = ({ creator, status }: { creator: Creator; status?: PresenceStatus }) => (
   <Dialog>
     <div className="border rounded-lg overflow-hidden bg-card">
       <div
@@ -22,7 +23,26 @@ export const CallCard = ({ creator }: { creator: Creator }) => (
       </div>
       <div className="p-3 space-y-2">
         <div className="flex items-center justify-between">
-          <h3 className="font-semibold">{creator.name}</h3>
+          <div className="flex items-center gap-2">
+            <h3 className="font-semibold">{creator.name}</h3>
+            {status && (
+              <span
+                className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] ${
+                  status === 'available'
+                    ? 'bg-emerald-600 text-white'
+                    : status === 'busy'
+                      ? 'bg-amber-600 text-white'
+                      : 'bg-muted text-muted-foreground'
+                }`}
+                title={`Status: ${status}`}
+              >
+                <span
+                  className={`h-1.5 w-1.5 rounded-full ${status === 'available' ? 'bg-white' : 'bg-white/70'}`}
+                />
+                {status}
+              </span>
+            )}
+          </div>
           <Badge>{creator.videoRate}💎/min</Badge>
         </div>
         <DialogTrigger asChild>
