@@ -121,7 +121,7 @@ export default function Auth() {
   const renderForm = (mode: AuthTab) => {
     const form = mode === 'signin' ? signInForm : signUpForm;
     const setForm = mode === 'signin' ? setSignInForm : setSignUpForm;
-    
+
     return (
       <form onSubmit={mode === 'signin' ? handleSignIn : handleSignUp} className="space-y-4">
         <div className="space-y-2">
@@ -171,21 +171,21 @@ export default function Auth() {
             </p>
           )}
         </div>
-      {formError && (
-        <p className="text-sm text-destructive" role="alert">
-          {formError}
-        </p>
-      )}
-      <Button type="submit" className="w-full" disabled={loading}>
-        {loading
-          ? mode === 'signin'
-            ? 'Signing in...'
-            : 'Creating account...'
-          : mode === 'signin'
-            ? 'Sign In'
-            : 'Sign Up'}
-      </Button>
-    </form>
+        {formError && (
+          <p className="text-sm text-destructive" role="alert">
+            {formError}
+          </p>
+        )}
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading
+            ? mode === 'signin'
+              ? 'Signing in...'
+              : 'Creating account...'
+            : mode === 'signin'
+              ? 'Sign In'
+              : 'Sign Up'}
+        </Button>
+      </form>
     );
   };
 
