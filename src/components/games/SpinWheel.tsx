@@ -31,10 +31,9 @@ const SpinWheel = ({ room, segments }: SpinWheelProps) => {
   const spin = () => {
     const segment = segments[Math.floor(Math.random() * segments.length)];
     setCurrent(segment);
-    room.localParticipant.publishData(
-      JSON.stringify({ type: 'spin', segment }),
-      DataPacket_Kind.RELIABLE,
-    );
+    const encoder = new TextEncoder();
+    const data = encoder.encode(JSON.stringify({ type: 'spin', segment }));
+    room.localParticipant.publishData(data, { reliable: true });
   };
 
   return (

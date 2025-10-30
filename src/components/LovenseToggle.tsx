@@ -29,7 +29,7 @@ const LovenseToggle = () => {
       const message = error instanceof Error ? error.message : 'Could not pair with toy';
       toast({
         title: 'Pairing failed',
-        description: error.message || 'Could not pair with toy',
+        description: message,
         variant: 'destructive',
       });
     }
@@ -49,7 +49,7 @@ const LovenseToggle = () => {
       const message = error instanceof Error ? error.message : 'Could not control toy';
       toast({
         title: 'Command failed',
-        description: error.message || 'Could not control toy',
+        description: message,
         variant: 'destructive',
       });
     }

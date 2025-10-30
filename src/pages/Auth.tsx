@@ -41,14 +41,15 @@ export default function Auth() {
   };
 
   const validate = () => {
-    const obj = { email, password };
+    const form = activeTab === 'signin' ? signInForm : signUpForm;
+    const obj = { email: form.email, password: form.password };
     const rules = {
       email: validators.email,
       password: (v: string) => validators.password(v, { min: 6 }),
     } as const;
     const errs = validateObject(obj, rules as any) as FieldErrors<typeof obj>;
     // For sign-in, relax min length check: allow any non-empty
-    if (activeTab === 'signin' && !errs.password && !password) {
+    if (activeTab === 'signin' && !errs.password && !form.password) {
       errs.password = 'Password is required.';
     }
     setFieldErrors(errs);
@@ -66,7 +67,7 @@ export default function Auth() {
     setLoading(true);
 
     try {
-      const { error } = await signIn(email.trim(), password);
+      const { error } = await signIn(signInForm.email.trim(), signInForm.password);
 
       if (error) {
         const message = getUserMessage(error);
@@ -76,7 +77,7 @@ export default function Auth() {
       }
 
       toast.success('Successfully signed in!');
-      setSignInForm({ email: trimmedEmail, password: '' });
+      setSignInForm({ email: signInForm.email.trim(), password: '' });
       navigate('/');
     } catch (error) {
       const message = getUserMessage(error);
@@ -98,7 +99,7 @@ export default function Auth() {
     setLoading(true);
 
     try {
-      const { error } = await signUp(email.trim(), password);
+      const { error } = await signUp(signUpForm.email.trim(), signUpForm.password);
 
       if (error) {
         const message = getUserMessage(error);
@@ -117,55 +118,59 @@ export default function Auth() {
     }
   };
 
-  const renderForm = (mode: AuthTab) => (
-    <form onSubmit={mode === 'signin' ? handleSignIn : handleSignUp} className="space-y-4">
-      <div className="space-y-2">
-        <Input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            if (fieldErrors.email) {
-              setFieldErrors((prev) => ({ ...prev, email: undefined }));
-            }
-          }}
-          aria-invalid={Boolean(fieldErrors.email)}
-          aria-describedby={fieldErrors.email ? `${mode}-email-error` : undefined}
-          className={cn(fieldErrors.email && 'border-destructive focus-visible:ring-destructive')}
-          required
-        />
-        {fieldErrors.email && (
-          <p id={`${mode}-email-error`} className="text-sm text-destructive">
-            {fieldErrors.email}
-          </p>
-        )}
-      </div>
-      <div className="space-y-2">
-        <Input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-            if (fieldErrors.password) {
-              setFieldErrors((prev) => ({ ...prev, password: undefined }));
-            }
-          }}
-          aria-invalid={Boolean(fieldErrors.password)}
-          aria-describedby={fieldErrors.password ? `${mode}-password-error` : undefined}
-          className={cn(
-            fieldErrors.password && 'border-destructive focus-visible:ring-destructive',
+  const renderForm = (mode: AuthTab) => {
+    const form = mode === 'signin' ? signInForm : signUpForm;
+    const setForm = mode === 'signin' ? setSignInForm : setSignUpForm;
+    
+    return (
+      <form onSubmit={mode === 'signin' ? handleSignIn : handleSignUp} className="space-y-4">
+        <div className="space-y-2">
+          <Input
+            type="email"
+            placeholder="Email"
+            value={form.email}
+            onChange={(e) => {
+              setForm({ ...form, email: e.target.value });
+              if (fieldErrors.email) {
+                setFieldErrors((prev) => ({ ...prev, email: undefined }));
+              }
+            }}
+            aria-invalid={Boolean(fieldErrors.email)}
+            aria-describedby={fieldErrors.email ? `${mode}-email-error` : undefined}
+            className={cn(fieldErrors.email && 'border-destructive focus-visible:ring-destructive')}
+            required
+          />
+          {fieldErrors.email && (
+            <p id={`${mode}-email-error`} className="text-sm text-destructive">
+              {fieldErrors.email}
+            </p>
           )}
-          required
-          minLength={6}
-        />
-        {fieldErrors.password && (
-          <p id={`${mode}-password-error`} className="text-sm text-destructive">
-            {fieldErrors.password}
-          </p>
-        )}
-      </div>
+        </div>
+        <div className="space-y-2">
+          <Input
+            type="password"
+            placeholder="Password"
+            value={form.password}
+            onChange={(e) => {
+              setForm({ ...form, password: e.target.value });
+              if (fieldErrors.password) {
+                setFieldErrors((prev) => ({ ...prev, password: undefined }));
+              }
+            }}
+            aria-invalid={Boolean(fieldErrors.password)}
+            aria-describedby={fieldErrors.password ? `${mode}-password-error` : undefined}
+            className={cn(
+              fieldErrors.password && 'border-destructive focus-visible:ring-destructive',
+            )}
+            required
+            minLength={6}
+          />
+          {fieldErrors.password && (
+            <p id={`${mode}-password-error`} className="text-sm text-destructive">
+              {fieldErrors.password}
+            </p>
+          )}
+        </div>
       {formError && (
         <p className="text-sm text-destructive" role="alert">
           {formError}
@@ -181,7 +186,8 @@ export default function Auth() {
             : 'Sign Up'}
       </Button>
     </form>
-  );
+    );
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-background px-4 py-10">

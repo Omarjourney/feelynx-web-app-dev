@@ -21,7 +21,7 @@ router.post(
   // authenticateToken,
   withValidation(groupSchemas.inviteVerify),
   async (req: AuthRequest, res: Response) => {
-    const { id } = req.params as InferParams<typeof groupSchemas.inviteVerify>;
+    const { id } = req.params as any as InferParams<typeof groupSchemas.inviteVerify>;
     const { code } = req.body as InferBody<typeof groupSchemas.inviteVerify>;
     const userId = String(req.userId ?? 'demo');
 
@@ -60,7 +60,7 @@ router.post(
   // authenticateToken,
   withValidation(groupSchemas.inviteRequest),
   async (req: AuthRequest, res: Response) => {
-    const { id } = req.params as InferParams<typeof groupSchemas.inviteRequest>;
+    const { id } = req.params as any as InferParams<typeof groupSchemas.inviteRequest>;
     const { message } = req.body as InferBody<typeof groupSchemas.inviteRequest>;
     const userId = String(req.userId ?? 'demo');
     try {
@@ -81,7 +81,7 @@ router.get(
   '/:id/membership',
   withValidation(groupSchemas.membership),
   async (req: AuthRequest, res: Response) => {
-    const { id } = req.params as InferParams<typeof groupSchemas.membership>;
+    const { id } = req.params as any as InferParams<typeof groupSchemas.membership>;
     const userId = String(req.userId ?? 'demo');
     try {
       const { data, error } = await (supabase as any)
@@ -103,7 +103,7 @@ router.get(
   '/:id/invite/requests',
   withValidation(groupSchemas.inviteRequests),
   async (req: AuthRequest, res: Response) => {
-    const { id } = req.params as InferParams<typeof groupSchemas.inviteRequests>;
+    const { id } = req.params as any as InferParams<typeof groupSchemas.inviteRequests>;
     try {
       const { data, error } = await (supabase as any)
         .from('group_invite_requests')
@@ -131,7 +131,7 @@ router.post(
   '/:id/invite/approve',
   withValidation(groupSchemas.inviteApprove),
   async (req: AuthRequest, res: Response) => {
-    const { id } = req.params as InferParams<typeof groupSchemas.inviteApprove>;
+    const { id } = req.params as any as InferParams<typeof groupSchemas.inviteApprove>;
     const { userId } = req.body as InferBody<typeof groupSchemas.inviteApprove>;
     try {
       const now = new Date().toISOString();

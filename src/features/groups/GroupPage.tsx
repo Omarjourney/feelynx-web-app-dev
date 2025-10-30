@@ -114,10 +114,10 @@ const GroupPage = () => {
           </Card>
         )}
 
-        <Tabs defaultValue="posts" disabled={membership !== 'approved'}>
+        <Tabs defaultValue="posts">
           <TabsList className="mb-4">
-            <TabsTrigger value="posts">Posts</TabsTrigger>
-            <TabsTrigger value="channels">Channels</TabsTrigger>
+            <TabsTrigger value="posts" disabled={membership !== 'approved'}>Posts</TabsTrigger>
+            <TabsTrigger value="channels" disabled={membership !== 'approved'}>Channels</TabsTrigger>
             <TabsTrigger value="events">Events</TabsTrigger>
           </TabsList>
         </Tabs>
