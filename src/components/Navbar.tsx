@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Menu, LogOut } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import ivibesWordmark from '@/assets/ivibes-wordmark.svg';
+import feelynxWordmark from '@/assets/feelynx-wordmark.svg';
 
 const links = [
   { to: '/', label: 'Home' },
@@ -26,7 +26,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Link to="/" aria-label="Go to Home">
-            <img src={ivibesWordmark} alt="iVibes" className="h-8 w-auto" />
+            <img src={feelynxWordmark} alt="Feelynx" className="h-8 w-auto" />
           </Link>
         </div>
         <div className="hidden md:flex items-center space-x-2">

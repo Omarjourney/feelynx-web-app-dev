@@ -7,7 +7,7 @@ test.describe('Authentication flow', () => {
   test('signs in with Supabase stub responses and routes to home', async ({ page }) => {
     await page.goto('/auth');
 
-    await expect(page.getByRole('heading', { name: 'Welcome to iVibes' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Welcome to Feelynx' })).toBeVisible();
 
     await page.getByPlaceholder('Email').fill(userEmail);
     await page.getByPlaceholder('Password').fill(userPassword);

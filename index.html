@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>iVibes</title>
-    <meta name="description" content="iVibes — live entertainment with neon energy." />
-    <meta name="author" content="iVibes" />
+    <title>Feelynx</title>
+    <meta name="description" content="Feelynx — live entertainment with neon energy." />
+    <meta name="author" content="Feelynx" />
 
-    <meta property="og:title" content="iVibes" />
-    <meta property="og:description" content="iVibes — live entertainment with neon energy." />
+    <meta property="og:title" content="Feelynx" />
+    <meta property="og:description" content="Feelynx — live entertainment with neon energy." />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="/brand/feelynx-icon.svg" />
 
@@ -34,7 +34,8 @@
   <body>
     <script>
       try {
-        var mode = localStorage.getItem('ivibes:themeMode');
+        var mode =
+          localStorage.getItem('feelynx:themeMode') || localStorage.getItem('ivibes:themeMode');
         var stored = localStorage.getItem('theme');
         var isDark;
         if (mode === 'auto') {

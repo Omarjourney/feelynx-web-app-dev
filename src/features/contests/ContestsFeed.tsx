@@ -5,7 +5,7 @@ const ContestsFeed: React.FC = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-4 space-y-4">
         <h1 className="text-2xl font-semibold">Contests</h1>
-        <p className="text-muted-foreground">iVibes-style submissions, voting, and live finals.</p>
+        <p className="text-muted-foreground">Feelynx-style submissions, voting, and live finals.</p>
         <ul className="list-disc pl-6 text-sm">
           <li>Cosplay Cup · Active · Free vote + coin boosts</li>
           <li>Dance Finals · Live vote counter</li>

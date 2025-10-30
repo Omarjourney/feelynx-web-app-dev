@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import IvibesLogo from '@/components/brand/IvibesLogo';
+import FeelynxLogo from '@/components/brand/FeelynxLogo';
 
-const meta: Meta<typeof IvibesLogo> = {
-  title: 'Brand/IvibesLogo',
-  component: IvibesLogo,
+const meta: Meta<typeof FeelynxLogo> = {
+  title: 'Brand/FeelynxLogo',
+  component: FeelynxLogo,
   parameters: {
     backgrounds: {
       default: 'ink',
@@ -15,7 +15,7 @@ const meta: Meta<typeof IvibesLogo> = {
     docs: {
       description: {
         component:
-          'iVibes neon wordmark with optional glow. Use at 24px height or larger for navigation and hero placements.',
+          'Feelynx neon wordmark with optional glow. Use at 24px height or larger for navigation and hero placements.',
       },
     },
   },
@@ -39,7 +39,7 @@ const meta: Meta<typeof IvibesLogo> = {
 
 export default meta;
 
-type Story = StoryObj<typeof IvibesLogo>;
+type Story = StoryObj<typeof FeelynxLogo>;
 
 export const Default: Story = {};
 
@@ -59,7 +59,7 @@ export const HoverPulse: Story = {
   render: (args) => (
     <div className="group inline-flex flex-col items-center gap-4">
       <div className="rounded-3xl bg-[#0B0720] p-6 transition-shadow duration-300 group-hover:shadow-[0_0_45px_rgba(232,51,139,0.45)]">
-        <IvibesLogo {...args} />
+        <FeelynxLogo {...args} />
       </div>
       <p className="text-sm text-white/70">Hover to preview the active glow state.</p>
     </div>

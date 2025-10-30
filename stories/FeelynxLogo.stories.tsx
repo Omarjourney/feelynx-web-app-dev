@@ -1,9 +1,9 @@
-import IvibesLogo from '../components/brand/IvibesLogo';
+import FeelynxLogo from '../components/brand/FeelynxLogo';
 import type { Meta, StoryObj } from '@storybook/react';
 
-const meta: Meta<typeof IvibesLogo> = {
-  title: 'Brand/IvibesLogo',
-  component: IvibesLogo,
+const meta: Meta<typeof FeelynxLogo> = {
+  title: 'Brand/FeelynxLogo',
+  component: FeelynxLogo,
   parameters: {
     backgrounds: {
       default: 'dark',
@@ -22,7 +22,7 @@ const meta: Meta<typeof IvibesLogo> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof IvibesLogo>;
+type Story = StoryObj<typeof FeelynxLogo>;
 
 export const Default: Story = { args: { size: 400, glow: true, theme: 'dark' } };
 export const LightMode: Story = { args: { size: 400, glow: false, theme: 'light' } };

@@ -14,7 +14,8 @@ const AutoThemeController = () => {
 
     const apply = () => {
       try {
-        const mode = localStorage.getItem('ivibes:themeMode');
+        const mode =
+          localStorage.getItem('feelynx:themeMode') || localStorage.getItem('ivibes:themeMode');
         if (mode !== 'auto') return;
         const hours = new Date().getHours();
         const preferred = hours >= 7 && hours < 19 ? 'light' : 'dark';
@@ -34,7 +35,7 @@ const AutoThemeController = () => {
     schedule();
 
     const onStorage = (e: StorageEvent) => {
-      if (e.key === 'ivibes:themeMode' || e.key === 'theme') {
+      if (e.key === 'feelynx:themeMode' || e.key === 'ivibes:themeMode' || e.key === 'theme') {
         apply();
       }
     };
