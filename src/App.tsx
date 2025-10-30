@@ -34,7 +34,6 @@ import ContestsFeed from './features/contests/ContestsFeed';
 import GoLiveEntry from '@/components/GoLiveEntry';
 import IncomingCall from '@/components/IncomingCall';
 import Styleguide from './pages/Styleguide';
-import MobileTabBar from '@/components/MobileTabBar';
 import Navbar from '@/components/Navbar';
 import AutoThemeController from '@/components/AutoThemeController';
 import PreviewBanner from '@/components/PreviewBanner';
@@ -83,7 +82,6 @@ const App = () => (
             </Routes>
             <GoLiveEntry />
             <IncomingCall />
-            <MobileTabBar />
           </BrowserRouter>
         </TooltipProvider>
       </ThemeProvider>

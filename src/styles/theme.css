@@ -1,0 +1,9 @@
+@layer base {
+  :root {
+    --radius-card: 24px;
+    --color-bg: #0e0e10;
+    --color-accent-start: #e8338b;
+    --color-accent-end: #9f2fff;
+    --color-highlight: #6c63ff;
+  }
+}

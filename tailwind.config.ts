@@ -25,6 +25,10 @@ export default {
         ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
+        surface: {
+          DEFAULT: 'rgba(255,255,255,0.05)',
+          elevated: 'rgba(255,255,255,0.08)',
+        },
         feelynx: {
           pink: '#E8338B',
           cyan: '#5CC8FF',
@@ -85,10 +89,16 @@ export default {
         'gradient-primary': 'var(--gradient-primary)',
         'gradient-card': 'var(--gradient-card)',
         'gradient-border': 'var(--gradient-border)',
+        'gradient-glow': 'var(--gradient-glow)',
       },
       boxShadow: {
         premium: 'var(--shadow-premium)',
         glow: 'var(--shadow-glow)',
+        'glow-strong': '0 0 45px rgba(159, 47, 255, 0.4)',
+      },
+      backdropBlur: {
+        xl: '28px',
+        '2xl': '40px',
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -120,6 +130,31 @@ export default {
             boxShadow: '0 0 35px 12px hsl(var(--primary) / 0.3)',
           },
         },
+        'pulse-ring': {
+          '0%': {
+            boxShadow: '0 0 0 0 rgba(233, 51, 139, 0.6)',
+          },
+          '70%': {
+            boxShadow: '0 0 0 18px rgba(233, 51, 139, 0)',
+          },
+          '100%': {
+            boxShadow: '0 0 0 0 rgba(233, 51, 139, 0)',
+          },
+        },
+        'feed-fade-in': {
+          '0%': {
+            opacity: '0',
+            transform: 'translateY(28px) scale(0.98)',
+          },
+          '60%': {
+            opacity: '1',
+            transform: 'translateY(0) scale(1.02)',
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateY(0) scale(1)',
+          },
+        },
         'reaction-float': {
           '0%': {
             transform: 'translateY(0px)',
@@ -143,6 +178,8 @@ export default {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'glow-pulse': 'glow-pulse 2.6s ease-in-out infinite',
+        'pulse-ring': 'pulse-ring 2.4s ease-out infinite',
+        'feed-fade-in': 'feed-fade-in 0.55s ease-out both',
         'reaction-float': 'reaction-float 2.4s ease-in forwards',
         'swipe-bounce': 'swipe-bounce 1.4s ease-in-out infinite',
       },
