@@ -45,6 +45,7 @@ jobs:
   e2e-tests:
     name: End-to-end tests
     needs: unit-tests
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     services:
       postgres:

@@ -12,7 +12,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
-import { useZodForm } from './useZodForm';
+import { useZodForm } from './UseZodForm';
 
 const emailSchema = z.string().trim().email().max(320);
 const passwordSchema = z.string().min(8).max(128);

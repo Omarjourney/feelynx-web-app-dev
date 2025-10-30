@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Home, Compass, Radio, UserRound } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import feelynxWordmark from '@/assets/feelynx-wordmark.svg';
+import FeelynxLogo from '@/components/brand/FeelynxLogo';
 
 type NavItem = {
   id: 'home' | 'discover' | 'go-live' | 'profile';
@@ -144,7 +144,7 @@ const Navbar = () => {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.3, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <img src={feelynxWordmark} alt="Feelynx" className="h-6 w-auto opacity-60" />
+          <FeelynxLogo size={96} glow={false} />
         </motion.div>
       </motion.nav>
     </div>

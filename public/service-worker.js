@@ -1,5 +1,14 @@
-const CACHE_NAME = 'feelynx-cache-v2';
-const URLS_TO_CACHE = ['/', '/index.html', '/favicon.ico'];
+const CACHE_NAME = 'feelynx-cache-v3';
+const URLS_TO_CACHE = [
+  '/',
+  '/index.html',
+  '/favicon.ico',
+  '/icons/feelynx-icon-512.png',
+  '/icons/feelynx-icon-1024.png',
+  '/icons/feelynx-favicon-196.png',
+  '/icons/feelynx-apple-180.png',
+  '/manifest.json',
+];
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();

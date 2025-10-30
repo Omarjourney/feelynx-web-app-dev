@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { useZodForm } from './useZodForm';
+import { useZodForm } from './UseZodForm';
 
 const dmcaSchema = z.object({
   reporterName: z.string().min(2).max(120).trim(),
