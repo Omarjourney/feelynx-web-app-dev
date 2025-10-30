@@ -3,17 +3,17 @@ export const runtime = 'edge';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-  const title = searchParams.get('title') ?? 'Feelynx';
-  const tagline = searchParams.get('tagline') ?? 'Feel. Connect. Sync.';
+  const title = searchParams.get('title') ?? 'iVibes';
+  const tagline = searchParams.get('tagline') ?? 'Feel the vibe. Live the show.';
   const mode = searchParams.get('theme') ?? 'dark';
 
   const bg = mode === 'light' ? '#F6F8FB' : '#0B0720';
   const textGradient =
     mode === 'light'
-      ? 'linear-gradient(90deg, #FF4FD8, #0077FF)'
-      : 'linear-gradient(90deg, #E8338B, #5CC8FF)';
-  const stroke = mode === 'light' ? '#A2B4D0' : '#1B1230';
-  const textColor = mode === 'light' ? '#0A0A0A' : '#EAE9FF';
+      ? 'linear-gradient(90deg, #0062FF, #00B9FF)'
+      : 'linear-gradient(90deg, #00E5FF, #4D7CFF)';
+  const stroke = mode === 'light' ? '#5B7FE6' : '#0A183C';
+  const textColor = mode === 'light' ? '#102043' : '#C7D6FF';
 
   return new ImageResponse(
     (

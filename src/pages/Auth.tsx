@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { getUserMessage } from '@/lib/errors';
 import { validators, validateObject, FieldErrors } from '@/lib/validation';
 import FlowBreadcrumb from '@/components/FlowBreadcrumb';
-import FeelynxLogo from '@/components/brand/FeelynxLogo';
+import IvibesLogo from '@/components/brand/IvibesLogo';
 import { BRAND } from '@/config';
 
 type AuthTab = 'signin' | 'signup';
@@ -186,9 +186,9 @@ export default function Auth() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-background px-4 py-10">
       {BRAND.v2Wordmark ? (
-        <FeelynxLogo size={220} glow tagline="Welcome back" />
+        <IvibesLogo size={220} glow tagline="Welcome back" />
       ) : (
-        <span className="text-2xl font-semibold text-foreground">Feelynx</span>
+        <span className="text-2xl font-semibold text-foreground">iVibes</span>
       )}
       <Card className="w-full max-w-md border border-border/60 bg-background/80 backdrop-blur">
         <CardHeader className="space-y-4">
