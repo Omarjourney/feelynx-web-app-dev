@@ -20,7 +20,7 @@ async function run() {
     background: '#0B0720',
     pathOverride: '/brand/generated',
     favicon: true,
-    manifest: true,
+    // The API expects a path when writing directly to a manifest; omit and use returned content instead
     maskable: true,
     apple: true,
     padding: '12%',

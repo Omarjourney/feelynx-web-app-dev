@@ -7,34 +7,28 @@
   "theme_color": "#0B0720",
   "icons": [
     {
-      "src": "/brand/feelynx-icon.svg",
-      "sizes": "192x192 256x256",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/logo-512.png",
+      "src": "/icons/feelynx-icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/logo-1024.png",
+      "src": "/icons/feelynx-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/feelynx-icon-1024.png",
       "sizes": "1024x1024",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/icons/feelynx-icon-512.svg",
-      "sizes": "512x512",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icons/feelynx-icon-1024.svg",
+      "src": "/icons/feelynx-icon-1024.png",
       "sizes": "1024x1024",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
