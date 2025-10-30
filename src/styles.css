@@ -307,6 +307,16 @@
   .infinite-progress {
     animation: progress-loop 1.6s linear infinite;
   }
+  .logo-glow {
+    filter: drop-shadow(0 0 12px rgba(233, 51, 139, 0.6));
+    transition:
+      filter 0.3s ease-in-out,
+      transform 0.3s ease-in-out;
+  }
+  .logo-glow:hover {
+    filter: drop-shadow(0 0 20px rgba(159, 47, 255, 0.9));
+    transform: translateZ(0);
+  }
   .pt-safe {
     padding-top: var(--safe-area-top);
   }

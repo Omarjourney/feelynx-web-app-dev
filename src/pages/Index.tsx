@@ -495,7 +495,8 @@ const Index = () => {
             {BRAND.v2Wordmark ? (
               <FeelynxLogo
                 size={180}
-                glow={false}
+                glow
+                className="logo-glow"
                 tagline="Feel the vibe. Live the show."
                 theme="light"
               />
