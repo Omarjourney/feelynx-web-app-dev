@@ -27,7 +27,7 @@ const meta: Meta<typeof IvibesLogo> = {
       control: 'boolean',
     },
     tagline: {
-          control: 'text',
+      control: 'text',
     },
   },
   args: {

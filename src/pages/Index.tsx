@@ -367,7 +367,12 @@ const Index = () => {
         <footer className="mt-16 px-4 text-center text-sm text-muted-foreground">
           <div className="flex flex-col items-center gap-3 pb-3">
             {BRAND.v2Wordmark ? (
-              <IvibesLogo size={180} glow={false} tagline="Feel the vibe. Live the show." theme="light" />
+              <IvibesLogo
+                size={180}
+                glow={false}
+                tagline="Feel the vibe. Live the show."
+                theme="light"
+              />
             ) : (
               <span className="text-lg font-semibold text-foreground">iVibes</span>
             )}

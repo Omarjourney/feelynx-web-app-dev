@@ -77,11 +77,7 @@ const Stories = () => {
     return (
       <div className="flex h-screen flex-col items-center justify-center gap-6 bg-[#0B0720]/90 px-4 text-center text-foreground">
         {BRAND.v2Wordmark ? (
-          <IvibesLogo
-            size={240}
-            glow
-            tagline="No stories yet. Check back soon."
-          />
+          <IvibesLogo size={240} glow tagline="No stories yet. Check back soon." />
         ) : (
           <p className="text-lg font-semibold">No stories yet. Check back soon.</p>
         )}
