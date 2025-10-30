@@ -2,16 +2,16 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import IvibesLogoBase, { type IvibesLogoProps } from '@/components/brand/IvibesLogo';
+import FeelynxLogoBase, { type FeelynxLogoProps } from '@/components/brand/FeelynxLogo';
 
-type Props = Omit<IvibesLogoProps, 'className'>;
+type Props = Omit<FeelynxLogoProps, 'className'>;
 
 const ENTER_VARIANTS = {
   hidden: { opacity: 0, y: 48, scale: 0.92 },
   visible: { opacity: 1, y: 0, scale: 1 },
 };
 
-export default function IvibesLogo({
+export default function FeelynxLogo({
   size = 480,
   glow = true,
   tagline,
@@ -25,7 +25,13 @@ export default function IvibesLogo({
         animate={ENTER_VARIANTS.visible}
         transition={{ duration: 0.8, ease: 'easeOut' }}
       >
-        <IvibesLogoBase size={size} glow={glow} tagline={tagline} animate={animate} theme={theme} />
+        <FeelynxLogoBase
+          size={size}
+          glow={glow}
+          tagline={tagline}
+          animate={animate}
+          theme={theme}
+        />
       </motion.div>
     </div>
   );

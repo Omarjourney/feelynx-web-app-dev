@@ -11,17 +11,17 @@ const SettingsPrivacy = () => {
   const [allowDMs, setAllowDMs] = useState(true);
   const [retention, setRetention] = useState(30);
   const [handle, setHandle] = useState<string>(
-    () => localStorage.getItem('ivibes:handle') || localStorage.getItem('feelynx:handle') || '',
+    () => localStorage.getItem('feelynx:handle') || localStorage.getItem('ivibes:handle') || '',
   );
   const [available, setAvailable] = useState<boolean>(
     () =>
-      (localStorage.getItem('ivibes:available') || localStorage.getItem('feelynx:available')) ===
+      (localStorage.getItem('feelynx:available') || localStorage.getItem('ivibes:available')) ===
       '1',
   );
   const { user } = useAuth();
   const { theme, setTheme, systemTheme } = useTheme();
   const [themePref, setThemePref] = useState<'system' | 'light' | 'dark' | 'auto'>(() => {
-    const mode = localStorage.getItem('ivibes:themeMode');
+    const mode = localStorage.getItem('feelynx:themeMode') || localStorage.getItem('ivibes:themeMode');
     if (mode === 'auto') return 'auto';
     const stored = localStorage.getItem('theme');
     return stored === 'light' || stored === 'dark' || stored === 'system'
@@ -34,7 +34,8 @@ const SettingsPrivacy = () => {
   );
 
   useEffect(() => {
-    localStorage.setItem('ivibes:handle', handle);
+    localStorage.setItem('feelynx:handle', handle);
+    localStorage.removeItem('ivibes:handle');
   }, [handle]);
 
   useEffect(() => {
@@ -46,7 +47,8 @@ const SettingsPrivacy = () => {
 
   const saveAvailability = async (next: boolean) => {
     setAvailable(next);
-    localStorage.setItem('ivibes:available', next ? '1' : '0');
+    localStorage.setItem('feelynx:available', next ? '1' : '0');
+    localStorage.removeItem('ivibes:available');
     if (!handle) return;
     try {
       await fetch(`/presence/${encodeURIComponent(handle)}`, {
@@ -63,13 +65,15 @@ const SettingsPrivacy = () => {
     setThemePref(next);
     // When selecting 'auto', record mode and set current theme based on local time.
     if (next === 'auto') {
-      localStorage.setItem('ivibes:themeMode', 'auto');
+      localStorage.setItem('feelynx:themeMode', 'auto');
+      localStorage.removeItem('ivibes:themeMode');
       const hours = new Date().getHours();
       const preferred = hours >= 7 && hours < 19 ? 'light' : 'dark';
       setTheme(preferred);
       localStorage.setItem('theme', preferred);
     } else {
       // Clear auto mode and set explicit theme
+      localStorage.removeItem('feelynx:themeMode');
       localStorage.removeItem('ivibes:themeMode');
       setTheme(next);
       // Global key used for early paint before React mounts
@@ -77,7 +81,10 @@ const SettingsPrivacy = () => {
     }
     // Per-user preference override if authenticated
     const uid = user?.id || user?.email;
-    if (uid) localStorage.setItem(`ivibes:theme:${uid}`, next);
+    if (uid) {
+      localStorage.setItem(`feelynx:theme:${uid}`, next);
+      localStorage.removeItem(`ivibes:theme:${uid}`);
+    }
   };
 
   return (

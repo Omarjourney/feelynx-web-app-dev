@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 128" role="img" aria-label="Feelynx">
+  <defs>
+    <linearGradient id="feelynxGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#E8338B" />
+      <stop offset="100%" stop-color="#5CC8FF" />
+    </linearGradient>
+    <filter id="feelynxGlow" x="-40%" y="-40%" width="180%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  <g filter="url(#feelynxGlow)">
+    <text x="24" y="90" font-family="'Poppins', 'Inter', 'Segoe UI', system-ui"
+          font-weight="800" font-size="72" letter-spacing="2"
+          fill="url(#feelynxGradient)" stroke="#1B1230" stroke-width="10"
+          transform="skewX(-5)">
+      Feelynx
+    </text>
+  </g>
+</svg>

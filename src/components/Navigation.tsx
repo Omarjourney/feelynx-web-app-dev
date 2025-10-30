@@ -22,7 +22,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Slider } from '@/components/ui/slider';
-import ivibesWordmark from '@/assets/ivibes-wordmark.svg';
+import feelynxWordmark from '@/assets/feelynx-wordmark.svg';
 import PreviewBanner from '@/components/PreviewBanner';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ReactiveMascot from '@/components/ReactiveMascot';
@@ -88,16 +88,16 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
   }, [activeTab, pathname]);
 
   useEffect(() => {
-    // Read new ivibes:* keys first, then fall back to legacy feelynx.* keys
+    // Read Feelynx keys first, then fall back to legacy ivibes.* keys for compatibility
     const storedLanguage =
-      localStorage.getItem('ivibes.language') || localStorage.getItem('feelynx.language');
+      localStorage.getItem('feelynx.language') || localStorage.getItem('ivibes.language');
     const storedTheme =
-      localStorage.getItem('ivibes.experienceTheme') ||
-      localStorage.getItem('feelynx.experienceTheme');
+      localStorage.getItem('feelynx.experienceTheme') ||
+      localStorage.getItem('ivibes.experienceTheme');
     const storedBrightness =
-      localStorage.getItem('ivibes.brightness') || localStorage.getItem('feelynx.brightness');
+      localStorage.getItem('feelynx.brightness') || localStorage.getItem('ivibes.brightness');
     const storedFontScale =
-      localStorage.getItem('ivibes.fontScale') || localStorage.getItem('feelynx.fontScale');
+      localStorage.getItem('feelynx.fontScale') || localStorage.getItem('ivibes.fontScale');
     if (storedLanguage) setLanguage(storedLanguage);
     if (storedTheme === 'midnight' || storedTheme === 'electric') setExperienceTheme(storedTheme);
     if (storedBrightness) setBrightness(Number(storedBrightness));
@@ -106,12 +106,12 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
 
   useEffect(() => {
     document.documentElement.style.setProperty('--app-brightness', brightness.toFixed(2));
-    localStorage.setItem('ivibes.brightness', brightness.toString());
+    localStorage.setItem('feelynx.brightness', brightness.toString());
   }, [brightness]);
 
   useEffect(() => {
     document.documentElement.style.setProperty('--app-font-scale', fontScale.toFixed(2));
-    localStorage.setItem('ivibes.fontScale', fontScale.toString());
+    localStorage.setItem('feelynx.fontScale', fontScale.toString());
   }, [fontScale]);
 
   useEffect(() => {
@@ -120,11 +120,11 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
     } else {
       document.documentElement.setAttribute('data-experience-theme', experienceTheme);
     }
-    localStorage.setItem('ivibes.experienceTheme', experienceTheme);
+    localStorage.setItem('feelynx.experienceTheme', experienceTheme);
   }, [experienceTheme]);
 
   useEffect(() => {
-    localStorage.setItem('ivibes.language', language);
+    localStorage.setItem('feelynx.language', language);
   }, [language]);
 
   const handleNav = (id: (typeof navItems)[number]['id'], to: string) => {
@@ -140,11 +140,11 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
       <aside className="hidden md:flex md:h-screen md:w-72 md:flex-shrink-0 md:flex-col md:border-r md:border-border/60 md:bg-sidebar-background/80 md:backdrop-blur-xl md:pt-safe">
         <div className="flex items-center gap-3 px-6 pt-8 pb-6">
           <div className="relative rounded-2xl bg-gradient-primary p-2 shadow-glow">
-            <img src={ivibesWordmark} alt="iVibes" className="h-10 w-auto" />
+            <img src={feelynxWordmark} alt="Feelynx" className="h-10 w-auto" />
           </div>
           <div>
             <p className="text-sm uppercase tracking-widest text-muted-foreground">Entertainment</p>
-            <p className="text-2xl font-extrabold text-foreground">iVibes</p>
+            <p className="text-2xl font-extrabold text-foreground">Feelynx</p>
           </div>
         </div>
 
@@ -295,7 +295,7 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
           <div className="space-y-3 rounded-3xl border border-primary/30 bg-primary/10 p-4">
             <ReactiveMascot
               mood="joined"
-              message="iVibes says: Tap Go Live to start your show!"
+              message="Feelynx says: Tap Go Live to start your show!"
               className="w-full justify-start"
             />
             <div className="rounded-2xl bg-background/60 px-4 py-3 text-sm text-muted-foreground">
@@ -324,7 +324,7 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-2">
-              <img src={ivibesWordmark} alt="iVibes" className="h-8 w-auto" />
+              <img src={feelynxWordmark} alt="Feelynx" className="h-8 w-auto" />
             </div>
 
             <div className="flex items-center space-x-3">

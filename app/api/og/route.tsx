@@ -3,7 +3,7 @@ export const runtime = 'edge';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-  const title = searchParams.get('title') ?? 'iVibes';
+  const title = searchParams.get('title') ?? 'Feelynx';
   const tagline = searchParams.get('tagline') ?? 'Feel the vibe. Live the show.';
   const mode = searchParams.get('theme') ?? 'dark';
 

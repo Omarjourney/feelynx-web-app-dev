@@ -1,6 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
-import IvibesLogo from './IvibesLogo';
+import FeelynxLogo from './FeelynxLogo';
 
 export default function HeroLogoReveal() {
   return (
@@ -10,7 +10,7 @@ export default function HeroLogoReveal() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1.2, ease: 'easeOut' }}
       >
-        <IvibesLogo size={560} glow animate tagline="Feel the vibe. Live the show." />
+        <FeelynxLogo size={560} glow animate tagline="Feel the vibe. Live the show." />
       </motion.div>
 
       <motion.div

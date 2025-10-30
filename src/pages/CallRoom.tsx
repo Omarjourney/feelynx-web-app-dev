@@ -19,7 +19,7 @@ const CallRoom = () => {
   const roomRef = useRef<Room | null>(null);
   const remoteVideoRef = useRef<HTMLDivElement>(null);
 
-  // Control session (iVibes-style) integration
+  // Control session (Feelynx-style) integration
   const [maxIntensity, setMaxIntensity] = useState(12);
   const [durationSec, setDurationSec] = useState(300);
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -86,7 +86,7 @@ const CallRoom = () => {
       setState('live');
       // Flip presence to busy (if we have a public handle saved)
       const handle =
-        localStorage.getItem('ivibes:handle') || localStorage.getItem('feelynx:handle');
+        localStorage.getItem('feelynx:handle') || localStorage.getItem('ivibes:handle');
       if (handle) {
         fetch(`/presence/${encodeURIComponent(handle)}`, {
           method: 'POST',
@@ -109,9 +109,10 @@ const CallRoom = () => {
     roomRef.current?.disconnect();
 
     setState('ended');
-    const handle = localStorage.getItem('ivibes:handle') || localStorage.getItem('feelynx:handle');
+    const handle =
+      localStorage.getItem('feelynx:handle') || localStorage.getItem('ivibes:handle');
     const wasAvailable =
-      (localStorage.getItem('ivibes:available') || localStorage.getItem('feelynx:available')) ===
+      (localStorage.getItem('feelynx:available') || localStorage.getItem('ivibes:available')) ===
       '1';
     if (handle) {
       fetch(`/presence/${encodeURIComponent(handle)}`, {
