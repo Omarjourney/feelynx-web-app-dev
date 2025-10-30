@@ -21,7 +21,8 @@ const SettingsPrivacy = () => {
   const { user } = useAuth();
   const { theme, setTheme, systemTheme } = useTheme();
   const [themePref, setThemePref] = useState<'system' | 'light' | 'dark' | 'auto'>(() => {
-    const mode = localStorage.getItem('feelynx:themeMode') || localStorage.getItem('ivibes:themeMode');
+    const mode =
+      localStorage.getItem('feelynx:themeMode') || localStorage.getItem('ivibes:themeMode');
     if (mode === 'auto') return 'auto';
     const stored = localStorage.getItem('theme');
     return stored === 'light' || stored === 'dark' || stored === 'system'

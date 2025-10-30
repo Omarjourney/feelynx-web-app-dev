@@ -109,8 +109,7 @@ const CallRoom = () => {
     roomRef.current?.disconnect();
 
     setState('ended');
-    const handle =
-      localStorage.getItem('feelynx:handle') || localStorage.getItem('ivibes:handle');
+    const handle = localStorage.getItem('feelynx:handle') || localStorage.getItem('ivibes:handle');
     const wasAvailable =
       (localStorage.getItem('feelynx:available') || localStorage.getItem('ivibes:available')) ===
       '1';
