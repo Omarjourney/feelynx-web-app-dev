@@ -4,7 +4,7 @@ import { Navigation } from '@/components/Navigation';
 import { creators } from '@/data/creators';
 import { CallCard } from '@/components/CallCard';
 import { usePresence } from '@/lib/presence';
-import FeelynxLogo from '@/components/brand/FeelynxLogo';
+import IvibesLogo from '@/components/brand/IvibesLogo';
 import { BRAND } from '@/config';
 import {
   Select,
@@ -88,7 +88,12 @@ const Connect = () => {
             {available.length === 0 ? (
               <div className="rounded-2xl border border-border/60 bg-background/70 p-6 text-center">
                 {BRAND.v2Wordmark ? (
-                  <FeelynxLogo size={160} glow={false} tagline="No one is available right now" />
+                <IvibesLogo
+                  size={160}
+                  glow={false}
+                  tagline="No one is available right now"
+                  theme="light"
+                />
                 ) : (
                   <p className="text-sm text-muted-foreground">No one is available right now.</p>
                 )}

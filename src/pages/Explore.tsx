@@ -13,7 +13,6 @@ import { Progress } from '@/components/ui/progress';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { creators as creatorsData } from '@/data/creators';
-import FeelynxLogo from '@/components/brand/FeelynxLogo';
 import type { Creator } from '@/types/creator';
 
 const Explore = () => {

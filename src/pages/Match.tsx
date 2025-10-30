@@ -3,7 +3,7 @@ import { useSwipeable } from 'react-swipeable';
 import { Room } from 'livekit-client';
 import { toast } from 'sonner';
 import { getUserMessage, toApiError } from '@/lib/errors';
-import FeelynxLogo from '@/components/brand/FeelynxLogo';
+import IvibesLogo from '@/components/brand/IvibesLogo';
 import { BRAND } from '@/config';
 
 interface Creator {
@@ -156,7 +156,12 @@ const Match = () => {
       ) : (
         <div className="flex flex-col items-center gap-4 text-center">
           {BRAND.v2Wordmark ? (
-            <FeelynxLogo size={180} glow={false} tagline="No more creators right now" />
+            <IvibesLogo
+              size={180}
+              glow={false}
+              tagline="No more creators right now"
+              theme="light"
+            />
           ) : (
             <p>No more creators right now</p>
           )}

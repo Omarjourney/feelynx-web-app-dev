@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import { getUserMessage, toApiError } from '@/lib/errors';
 import { DMMessageSkeleton, DMThreadSkeleton } from '@/components/Skeletons';
 import { useAuth } from '@/contexts/AuthContext';
-import FeelynxLogo from '@/components/brand/FeelynxLogo';
+import IvibesLogo from '@/components/brand/IvibesLogo';
 import { BRAND } from '@/config';
 
 interface Message {
@@ -317,7 +317,7 @@ const DM = () => {
             {!loadingThreads && threads.length === 0 && (
               <div className="flex flex-col items-center gap-3 rounded-2xl border border-border/50 bg-background/70 p-4 text-center">
                 {BRAND.v2Wordmark ? (
-                  <FeelynxLogo size={140} glow={false} tagline="No threads yet" />
+                  <IvibesLogo size={140} glow={false} tagline="No threads yet" theme="light" />
                 ) : (
                   <div className="text-sm font-medium text-muted-foreground">No threads yet</div>
                 )}
@@ -378,7 +378,7 @@ const DM = () => {
             {!loadingMessages && messages.length === 0 && (
               <div className="flex flex-col items-center gap-3 rounded-2xl border border-border/50 bg-background/70 p-4 text-center">
                 {BRAND.v2Wordmark ? (
-                  <FeelynxLogo size={140} glow={false} tagline="No messages yet" />
+                  <IvibesLogo size={140} glow={false} tagline="No messages yet" theme="light" />
                 ) : (
                   <p className="text-sm text-muted-foreground">No messages yet.</p>
                 )}
