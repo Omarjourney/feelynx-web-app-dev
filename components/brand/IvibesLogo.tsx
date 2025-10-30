@@ -25,13 +25,7 @@ export default function IvibesLogo({
         animate={ENTER_VARIANTS.visible}
         transition={{ duration: 0.8, ease: 'easeOut' }}
       >
-        <IvibesLogoBase
-          size={size}
-          glow={glow}
-          tagline={tagline}
-          animate={animate}
-          theme={theme}
-        />
+        <IvibesLogoBase size={size} glow={glow} tagline={tagline} animate={animate} theme={theme} />
       </motion.div>
     </div>
   );

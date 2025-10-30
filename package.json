@@ -17,7 +17,7 @@
     "lint:names": "node ./scripts/check-filenames.mjs",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
-    "preview": "vite preview",
+    "preview": "pnpm run build && vite preview",
     "generate:brand-icons": "node ./scripts/generate-feelynx-icons.mjs",
     "test": "vitest run --passWithNoTests",
     "test:e2e": "TS_NODE_TRANSPILE_ONLY=true TS_NODE_PROJECT=tsconfig.server.json node --loader ts-node/esm --test server/routes",
