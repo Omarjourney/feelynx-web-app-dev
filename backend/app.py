@@ -1,12 +1,38 @@
-from http.server import SimpleHTTPRequestHandler, HTTPServer
+from fastapi import FastAPI, WebSocket
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
-PORT = 8000
+app = FastAPI(title="Feelynx Backend")
 
-class Handler(SimpleHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.end_headers()
-        self.wfile.write(b"Hello from the backend")
+# Allow frontend origin
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # tighten in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-if __name__ == "__main__":
-    HTTPServer(("0.0.0.0", PORT), Handler).serve_forever()
+
+@app.get("/health")
+async def health_check():
+    """Simple health check endpoint"""
+    return JSONResponse(content={"status": "ok", "service": "backend", "version": "1.0"})
+
+
+# Example WebSocket route
+@app.websocket("/ws/")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    await websocket.send_json({"message": "WebSocket connection established"})
+    try:
+        while True:
+            data = await websocket.receive_text()
+            await websocket.send_json({"echo": data})
+    except Exception:
+        await websocket.close()
+
+
+@app.get("/")
+async def root():
+    return {"message": "Feelynx Backend is running!"}
