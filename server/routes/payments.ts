@@ -10,7 +10,8 @@ import {
 } from '../utils/validation';
 
 const router = Router();
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
+const stripeSecret = process.env.STRIPE_SECRET_KEY;
+const stripe = stripeSecret ? new Stripe(stripeSecret) : null;
 
 const PURCHASE_LIMIT_PER_HOUR = 5;
 
@@ -20,6 +21,9 @@ router.post(
   withValidation(paymentSchemas.createIntent),
   async (req: Request, res: Response) => {
     try {
+      if (!stripe) {
+        return res.status(500).json({ error: 'Stripe not configured' });
+      }
       const { amount, coins, currency, userId } = req.body as PaymentIntentBody;
 
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
@@ -66,6 +70,9 @@ router.post(
   withValidation(paymentSchemas.success),
   async (req: Request, res: Response) => {
     try {
+      if (!stripe) {
+        return res.status(500).json({ error: 'Stripe not configured' });
+      }
       const { paymentIntentId } = req.body as PaymentSuccessBody;
 
       const intent = (await stripe.paymentIntents.retrieve(
@@ -120,6 +127,9 @@ router.get(
 );
 
 export const webhookHandler = async (req: Request, res: Response) => {
+  if (!stripe) {
+    return res.status(500).json({ error: 'Stripe not configured' });
+  }
   const signature = req.headers['stripe-signature'] as string;
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
   let event: Stripe.Event;

@@ -12,23 +12,39 @@ interface InviteRequest {
 const GroupAdmin = () => {
   const { groupId } = useParams();
   const navigate = useNavigate();
+  const parsedId = Number(groupId);
+  const resolvedGroupId = Number.isFinite(parsedId) ? String(parsedId) : null;
   const [requests, setRequests] = useState<InviteRequest[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!resolvedGroupId) {
+      setRequests([]);
+      setLoading(false);
+      return;
+    }
+    let active = true;
+    setLoading(true);
     (async () => {
       try {
-        const res = await fetch(`/api/groups/${groupId}/invite/requests`);
+        const res = await fetch(`/api/groups/${resolvedGroupId}/invite/requests`);
         const data = await res.json();
+        if (!active) return;
         setRequests(Array.isArray(data) ? data : []);
       } finally {
-        setLoading(false);
+        if (active) {
+          setLoading(false);
+        }
       }
     })();
-  }, [groupId]);
+    return () => {
+      active = false;
+    };
+  }, [resolvedGroupId]);
 
   const approve = async (userId: string) => {
-    await fetch(`/api/groups/${groupId}/invite/approve`, {
+    if (!resolvedGroupId) return;
+    await fetch(`/api/groups/${resolvedGroupId}/invite/approve`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId }),

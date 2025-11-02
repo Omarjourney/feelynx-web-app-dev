@@ -98,8 +98,13 @@ export async function processPendingPayouts() {
     const account = await prisma.payoutAccount.findUnique({ where: { creatorId: p.creatorId } });
     if (!account) continue;
     try {
+      const amountFloat = typeof p.amount === 'number' ? p.amount : Number(p.amount);
+      if (!Number.isFinite(amountFloat)) {
+        throw new Error('Invalid payout amount');
+      }
+      const amountInCents = Math.round(amountFloat * 100);
       await stripe.payouts.create(
-        { amount: Number(p.amount) * 100, currency: 'usd' },
+        { amount: amountInCents, currency: 'usd' },
         { stripeAccount: account.stripeAccountId },
       );
       await prisma.payout.update({

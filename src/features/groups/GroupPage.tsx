@@ -10,19 +10,33 @@ import { toast } from 'sonner';
 const GroupPage = () => {
   const { groupId } = useParams();
   const navigate = useNavigate();
-  const id = Number(groupId);
-  const group = useMemo(() => groups.find((g) => g.id === id), [id]);
+  const parsedId = Number(groupId);
+  const id = Number.isFinite(parsedId) ? parsedId : null;
+  const group = useMemo(() => {
+    if (id === null) return undefined;
+    return groups.find((g) => g.id === id);
+  }, [id]);
   const [membership, setMembership] = useState<'approved' | 'pending' | 'none'>('none');
   useEffect(() => {
+    if (id === null) {
+      setMembership('none');
+      return;
+    }
+    let active = true;
     (async () => {
       try {
         const res = await fetch(`/api/groups/${id}/membership`);
         const data = await res.json();
+        if (!active) return;
         setMembership((data?.status as any) || 'none');
       } catch {
+        if (!active) return;
         setMembership('none');
       }
     })();
+    return () => {
+      active = false;
+    };
   }, [id]);
 
   if (!group) {
@@ -77,6 +91,10 @@ const GroupPage = () => {
                 const code = el?.value.trim();
                 if (!code) {
                   toast.error('Please enter a valid invite code');
+                  return;
+                }
+                if (id === null) {
+                  toast.error('Crew not found');
                   return;
                 }
                 (async () => {
