@@ -8,7 +8,7 @@ import type { Creator } from '@/types/creator';
 
 interface CreatorCardProps {
   creator: Creator;
-  onViewProfile: (id: number) => void;
+  onViewProfile?: (id: number) => void;
 }
 
 export const CreatorCard = ({ creator, onViewProfile }: CreatorCardProps) => {
@@ -111,7 +111,8 @@ export const CreatorCard = ({ creator, onViewProfile }: CreatorCardProps) => {
               <Button
                 size="lg"
                 className="group/button flex-1 rounded-2xl bg-gradient-primary text-sm font-semibold uppercase tracking-[0.25em] text-white shadow-glow transition-transform hover:-translate-y-0.5"
-                onClick={() => onViewProfile(creator.id)}
+                onClick={() => onViewProfile?.(creator.id)}
+                disabled={!onViewProfile}
               >
                 {creator.isLive ? 'Enter Live' : 'Send Tip'}
               </Button>
