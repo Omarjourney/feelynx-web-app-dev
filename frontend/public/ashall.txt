@@ -1,2 +1,94 @@
-Feelynx placeholder asset for ashall.txt
+cd /srv/feelynx
+
+# Ensure ashall.txt is served from Vite root
+mkdir -p public
+cp -f frontend/public/ashall.txt public/ashall.txt
+
+git switch dev || git switch -c dev
+git add Dockerfile.frontend entrypoint-frontend.sh deploy/dev/docker-compose.yml deploy/dev/nginx.conf public/ashall.txt
+git commit -m "build(dev): build frontend from repo root; serve public/ashall.txt; add /health and WSS proxy"
+
+git pull --rebase --autostash origin dev
+git push -u origin dev
+
+# Deploy
+cd deploy/dev
+docker compose up -d --build frontend
+docker compose restart nginx
+
+# Verify
+curl -I https://dev.feelynx.live/ashall.txt
+curl -s https://dev.feelynx.live/health
+```
+
+When you run these, reply “done” and I’ll confirm results.cd /srv/feelynx
+
+# Ensure ashall.txt is served from Vite root
+mkdir -p public
+cp -f frontend/public/ashall.txt public/ashall.txt
+
+git switch dev || git switch -c dev
+git add Dockerfile.frontend entrypoint-frontend.sh deploy/dev/docker-compose.yml deploy/dev/nginx.conf public/ashall.txt
+git commit -m "build(dev): build frontend from repo root; serve public/ashall.txt; add /health and WSS proxy"
+
+git pull --rebase --autostash origin dev
+git push -u origin dev
+
+# Deploy
+cd deploy/dev
+docker compose up -d --build frontend
+docker compose restart nginx
+
+# Verify
+curl -I https://dev.feelynx.live/ashall.txt
+curl -s https://dev.feelynx.live/health
+```
+
+When you run these, reply “done” and I’ll confirm results.cd /srv/feelynx
+
+# Ensure ashall.txt is served from Vite root
+mkdir -p public
+cp -f frontend/public/ashall.txt public/ashall.txt
+
+git switch dev || git switch -c dev
+git add Dockerfile.frontend entrypoint-frontend.sh deploy/dev/docker-compose.yml deploy/dev/nginx.conf public/ashall.txt
+git commit -m "build(dev): build frontend from repo root; serve public/ashall.txt; add /health and WSS proxy"
+
+git pull --rebase --autostash origin dev
+git push -u origin dev
+
+# Deploy
+cd deploy/dev
+docker compose up -d --build frontend
+docker compose restart nginx
+
+# Verify
+curl -I https://dev.feelynx.live/ashall.txt
+curl -s https://dev.feelynx.live/health
+```
+
+When you run these, reply “done” and I’ll confirm results.cd /srv/feelynx
+
+# Ensure ashall.txt is served from Vite root
+mkdir -p public
+cp -f frontend/public/ashall.txt public/ashall.txt
+
+git switch dev || git switch -c dev
+git add Dockerfile.frontend entrypoint-frontend.sh deploy/dev/docker-compose.yml deploy/dev/nginx.conf public/ashall.txt
+git commit -m "build(dev): build frontend from repo root; serve public/ashall.txt; add /health and WSS proxy"
+
+git pull --rebase --autostash origin dev
+git push -u origin dev
+
+# Deploy
+cd deploy/dev
+docker compose up -d --build frontend
+docker compose restart nginx
+
+# Verify
+curl -I https://dev.feelynx.live/ashall.txt
+curl -s https://dev.feelynx.live/health
+```
+
+When you run these, reply “done” and I’ll confirm results.Feelynx placeholder asset for ashall.txt
 Served from /frontend/public/ashall.txt via Vite static copy to dist.
