@@ -24,7 +24,10 @@ export function HeroSection({ onPrimaryCta, onSecondaryCta, stats }: HeroSection
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
     >
-      <div className="absolute inset-0 bg-gradient-primary opacity-20 blur-3xl" aria-hidden />
+      <div
+        className="pointer-events-none absolute inset-0 bg-gradient-primary opacity-20 blur-3xl"
+        aria-hidden
+      />
       <div className="relative flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
         <div className="max-w-2xl space-y-6">
           <LiveIndicator label="Immersive streaming" />
