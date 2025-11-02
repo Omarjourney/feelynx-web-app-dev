@@ -59,7 +59,12 @@ export const OnboardingTips = ({ isNewUser = true }: OnboardingTipsProps) => {
             const Icon = tip.icon;
             return (
               <Tooltip key={index} content={tip.tooltip}>
-                <div className="flex items-start gap-3 rounded-2xl bg-background/40 p-4 transition-all hover:bg-background/60 cursor-help">
+                <div
+                  className="flex items-start gap-3 rounded-2xl bg-background/40 p-4 transition-all hover:bg-background/60 cursor-help focus:bg-background/60 focus:ring-2 focus:ring-primary"
+                  tabIndex={0}
+                  role="button"
+                  aria-label={tip.tooltip}
+                >
                   <Icon className="h-5 w-5 flex-shrink-0 text-primary" aria-hidden />
                   <p className="text-sm leading-relaxed text-white">{tip.text}</p>
                 </div>

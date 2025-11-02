@@ -1,6 +1,7 @@
 import { Gauge } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { VIBECOIN_TO_USD_RATE } from '@/lib/appConstants';
 
 interface BalanceBarProps {
   coins: number;
@@ -19,7 +20,7 @@ export const BalanceBar = ({ coins }: BalanceBarProps) => {
             <div className="flex items-baseline gap-2">
               <span className="text-2xl font-bold text-white">💎 {coins.toLocaleString()}</span>
               <span className="rounded-full bg-primary/20 px-2 py-0.5 text-xs text-white/80">
-                ${(coins / 100).toFixed(2)} USD
+                ${(coins / VIBECOIN_TO_USD_RATE).toFixed(2)} USD
               </span>
             </div>
           </div>
@@ -33,7 +34,7 @@ export const BalanceBar = ({ coins }: BalanceBarProps) => {
           Recharge
         </Button>
       </div>
-      <p className="mt-2 text-xs text-white/60">100 coins = $1.00</p>
+      <p className="mt-2 text-xs text-white/60">{VIBECOIN_TO_USD_RATE} coins = $1.00</p>
     </div>
   );
 };
