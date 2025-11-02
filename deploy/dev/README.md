@@ -29,6 +29,7 @@ frontend/
 ## How to run
 
 Prereqs:
+
 - Frontend and backend source code present under `frontend/` and `backend/`
 
 Commands:

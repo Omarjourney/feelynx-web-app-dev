@@ -21,6 +21,7 @@ export const CreatorCard = ({ creator, onViewProfile }: CreatorCardProps) => {
       viewport={{ once: true, amount: 0.35 }}
       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
       className="animate-feed-fade-in"
+      aria-label={`Creator profile: ${creator.name}`}
     >
       <Card className="group relative overflow-hidden border-white/5 bg-white/5 p-0 shadow-[0_35px_80px_-45px_rgba(15,15,30,0.9)]">
         <CardContent className="flex h-full flex-col gap-0 p-0">
@@ -42,7 +43,11 @@ export const CreatorCard = ({ creator, onViewProfile }: CreatorCardProps) => {
 
             {creator.toyConnected && (
               <div className="absolute right-4 top-4 flex items-center gap-2">
-                <span className="glass-chip animate-pulse-ring !border-pink-400/40 !bg-pink-500/15 text-[11px] text-white">
+                <span
+                  className="glass-chip animate-pulse-ring !border-pink-400/40 !bg-pink-500/15 text-[11px] text-white"
+                  role="status"
+                  aria-label="Interactive toy connected"
+                >
                   💗 Connected
                 </span>
               </div>
@@ -113,6 +118,11 @@ export const CreatorCard = ({ creator, onViewProfile }: CreatorCardProps) => {
                 className="group/button flex-1 rounded-2xl bg-gradient-primary text-sm font-semibold uppercase tracking-[0.25em] text-white shadow-glow transition-transform hover:-translate-y-0.5"
                 onClick={() => onViewProfile?.(creator.id)}
                 disabled={!onViewProfile}
+                aria-label={
+                  creator.isLive
+                    ? `Enter ${creator.name}'s live stream`
+                    : `Send tip to ${creator.name}`
+                }
               >
                 {creator.isLive ? 'Enter Live' : 'Send Tip'}
               </Button>
@@ -120,8 +130,11 @@ export const CreatorCard = ({ creator, onViewProfile }: CreatorCardProps) => {
                 variant="outline"
                 size="icon"
                 className="h-12 w-12 rounded-2xl border-white/15 bg-white/5 text-lg text-white/80 hover:border-white/30 hover:text-white"
+                aria-label={`Send message to ${creator.name}`}
               >
-                💬
+                <span role="img" aria-hidden="true">
+                  💬
+                </span>
               </Button>
             </div>
           </div>

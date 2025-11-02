@@ -11,10 +11,12 @@ const CORS_ORIGIN = process.env.CORS_ORIGIN || 'https://dev.feelynx.live';
 const app = express();
 
 // CORS for API routes
-app.use(cors({
-  origin: CORS_ORIGIN,
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: CORS_ORIGIN,
+    credentials: true,
+  }),
+);
 
 app.set('trust proxy', 1);
 app.use(express.json());

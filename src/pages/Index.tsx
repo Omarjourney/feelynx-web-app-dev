@@ -60,7 +60,9 @@ const Index = () => {
       return;
     }
 
+    // eslint-disable-next-line prefer-const
     let intervalId: number | undefined;
+    // eslint-disable-next-line prefer-const
     let mutationObserver: MutationObserver | undefined;
 
     const cleanup = () => {
@@ -238,15 +240,17 @@ const Index = () => {
                 View all modules
               </Button>
             }
-            tiles={quickLinks.map(({ id, title, badge, description, icon, action, actionLabel }) => ({
-              id,
-              title,
-              badge,
-              description,
-              icon,
-              actionLabel,
-              onAction: action,
-            }))}
+            tiles={quickLinks.map(
+              ({ id, title, badge, description, icon, action, actionLabel }) => ({
+                id,
+                title,
+                badge,
+                description,
+                icon,
+                actionLabel,
+                onAction: action,
+              }),
+            )}
           />
 
           <ActionTilesSection
@@ -365,7 +369,9 @@ const Index = () => {
                   <CardContent className="grid gap-4 md:grid-cols-3">
                     <div className="glass-elevated rounded-3xl border-white/15 bg-white/10 p-4 text-sm text-white">
                       <p className="text-lg font-bold">Level 12</p>
-                      <p className="text-[10px] uppercase tracking-[0.35em] text-white/60">Viewer XP</p>
+                      <p className="text-[10px] uppercase tracking-[0.35em] text-white/60">
+                        Viewer XP
+                      </p>
                       <div className="relative mt-4 h-2 overflow-hidden rounded-full bg-white/10">
                         <div className="absolute inset-y-0 left-0 w-[68%] rounded-full bg-gradient-primary" />
                       </div>
@@ -396,7 +402,9 @@ const Index = () => {
 
                 <Card className="glass-panel border-white/10 bg-white/5">
                   <CardHeader>
-                    <CardTitle className="text-2xl font-semibold text-white">Quick top ups</CardTitle>
+                    <CardTitle className="text-2xl font-semibold text-white">
+                      Quick top ups
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <VibeCoinPackages platform="web" />

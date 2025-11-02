@@ -23,7 +23,8 @@ export function FilterSection({ onChange, onOpenDirectory, ...filters }: FilterS
           <div>
             <CardTitle className="text-2xl font-semibold text-white">Tailor your feed</CardTitle>
             <CardDescription className="text-sm text-white/70">
-              Smart filters remember your vibe and surface interactive sessions with the perfect pacing.
+              Smart filters remember your vibe and surface interactive sessions with the perfect
+              pacing.
             </CardDescription>
           </div>
           <Button

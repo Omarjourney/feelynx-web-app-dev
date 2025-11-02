@@ -39,10 +39,7 @@ function ensureAuthenticated(req: AuthRequest, res: Response) {
 router.post('/sessions', authenticateToken, (req: AuthRequest, res) => {
   if (!ensureAuthenticated(req, res)) return;
 
-  const {
-    maxIntensity = 12,
-    durationSec = 300,
-  } = (req.body || {}) as Partial<ControlSession>;
+  const { maxIntensity = 12, durationSec = 300 } = (req.body || {}) as Partial<ControlSession>;
   const ownerId = String(req.userId);
   const id = randId('sess');
   const token = randId('ctok');

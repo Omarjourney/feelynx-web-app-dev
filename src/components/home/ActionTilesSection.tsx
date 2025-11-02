@@ -24,7 +24,14 @@ type ActionTilesSectionProps = {
   gridClassName?: string;
 };
 
-export function ActionTilesSection({ id, title, description, actions, tiles, gridClassName }: ActionTilesSectionProps) {
+export function ActionTilesSection({
+  id,
+  title,
+  description,
+  actions,
+  tiles,
+  gridClassName,
+}: ActionTilesSectionProps) {
   const gridClasses = gridClassName ?? 'grid gap-5 md:grid-cols-2 xl:grid-cols-4';
 
   return (
@@ -36,7 +43,15 @@ export function ActionTilesSection({ id, title, description, actions, tiles, gri
       <PageSection id={id} title={title} description={description} actions={actions}>
         <div className={cn(gridClasses)}>
           {tiles.map(
-            ({ id: tileId, title: tileTitle, badge, description: tileDescription, icon: Icon, actionLabel, onAction }) => (
+            ({
+              id: tileId,
+              title: tileTitle,
+              badge,
+              description: tileDescription,
+              icon: Icon,
+              actionLabel,
+              onAction,
+            }) => (
               <Card
                 key={tileId}
                 className="glass-panel h-full border-white/10 bg-white/5 p-6 transition duration-300 hover:-translate-y-1"
@@ -47,7 +62,9 @@ export function ActionTilesSection({ id, title, description, actions, tiles, gri
                     <span className="text-[10px] uppercase tracking-[0.35em]">{badge}</span>
                   </div>
                   <CardTitle className="text-xl font-semibold text-white">{tileTitle}</CardTitle>
-                  <CardDescription className="text-sm text-white/70">{tileDescription}</CardDescription>
+                  <CardDescription className="text-sm text-white/70">
+                    {tileDescription}
+                  </CardDescription>
                 </div>
                 <Button
                   className="mt-6 rounded-full bg-gradient-primary text-xs font-semibold uppercase tracking-[0.3em] text-white shadow-glow"

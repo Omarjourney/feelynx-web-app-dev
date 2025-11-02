@@ -32,11 +32,15 @@ export function HeroSection({ onPrimaryCta, onSecondaryCta, stats }: HeroSection
         <div className="max-w-2xl space-y-6">
           <LiveIndicator label="Immersive streaming" />
           <div className="space-y-4">
-            <h1 id="hero-intro" className="text-4xl font-semibold leading-tight text-white md:text-5xl">
+            <h1
+              id="hero-intro"
+              className="text-4xl font-semibold leading-tight text-white md:text-5xl"
+            >
               A premium glassmorphism home for your live vibes
             </h1>
             <p className="max-w-xl text-base text-white/75">
-              Seamlessly browse live creators, curated crews, and Lovense-powered shows inside a focused experience crafted for retention.
+              Seamlessly browse live creators, curated crews, and Lovense-powered shows inside a
+              focused experience crafted for retention.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -44,6 +48,7 @@ export function HeroSection({ onPrimaryCta, onSecondaryCta, stats }: HeroSection
               size="lg"
               className="rounded-full bg-gradient-primary px-6 py-3 text-sm font-semibold uppercase tracking-[0.25em] text-white shadow-glow"
               onClick={onPrimaryCta}
+              aria-label="Launch creator studio to start streaming"
             >
               Launch creator studio
             </Button>
@@ -52,6 +57,7 @@ export function HeroSection({ onPrimaryCta, onSecondaryCta, stats }: HeroSection
               variant="secondary"
               className="rounded-full border border-white/15 bg-white/10 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white/80 hover:text-white"
               onClick={onSecondaryCta}
+              aria-label="Discover live streaming experiences"
             >
               Discover experiences
             </Button>

@@ -46,42 +46,47 @@ const App = () => (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <TooltipProvider>
+          <a href="#main-content" className="skip-to-main">
+            Skip to main content
+          </a>
           <PreviewBanner />
           <AutoThemeController />
           <Toaster />
           <Sonner />
           <BrowserRouter>
             <Navbar />
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/refactored" element={<IndexRefactored />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/explore" element={<Explore />} />
-              <Route path="/discover" element={<Explore />} />
-              <Route path="/creators" element={<Creators />} />
-              <Route path="/content" element={<Content />} />
-              <Route path="/connect" element={<Connect />} />
-              <Route path="/match" element={<Match />} />
-              <Route path="/groups" element={<Groups />} />
-              <Route path="/groups/:groupId" element={<GroupPage />} />
-              <Route path="/groups/:groupId/admin" element={<GroupAdmin />} />
-              <Route path="/dm" element={<DM />} />
-              <Route path="/live/:username" element={<Live />} />
-              <Route path="/live-creator" element={<LiveCreator />} />
-              <Route path="/stories" element={<Stories />} />
-              <Route path="/token-shop" element={<TokenShop />} />
-              <Route path="/coins" element={<TokenShop />} />
-              <Route path="/settings" element={<SettingsPrivacy />} />
-              <Route path="/patterns" element={<Navigate to="/toys" replace />} />
-              <Route path="/toys" element={<ToysHub />} />
-              <Route path="/remote" element={<Navigate to="/toys?tab=long" replace />} />
-              <Route path="/companions" element={<CompanionsHome />} />
-              <Route path="/contests" element={<ContestsFeed />} />
-              <Route path="/styleguide" element={<Styleguide />} />
-              <Route path="/call-room" element={<CallRoom />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <main id="main-content" role="main">
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/refactored" element={<IndexRefactored />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/explore" element={<Explore />} />
+                <Route path="/discover" element={<Explore />} />
+                <Route path="/creators" element={<Creators />} />
+                <Route path="/content" element={<Content />} />
+                <Route path="/connect" element={<Connect />} />
+                <Route path="/match" element={<Match />} />
+                <Route path="/groups" element={<Groups />} />
+                <Route path="/groups/:groupId" element={<GroupPage />} />
+                <Route path="/groups/:groupId/admin" element={<GroupAdmin />} />
+                <Route path="/dm" element={<DM />} />
+                <Route path="/live/:username" element={<Live />} />
+                <Route path="/live-creator" element={<LiveCreator />} />
+                <Route path="/stories" element={<Stories />} />
+                <Route path="/token-shop" element={<TokenShop />} />
+                <Route path="/coins" element={<TokenShop />} />
+                <Route path="/settings" element={<SettingsPrivacy />} />
+                <Route path="/patterns" element={<Navigate to="/toys" replace />} />
+                <Route path="/toys" element={<ToysHub />} />
+                <Route path="/remote" element={<Navigate to="/toys?tab=long" replace />} />
+                <Route path="/companions" element={<CompanionsHome />} />
+                <Route path="/contests" element={<ContestsFeed />} />
+                <Route path="/styleguide" element={<Styleguide />} />
+                <Route path="/call-room" element={<CallRoom />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </main>
             <GoLiveEntry />
             <IncomingCall />
           </BrowserRouter>

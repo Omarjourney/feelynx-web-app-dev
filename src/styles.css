@@ -174,6 +174,28 @@
       filter 320ms ease;
   }
 
+  /* Global keyboard navigation focus styles */
+  *:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  /* Skip to main content link for screen readers */
+  .skip-to-main {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--feelynx-pink);
+    color: white;
+    padding: 8px;
+    text-decoration: none;
+    z-index: 100;
+  }
+
+  .skip-to-main:focus {
+    top: 0;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     body {
       transition: none;
@@ -287,6 +309,12 @@
     box-shadow:
       0 0 0 2px hsl(var(--primary) / 0.55),
       0 0 25px hsl(var(--primary) / 0.35);
+  }
+  /* Enhanced focus styles for keyboard navigation (WCAG 2.1 compliant) */
+  .focus-visible-enhanced:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+    border-radius: 4px;
   }
   .button-ripple {
     position: relative;

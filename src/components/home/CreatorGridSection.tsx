@@ -16,7 +16,15 @@ type CreatorGridSectionProps = {
 
 const CreatorGrid = lazy(() => import('@/components/home/CreatorGrid'));
 
-export function CreatorGridSection({ id, title, creators, onSelect, onViewAll, viewAllLabel, emptyState }: CreatorGridSectionProps) {
+export function CreatorGridSection({
+  id,
+  title,
+  creators,
+  onSelect,
+  onViewAll,
+  viewAllLabel,
+  emptyState,
+}: CreatorGridSectionProps) {
   const gridContent = useMemo(() => {
     if (!creators.length) {
       return (

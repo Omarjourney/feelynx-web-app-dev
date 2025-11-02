@@ -15,7 +15,7 @@ const sharedSecurityRules = {
 
 export default tseslint.config(
   {
-    ignores: ['dist', 'scripts/*.mjs'],
+    ignores: ['dist', 'scripts/*.mjs', 'api/**/*.js'],
   },
   js.configs.recommended,
   {

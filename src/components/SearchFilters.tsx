@@ -35,7 +35,11 @@ export const SearchFilters = ({
   };
 
   return (
-    <div className="bg-card/50 backdrop-blur-sm p-6 rounded-lg border border-border space-y-4">
+    <div
+      className="bg-card/50 backdrop-blur-sm p-6 rounded-lg border border-border space-y-4"
+      role="search"
+      aria-label="Creator search and filters"
+    >
       <div className="flex flex-col sm:flex-row gap-4">
         {/* Search Bar */}
         <div className="relative w-full sm:w-[16rem]">
@@ -54,7 +58,10 @@ export const SearchFilters = ({
           value={country || 'all'}
           onValueChange={(value) => handleChange({ country: value })}
         >
-          <SelectTrigger className="w-full sm:w-[140px] bg-background/50">
+          <SelectTrigger
+            className="w-full sm:w-[140px] bg-background/50"
+            aria-label="Filter by country"
+          >
             <SelectValue placeholder="Country" />
           </SelectTrigger>
           <SelectContent>
@@ -71,7 +78,10 @@ export const SearchFilters = ({
           value={specialty || 'all'}
           onValueChange={(value) => handleChange({ specialty: value })}
         >
-          <SelectTrigger className="w-full sm:w-[140px] bg-background/50">
+          <SelectTrigger
+            className="w-full sm:w-[140px] bg-background/50"
+            aria-label="Filter by category"
+          >
             <SelectValue placeholder="Category" />
           </SelectTrigger>
           <SelectContent>
@@ -118,11 +128,18 @@ export const SearchFilters = ({
       <Tabs
         value={sort}
         onValueChange={(v) => handleChange({ sort: v as SearchFiltersState['sort'] })}
+        aria-label="Sort creators"
       >
-        <TabsList className="flex w-full flex-wrap gap-2">
-          <TabsTrigger value="trending">Trending</TabsTrigger>
-          <TabsTrigger value="newest">Newest</TabsTrigger>
-          <TabsTrigger value="followers">Most Followers</TabsTrigger>
+        <TabsList className="flex w-full flex-wrap gap-2" role="tablist">
+          <TabsTrigger value="trending" role="tab">
+            Trending
+          </TabsTrigger>
+          <TabsTrigger value="newest" role="tab">
+            Newest
+          </TabsTrigger>
+          <TabsTrigger value="followers" role="tab">
+            Most Followers
+          </TabsTrigger>
         </TabsList>
       </Tabs>
     </div>

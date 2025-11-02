@@ -55,6 +55,7 @@ export const Navbar = () => {
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 flex justify-center pb-[calc(var(--safe-area-bottom)+2.5rem)]">
       <motion.nav
         layout
+        aria-label="Main navigation"
         className="pointer-events-auto relative w-full max-w-xl px-6"
         initial={{ opacity: 0, y: 48 }}
         animate={{ opacity: 1, y: 0 }}
@@ -74,11 +75,20 @@ export const Navbar = () => {
               💎 <span className="ml-1">0/min</span>
             </span>
             {user ? (
-              <button onClick={handleSignOut} className="glass-chip hover:text-white" type="button">
+              <button
+                onClick={handleSignOut}
+                className="glass-chip hover:text-white"
+                type="button"
+                aria-label="Sign out of your account"
+              >
                 Sign out
               </button>
             ) : (
-              <Link to="/auth" className="glass-chip hover:text-white">
+              <Link
+                to="/auth"
+                className="glass-chip hover:text-white"
+                aria-label="Sign in to your account"
+              >
                 Sign in
               </Link>
             )}
@@ -94,6 +104,8 @@ export const Navbar = () => {
                 key={item.id}
                 type="button"
                 onClick={() => handleNavigate(item)}
+                aria-label={`Navigate to ${item.label}`}
+                aria-current={isActive ? 'page' : undefined}
                 className={cn(
                   'relative flex flex-1 flex-col items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70 transition',
                   isActive && 'text-white',
@@ -113,6 +125,7 @@ export const Navbar = () => {
                     isActive && 'bg-gradient-primary text-white shadow-glow',
                     isGoLive && 'h-14 w-14 -mt-4 shadow-glow-strong',
                   )}
+                  aria-hidden="true"
                 >
                   <Icon
                     className={cn(

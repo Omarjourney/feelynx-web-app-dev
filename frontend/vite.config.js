@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vite';
 
 // During local dev, proxy API and Socket.io to the backend
 export default defineConfig({
@@ -15,4 +15,4 @@ export default defineConfig({
       },
     },
   },
-})
+});
