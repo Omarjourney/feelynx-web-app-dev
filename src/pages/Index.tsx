@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate, Link } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
@@ -38,6 +38,54 @@ const Index = () => {
     if (normalized.endsWith('k')) return numeric * 1_000;
     return numeric;
   };
+
+  const [isThemeReady, setIsThemeReady] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      setIsThemeReady(true);
+      return;
+    }
+
+    const root = document.documentElement;
+    const hasThemeTokens = () => {
+      const styles = getComputedStyle(root);
+      const backgroundToken = styles.getPropertyValue('--background');
+      const foregroundToken = styles.getPropertyValue('--foreground');
+      return Boolean(backgroundToken.trim() || foregroundToken.trim());
+    };
+
+    if (hasThemeTokens()) {
+      setIsThemeReady(true);
+      return;
+    }
+
+    let intervalId: number | undefined;
+    let mutationObserver: MutationObserver | undefined;
+
+    const cleanup = () => {
+      mutationObserver?.disconnect();
+      if (intervalId !== undefined) {
+        window.clearInterval(intervalId);
+      }
+    };
+
+    const markReadyIfTokensExist = () => {
+      if (hasThemeTokens()) {
+        setIsThemeReady(true);
+        cleanup();
+      }
+    };
+
+    mutationObserver = new MutationObserver(markReadyIfTokensExist);
+    mutationObserver.observe(root, { attributes: true, attributeFilter: ['class', 'style'] });
+
+    intervalId = window.setInterval(markReadyIfTokensExist, 160);
+
+    markReadyIfTokensExist();
+
+    return cleanup;
+  }, []);
 
   const filteredCreators = useMemo(() => {
     return creators
@@ -153,13 +201,15 @@ const Index = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-transparent md:flex">
+    <div className="relative min-h-screen bg-[#05010f] text-white md:flex">
       <Navigation activeTab="home" onTabChange={() => undefined} />
       <main
         id="main-content"
         className="relative flex-1 overflow-x-hidden pb-[calc(9rem+var(--safe-area-bottom))]"
       >
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-white/5 to-transparent opacity-40" />
+        {isThemeReady && (
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-white/5 to-transparent opacity-40" />
+        )}
         <HeroLogoReveal />
 
         <section className="relative mx-auto mt-10 flex w-full max-w-6xl flex-col gap-12 px-4">
