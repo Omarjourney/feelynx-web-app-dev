@@ -120,7 +120,7 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
           const platformProfitPerCoin = platformMarginAmount / displayedTokens;
 
           if (platformProfitPerCoin < MIN_PLATFORM_PROFIT_PER_COIN) {
-            console.error(
+            console.warn(
               `Platform profit per coin dropped below the minimum for package ${pkg.id}.`,
             );
           }
