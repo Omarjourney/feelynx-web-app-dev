@@ -14,20 +14,16 @@ services:
       - backend
     restart: unless-stopped
 
-  # Node.js API (Express) + Socket.io on port 3001
+  # Backend app served on port 8000
   backend:
     build:
-      context: ../../api
-      dockerfile: Dockerfile
-    environment:
-      - NODE_ENV=production
-      - PORT=3001
-      - CORS_ORIGIN=https://dev.feelynx.live
+      context: ../..
+      dockerfile: Dockerfile.backend
     expose:
-      - "3001"
+      - "8000"
     restart: unless-stopped
 
-  # Public reverse proxy with TLS; serves static frontend and proxies API + WebSockets
+  # Public reverse proxy (HTTP); serves static frontend and proxies API + WebSockets
   nginx:
     image: nginx:1.25-alpine
     depends_on:
@@ -35,22 +31,12 @@ services:
       - backend
     ports:
       - "80:80"
-      - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - certs:/etc/letsencrypt/live/dev.feelynx.live:ro
       - frontend_dist:/usr/share/nginx/html:ro
     restart: unless-stopped
 
 volumes:
-  # Named volume mapped to host cert directory (uses bind via local driver)
-  certs:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /etc/letsencrypt/live/dev.feelynx.live
-
   # Where the built frontend (Vite) artifacts are published, then served by Nginx
   frontend_dist:
     driver: local
