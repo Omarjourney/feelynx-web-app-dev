@@ -1,59 +1,62 @@
-import type { KeyboardEvent } from 'react';
-import { Tooltip } from './Tooltip';
+import { motion } from 'framer-motion';
+import LiveBadge from '@/components/LiveBadge';
+import { cn } from '@/lib/utils';
 
-interface CreatorCardProps {
+export interface CreatorCardProps {
   name: string;
-  live: boolean;
+  live?: boolean;
   thumbnail: string;
-  earnings: string;
+  earnings?: string;
   onSelect?: () => void;
 }
 
-export type { CreatorCardProps };
-
 export const CreatorCard = ({ name, live, thumbnail, earnings, onSelect }: CreatorCardProps) => {
-  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if ((event.key === 'Enter' || event.key === ' ') && onSelect) {
-      event.preventDefault();
-      onSelect();
-    }
-  };
-
   return (
-    <article
-      className="glass-card flex flex-col overflow-hidden rounded-3xl text-foreground transition hover:bg-white/10"
-      role="button"
-      tabIndex={0}
+    <motion.button
+      type="button"
+      layout
+      whileHover={{ scale: 1.02 }}
+      whileFocus={{ scale: 1.01 }}
       onClick={onSelect}
-      onKeyDown={handleKeyDown}
-      aria-label={`Open creator profile for ${name}`}
+      className={cn(
+        'glass-card group relative flex h-full flex-col overflow-hidden rounded-3xl text-left shadow-lg transition',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+        'hover:bg-white/10'
+      )}
+      aria-label={`${name}${live ? ' is live' : ''}`.trim()}
     >
-      <div className="relative h-44 w-full overflow-hidden">
+      <div className="relative aspect-video w-full overflow-hidden rounded-2xl">
         <img
           src={thumbnail}
-          alt=""
-          className="h-full w-full object-cover"
+          alt={`${name} thumbnail`}
+          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+          loading="lazy"
         />
         {live && (
-          <Tooltip label="LIVE with Lovense">
-            <span className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full bg-rose-500 px-3 py-1 text-xs font-semibold text-white shadow-lg">
-              <span className="h-2 w-2 rounded-full bg-white" aria-hidden />
-              Live now
-            </span>
-          </Tooltip>
+          <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground shadow-md">
+            <span className="h-2 w-2 rounded-full bg-red-400" aria-hidden />
+            Live now
+          </span>
         )}
       </div>
-      <div className="flex flex-1 flex-col gap-3 p-4">
-        <div className="flex items-start justify-between">
-          <h3 className="text-lg font-semibold leading-tight">{name}</h3>
-          <span className="rounded-full bg-white/10 px-3 py-1 text-xs uppercase tracking-wide text-foreground/70">
-            {earnings}
-          </span>
+
+      <div className="mt-4 flex flex-1 flex-col justify-between space-y-3">
+        <div className="space-y-1">
+          <h3 className="text-xl font-semibold tracking-tight text-foreground">{name}</h3>
+          {earnings && (
+            <p className="text-sm text-foreground/70" aria-label={`Earnings ${earnings}`}>
+              Earnings: <span className="font-medium text-primary">{earnings}</span>
+            </p>
+          )}
         </div>
-        <p className="text-sm text-foreground/70">
-          Chill ambience, responsive chat, and safe moderation for a steady fan crew.
-        </p>
+        {live ? (
+          <LiveBadge className="w-full justify-center" label="LIVE with Lovense" />
+        ) : (
+          <span className="inline-flex items-center justify-center rounded-full border border-white/10 px-4 py-2 text-sm text-foreground/70">
+            Offline replay
+          </span>
+        )}
       </div>
-    </article>
+    </motion.button>
   );
 };

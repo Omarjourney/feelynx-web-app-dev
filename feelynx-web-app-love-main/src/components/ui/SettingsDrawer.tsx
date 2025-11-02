@@ -1,98 +1,166 @@
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Settings2 } from 'lucide-react';
+import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
+import { Button } from '@/components/ui/button';
+import { Slider } from '@/components/ui/slider';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+
+const LANGUAGES = ['EN', 'ES', 'PT', 'FR'] as const;
+
+type ExperienceTheme = 'vibe' | 'midnight' | 'electric';
+
+const readLocal = (key: string, fallback: string) => {
+  try {
+    return localStorage.getItem(key) ?? fallback;
+  } catch (error) {
+    console.warn('Unable to read localStorage key', key, error);
+    return fallback;
+  }
+};
+
+const writeLocal = (key: string, value: string) => {
+  try {
+    localStorage.setItem(key, value);
+  } catch (error) {
+    console.warn('Unable to persist localStorage key', key, error);
+  }
+};
 
 export const SettingsDrawer = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [fontScale, setFontScale] = useState(1);
+  const [open, setOpen] = useState(false);
   const [brightness, setBrightness] = useState(1);
-  const dialogTitleId = useId();
-  const drawerId = useId();
+  const [fontScale, setFontScale] = useState(1);
+  const [language, setLanguage] = useState<(typeof LANGUAGES)[number]>('EN');
+  const [experienceTheme, setExperienceTheme] = useState<ExperienceTheme>('vibe');
 
   useEffect(() => {
-    document.documentElement.style.setProperty('--app-font-scale', fontScale.toString());
+    if (!open) return;
+    const storedLanguage =
+      readLocal('feelynx.language', readLocal('ivibes.language', language)) as (typeof LANGUAGES)[number];
+    const storedTheme =
+      readLocal('feelynx.experienceTheme', readLocal('ivibes.experienceTheme', experienceTheme)) as ExperienceTheme;
+    const storedBrightness = Number(readLocal('feelynx.brightness', readLocal('ivibes.brightness', '1')));
+    const storedFontScale = Number(readLocal('feelynx.fontScale', readLocal('ivibes.fontScale', '1')));
+
+    setLanguage(storedLanguage ?? 'EN');
+    if (storedTheme === 'midnight' || storedTheme === 'electric') {
+      setExperienceTheme(storedTheme);
+    } else {
+      setExperienceTheme('vibe');
+    }
+    setBrightness(Number.isFinite(storedBrightness) ? storedBrightness : 1);
+    setFontScale(Number.isFinite(storedFontScale) ? storedFontScale : 1);
+  }, [open]);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--app-brightness', brightness.toFixed(2));
+    writeLocal('feelynx.brightness', brightness.toString());
+  }, [brightness]);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--app-font-scale', fontScale.toFixed(2));
+    writeLocal('feelynx.fontScale', fontScale.toString());
   }, [fontScale]);
 
   useEffect(() => {
-    document.documentElement.style.setProperty('--app-brightness', brightness.toString());
-  }, [brightness]);
+    if (experienceTheme === 'vibe') {
+      document.documentElement.removeAttribute('data-experience-theme');
+    } else {
+      document.documentElement.setAttribute('data-experience-theme', experienceTheme);
+    }
+    writeLocal('feelynx.experienceTheme', experienceTheme);
+  }, [experienceTheme]);
 
-  const closeDrawer = () => setIsOpen(false);
+  useEffect(() => {
+    writeLocal('feelynx.language', language);
+  }, [language]);
 
   return (
     <>
-      <button
+      <Button
         type="button"
-        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/10 text-lg transition hover:bg-white/20"
-        onClick={() => setIsOpen(true)}
-        aria-haspopup="dialog"
-        aria-expanded={isOpen}
-        aria-controls={drawerId}
-        aria-label="Open settings drawer"
+        variant="secondary"
+        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/10 text-foreground transition hover:bg-white/20 focus-visible:ring-2 focus-visible:ring-primary"
+        aria-label="Open comfort settings"
+        onClick={() => setOpen(true)}
       >
-        ⚙️
-      </button>
+        <span aria-hidden className="text-lg">
+          <Settings2 className="h-5 w-5" />
+        </span>
+      </Button>
 
-      {isOpen ? (
-        <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 px-4 pt-20"
-          role="presentation"
-          onClick={closeDrawer}
-        >
-          <div
-            id={drawerId}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby={dialogTitleId}
-            className="glass-card w-full max-w-md rounded-t-3xl border border-white/10 bg-slate-900/90 p-6 text-foreground"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="flex items-center justify-between">
-              <h2 id={dialogTitleId} className="m-0 text-xl font-semibold">
-                Studio preferences
-              </h2>
-              <button
-                type="button"
-                className="rounded-full border border-white/10 px-3 py-1 text-sm text-foreground/70 transition hover:bg-white/10"
-                onClick={closeDrawer}
-                aria-label="Close settings drawer"
-              >
-                Close
-              </button>
+      <Drawer open={open} onOpenChange={setOpen}>
+        <DrawerContent className="mx-auto w-full max-w-lg space-y-6 rounded-t-3xl bg-background/95 p-6 shadow-2xl">
+          <DrawerHeader className="space-y-2 text-left">
+            <DrawerTitle className="text-2xl font-semibold tracking-tight">Comfort controls</DrawerTitle>
+            <DrawerDescription className="text-sm text-foreground/70">
+              Tune the interface for readability and accessibility across any lighting.
+            </DrawerDescription>
+          </DrawerHeader>
+
+          <section className="space-y-4">
+            <div className="flex items-center justify-between text-sm">
+              <p className="font-medium text-foreground">Brightness</p>
+              <span className="text-xs text-foreground/60">{Math.round(brightness * 100)}%</span>
             </div>
+            <Slider
+              min={0.6}
+              max={1.2}
+              step={0.05}
+              value={[brightness]}
+              onValueChange={([value]) => setBrightness(Number(value.toFixed(2)))}
+              aria-label="Adjust brightness"
+            />
+          </section>
 
-            <div className="mt-6 space-y-6">
-              <label className="flex flex-col gap-2 text-sm">
-                <span className="font-medium text-foreground">Font size</span>
-                <input
-                  type="range"
-                  min={0.9}
-                  max={1.2}
-                  step={0.05}
-                  value={fontScale}
-                  onChange={(event) => setFontScale(Number(event.target.value))}
-                  className="accent-primary"
-                  aria-valuetext={`${Math.round(fontScale * 100)} percent`}
-                />
-                <span className="text-xs text-foreground/70">Adjust typography for long reading sessions.</span>
-              </label>
-
-              <label className="flex flex-col gap-2 text-sm">
-                <span className="font-medium text-foreground">Brightness</span>
-                <input
-                  type="range"
-                  min={0.8}
-                  max={1.1}
-                  step={0.05}
-                  value={brightness}
-                  onChange={(event) => setBrightness(Number(event.target.value))}
-                  className="accent-secondary"
-                  aria-valuetext={`${Math.round(brightness * 100)} percent`}
-                />
-                <span className="text-xs text-foreground/70">Tone down glare during night streams.</span>
-              </label>
+          <section className="space-y-4">
+            <div className="flex items-center justify-between text-sm">
+              <p className="font-medium text-foreground">Font size</p>
+              <span className="text-xs text-foreground/60">{Math.round(fontScale * 100)}%</span>
             </div>
-          </div>
-        </div>
-      ) : null}
+            <Slider
+              min={0.9}
+              max={1.3}
+              step={0.05}
+              value={[fontScale]}
+              onValueChange={([value]) => setFontScale(Number(value.toFixed(2)))}
+              aria-label="Adjust font scale"
+            />
+          </section>
+
+          <section className="space-y-3">
+            <p className="text-sm font-medium text-foreground">Experience theme</p>
+            <ToggleGroup type="single" value={experienceTheme} onValueChange={(value) => value && setExperienceTheme(value as ExperienceTheme)}>
+              <ToggleGroupItem value="vibe" aria-label="Use vibe theme" className="flex-1">Vibe</ToggleGroupItem>
+              <ToggleGroupItem value="midnight" aria-label="Use midnight theme" className="flex-1">
+                Midnight
+              </ToggleGroupItem>
+              <ToggleGroupItem value="electric" aria-label="Use electric theme" className="flex-1">
+                Electric
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </section>
+
+          <section className="space-y-3">
+            <p className="text-sm font-medium text-foreground">Language</p>
+            <div className="grid grid-cols-2 gap-2">
+              {LANGUAGES.map((lng) => (
+                <Button
+                  key={lng}
+                  type="button"
+                  variant={language === lng ? 'default' : 'secondary'}
+                  onClick={() => setLanguage(lng)}
+                  aria-pressed={language === lng}
+                  className="justify-between"
+                >
+                  <span>{lng}</span>
+                  {language === lng && <span className="text-xs text-primary-foreground/80">Selected</span>}
+                </Button>
+              ))}
+            </div>
+          </section>
+        </DrawerContent>
+      </Drawer>
     </>
   );
 };

@@ -1,3 +1,6 @@
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+
 interface BalanceBarProps {
   coins: number;
   usdValue: number;
@@ -7,42 +10,44 @@ interface BalanceBarProps {
 
 export const BalanceBar = ({ coins, usdValue, onRecharge, onWithdraw }: BalanceBarProps) => {
   return (
-    <section
-      className="glass-card flex flex-col gap-4 rounded-3xl p-5 text-sm text-foreground md:flex-row md:items-center md:justify-between"
+    <div
+      className="glass-card flex flex-wrap items-center justify-between gap-4 rounded-3xl px-6 py-4 text-sm text-foreground"
       role="status"
       aria-live="polite"
-      aria-label="Current balance"
     >
       <div className="flex items-center gap-3">
         <span className="text-2xl" aria-hidden>
           💎
         </span>
         <div>
-          <p className="text-xs uppercase tracking-[0.25em] text-foreground/70">Available balance</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-foreground/60">Available balance</p>
           <p className="text-lg font-semibold text-foreground">
             {coins.toLocaleString()} VibeCoins
             <span className="ml-2 text-sm text-foreground/70">≈ ${usdValue.toFixed(2)} USD</span>
           </p>
         </div>
       </div>
-      <div className="flex flex-wrap gap-3">
-        <button
+      <div className="flex items-center gap-3">
+        <Button
           type="button"
+          variant="secondary"
+          className="min-h-11 min-w-[120px] rounded-full px-5"
           onClick={onRecharge}
-          className="min-h-[44px] min-w-[140px] rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white transition hover:scale-[1.02]"
           aria-label="Recharge VibeCoins"
         >
           Buy coins
-        </button>
-        <button
+        </Button>
+        <Separator orientation="vertical" className="hidden h-8 md:block" />
+        <Button
           type="button"
+          variant="ghost"
+          className="min-h-11 min-w-[120px] rounded-full border border-white/10 px-5 text-foreground/70 hover:bg-white/10"
           onClick={onWithdraw}
-          className="min-h-[44px] min-w-[140px] rounded-full border border-white/20 px-5 py-2 text-sm font-semibold text-foreground transition hover:bg-white/10"
           aria-label="Withdraw funds"
         >
           Withdraw
-        </button>
+        </Button>
       </div>
-    </section>
+    </div>
   );
 };

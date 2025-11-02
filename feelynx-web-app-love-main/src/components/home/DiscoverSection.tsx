@@ -1,5 +1,5 @@
-import { CreatorCard, type CreatorCardProps } from '../ui/CreatorCard';
-import { Tooltip } from '../ui/Tooltip';
+import { CreatorCard, CreatorCardProps } from '@/components/ui/CreatorCard';
+import { Tooltip } from '@/components/ui/Tooltip';
 
 interface DiscoverSectionProps {
   creators: CreatorCardProps[];
@@ -8,16 +8,18 @@ interface DiscoverSectionProps {
 
 export const DiscoverSection = ({ creators, onSelectCreator }: DiscoverSectionProps) => {
   return (
-    <section id="discover" aria-labelledby="discover-heading" className="space-y-6 px-0">
+    <section aria-labelledby="discover" className="space-y-6">
       <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
         <div>
-          <h2 id="discover-heading">Featured creators</h2>
-          <p className="text-foreground/70">
-            A calm grid that highlights safe, curated rooms with consistent schedules and vibe goals.
+          <h2 id="discover" className="text-2xl font-medium">
+            Featured creators
+          </h2>
+          <p className="text-base leading-relaxed text-foreground/70">
+            Curated live shows with transparent Lovense goals and consistent schedules.
           </p>
         </div>
-        <Tooltip label="Fan Crew creators are moderated performers with reliable Lovense setups and community guidelines.">
-          <span className="inline-flex items-center gap-2 self-start rounded-full border border-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-foreground/70">
+        <Tooltip label="Fan Crew creators are verified hosts with steady vibes and moderated chats.">
+          <span className="inline-flex items-center gap-2 self-start rounded-full border border-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-foreground/60">
             Fan Crew
           </span>
         </Tooltip>

@@ -1,39 +1,60 @@
+import { Button } from '@/components/ui/button';
+import { Sparkles, Radio, Compass } from 'lucide-react';
+
 export interface OnboardingTip {
   title: string;
   description: string;
   actionLabel: string;
-  onAction?: () => void;
+  onClick: () => void;
 }
 
 interface OnboardingTipsProps {
   tips: OnboardingTip[];
 }
 
+const icons = [Sparkles, Radio, Compass];
+
 export const OnboardingTips = ({ tips }: OnboardingTipsProps) => {
   return (
-    <section id="onboarding" aria-labelledby="onboarding-heading" className="space-y-6">
-      <div className="flex flex-col gap-2">
-        <h2 id="onboarding-heading">Quick onboarding tips</h2>
-        <p className="text-foreground/70">
-          New to Feelynx? Start with these quick wins to launch a safe, monetized room within minutes.
-        </p>
+    <section aria-labelledby="onboarding" className="space-y-6">
+      <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h2 id="onboarding" className="text-2xl font-medium">
+            Onboarding essentials
+          </h2>
+          <p className="text-base leading-relaxed text-foreground/70">
+            Quick wins to publish your first show and grow your first 100 supporters.
+          </p>
+        </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3" role="list">
-        {tips.map((tip) => (
-          <article key={tip.title} className="glass-card flex flex-col gap-3 rounded-3xl p-5 text-sm text-foreground">
-            <h3 className="text-lg font-semibold">{tip.title}</h3>
-            <p className="text-foreground/70">{tip.description}</p>
-            <button
-              type="button"
-              onClick={tip.onAction}
-              className="mt-auto inline-flex min-h-[44px] items-center justify-center rounded-full bg-secondary px-4 py-2 text-sm font-semibold text-white transition hover:scale-[1.02]"
-              aria-label={tip.actionLabel}
+      <div className="grid gap-4 md:grid-cols-3">
+        {tips.map((tip, index) => {
+          const Icon = icons[index % icons.length];
+          return (
+            <article
+              key={tip.title}
+              className="glass-card flex h-full flex-col justify-between rounded-3xl p-5"
+              aria-label={tip.title}
             >
-              {tip.actionLabel}
-            </button>
-          </article>
-        ))}
+              <div className="space-y-3">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-primary">
+                  <Icon className="h-5 w-5" aria-hidden />
+                </span>
+                <h3 className="text-xl font-semibold tracking-tight text-foreground">{tip.title}</h3>
+                <p className="text-sm leading-relaxed text-foreground/70">{tip.description}</p>
+              </div>
+              <Button
+                type="button"
+                className="mt-4 w-full rounded-full"
+                onClick={tip.onClick}
+                aria-label={tip.actionLabel}
+              >
+                {tip.actionLabel}
+              </Button>
+            </article>
+          );
+        })}
       </div>
     </section>
   );
