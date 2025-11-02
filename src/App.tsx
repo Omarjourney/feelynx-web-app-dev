@@ -38,6 +38,7 @@ import Styleguide from './pages/Styleguide';
 import { Navbar } from '@/components/Navbar';
 import AutoThemeController from '@/components/AutoThemeController';
 import PreviewBanner from '@/components/PreviewBanner';
+import { FeedbackButton } from '@/components/FeedbackButton';
 
 const queryClient = new QueryClient();
 
@@ -89,6 +90,7 @@ const App = () => (
             </main>
             <GoLiveEntry />
             <IncomingCall />
+            <FeedbackButton />
           </BrowserRouter>
         </TooltipProvider>
       </ThemeProvider>
