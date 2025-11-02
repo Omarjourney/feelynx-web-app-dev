@@ -35,7 +35,7 @@ import ContestsFeed from './features/contests/ContestsFeed';
 import GoLiveEntry from '@/components/GoLiveEntry';
 import IncomingCall from '@/components/IncomingCall';
 import Styleguide from './pages/Styleguide';
-import Navbar from '@/components/Navbar';
+import { Navbar } from '@/components/Navbar';
 import AutoThemeController from '@/components/AutoThemeController';
 import PreviewBanner from '@/components/PreviewBanner';
 

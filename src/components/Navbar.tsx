@@ -20,7 +20,7 @@ const navItems: NavItem[] = [
   { id: 'profile', label: 'Profile', to: '/dashboard', icon: UserRound },
 ];
 
-const Navbar = () => {
+export const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
@@ -150,5 +150,3 @@ const Navbar = () => {
     </div>
   );
 };
-
-export default Navbar;
