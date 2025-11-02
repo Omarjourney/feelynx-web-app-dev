@@ -1,2 +1,2 @@
-Feelynx placeholder asset for ashall.txt
-Served from /frontend/public/ashall.txt via Vite static copy to dist.
+Feelynx - Live (Dev)
+This file is served from /public/ashall.txt by Vite.
