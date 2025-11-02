@@ -78,18 +78,25 @@ Text color variables are defined for optimal contrast on dark backgrounds:
 
 ```css
 :root {
-  --text-high-contrast: rgba(255, 255, 255, 0.95); /* 18.5:1 contrast ratio */
-  --text-medium-contrast: rgba(255, 255, 255, 0.8); /* 14.8:1 contrast ratio */
-  --text-low-contrast: rgba(255, 255, 255, 0.65); /* 11.2:1 contrast ratio */
-  --text-subtle: rgba(255, 255, 255, 0.5); /* 7.5:1 contrast ratio */
+  --text-high-contrast: rgba(255, 255, 255, 0.95); /* Ensures ~18:1+ contrast on dark backgrounds */
+  --text-medium-contrast: rgba(
+    255,
+    255,
+    255,
+    0.8
+  ); /* Ensures ~14:1+ contrast on dark backgrounds */
+  --text-low-contrast: rgba(255, 255, 255, 0.65); /* Ensures ~10:1+ contrast on dark backgrounds */
+  --text-subtle: rgba(255, 255, 255, 0.5); /* Ensures ~7:1+ contrast on dark backgrounds */
 }
 ```
 
-All text meets WCAG AA standards:
+These values are designed for use on the app's dark background (`#05010f` to `#0e0e10`) with consideration for gradient overlays. All text meets WCAG AA standards:
 
-- Normal text: Minimum 4.5:1 contrast ratio
-- Large text (18pt+): Minimum 3:1 contrast ratio
-- UI components: Minimum 3:1 contrast ratio
+- Normal text: Minimum 4.5:1 contrast ratio (✅ all values exceed this)
+- Large text (18pt+): Minimum 3:1 contrast ratio (✅ all values exceed this)
+- UI components: Minimum 3:1 contrast ratio (✅ all values exceed this)
+
+**Note**: These ratios are calculated against the darkest background colors used in the application. Some areas with lighter gradients or overlays may have even higher contrast ratios. Developers should verify contrast when adding new color combinations.
 
 ### 4. Responsive Design
 

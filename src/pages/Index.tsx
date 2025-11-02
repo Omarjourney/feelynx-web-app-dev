@@ -205,11 +205,7 @@ const Index = () => {
   return (
     <div className="relative min-h-screen bg-[#05010f] text-white md:flex">
       <Navigation activeTab="home" onTabChange={() => undefined} />
-      <main
-        id="main-content"
-        className="relative flex-1 overflow-x-hidden pb-[calc(9rem+var(--safe-area-bottom))]"
-        role="main"
-      >
+      <div className="relative flex-1 overflow-x-hidden pb-[calc(9rem+var(--safe-area-bottom))]">
         {isThemeReady && (
           <div
             className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-white/5 to-transparent opacity-40"
@@ -437,7 +433,7 @@ const Index = () => {
             DMCA Notice
           </Link>
         </footer>
-      </main>
+      </div>
     </div>
   );
 };
