@@ -1,0 +1,2 @@
+Feelynx placeholder asset for ashall.txt
+Served from /frontend/public/ashall.txt via Vite static copy to dist.
