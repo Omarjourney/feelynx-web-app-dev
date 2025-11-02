@@ -32,7 +32,7 @@ const server = http.createServer(app);
 
 // Socket.io behind Nginx, on default path /socket.io
 const io = new Server(server, {
-  path: '/socket.io/',
+  path: '/socket.io',
   cors: {
     origin: CORS_ORIGIN,
     methods: ['GET', 'POST'],
