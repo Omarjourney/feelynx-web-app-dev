@@ -23,6 +23,8 @@ export default defineConfig(({ mode }) => ({
       '/rooms': { target: 'http://localhost:3001', changeOrigin: true },
       '/moderation': { target: 'http://localhost:3001', changeOrigin: true },
       '/control': { target: 'http://localhost:3001', changeOrigin: true },
+      '/presence': { target: 'http://localhost:3001', changeOrigin: true },
+      '/calls': { target: 'http://localhost:3001', changeOrigin: true },
       '/toys': { target: 'http://localhost:3001', changeOrigin: true },
       '/patterns': { target: 'http://localhost:3001', changeOrigin: true },
     },

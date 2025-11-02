@@ -1,13 +1,14 @@
-import { Router } from 'express';
+import { Router, type Request, type Response } from 'express';
 import crypto from 'crypto';
 import { publishCommand, publishEnd } from '../wsControl';
+import { authenticateToken } from './auth.js';
 
 const router = Router();
 
 type ControlSession = {
   id: string;
   token: string; // bearer presented by controller
-  ownerId: string; // performer user id (placeholder)
+  ownerId: string; // performer user id
   controllerId?: string; // optional controller identity
   maxIntensity: number; // 0-20
   durationSec: number; // max session duration
@@ -21,13 +22,28 @@ function randId(prefix: string) {
   return `${prefix}_${crypto.randomBytes(8).toString('hex')}`;
 }
 
+interface AuthRequest extends Request {
+  userId?: number;
+}
+
+function ensureAuthenticated(req: AuthRequest, res: Response) {
+  const { userId } = req;
+  if (!userId || userId === 0) {
+    res.status(401).json({ error: 'unauthorized' });
+    return false;
+  }
+  return true;
+}
+
 // Create a consented control session (performer-side action)
-router.post('/sessions', (req, res) => {
+router.post('/sessions', authenticateToken, (req: AuthRequest, res) => {
+  if (!ensureAuthenticated(req, res)) return;
+
   const {
-    ownerId = 'owner_demo',
     maxIntensity = 12,
     durationSec = 300,
   } = (req.body || {}) as Partial<ControlSession>;
+  const ownerId = String(req.userId);
   const id = randId('sess');
   const token = randId('ctok');
   const sess: ControlSession = {
@@ -50,10 +66,12 @@ router.post('/sessions', (req, res) => {
 });
 
 // Revoke session early
-router.post('/sessions/:id/revoke', (req, res) => {
+router.post('/sessions/:id/revoke', authenticateToken, (req: AuthRequest, res) => {
   const { id } = req.params;
   const sess = SESSIONS.get(id);
   if (!sess) return res.status(404).json({ error: 'not_found' });
+  if (!ensureAuthenticated(req, res)) return;
+  if (String(req.userId) !== sess.ownerId) return res.status(403).json({ error: 'forbidden' });
   sess.revoked = true;
   SESSIONS.set(id, sess);
   publishEnd(id);
