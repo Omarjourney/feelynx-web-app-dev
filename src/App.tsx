@@ -38,6 +38,7 @@ import Styleguide from './pages/Styleguide';
 import Navbar from '@/components/Navbar';
 import AutoThemeController from '@/components/AutoThemeController';
 import PreviewBanner from '@/components/PreviewBanner';
+import IdeaGenerator from './pages/IdeaGenerator';
 
 const queryClient = new QueryClient();
 
@@ -80,6 +81,7 @@ const App = () => (
               <Route path="/styleguide" element={<Styleguide />} />
               <Route path="/call-room" element={<CallRoom />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/ideas" element={<IdeaGenerator />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <GoLiveEntry />
