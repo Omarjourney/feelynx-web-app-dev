@@ -208,13 +208,17 @@ const Index = () => {
       <main
         id="main-content"
         className="relative flex-1 overflow-x-hidden pb-[calc(9rem+var(--safe-area-bottom))]"
+        role="main"
       >
         {isThemeReady && (
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-white/5 to-transparent opacity-40" />
+          <div
+            className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-white/5 to-transparent opacity-40"
+            aria-hidden="true"
+          />
         )}
         <HeroLogoReveal />
 
-        <section className="relative mx-auto mt-10 flex w-full max-w-6xl flex-col gap-12 px-4">
+        <section className="relative mx-auto mt-10 flex w-full max-w-7xl flex-col gap-16 px-4 md:px-6 lg:px-8">
           <HeroSection
             stats={heroStats}
             onPrimaryCta={() => navigate('/call-room')}

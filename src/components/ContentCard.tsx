@@ -48,7 +48,12 @@ const ContentCard = ({
     <div className="relative">
       <Dialog>
         <DialogTrigger asChild>
-          <div className="group cursor-pointer overflow-hidden rounded-lg">
+          <div
+            className="group cursor-pointer overflow-hidden rounded-lg"
+            role="button"
+            tabIndex={0}
+            aria-label={`View ${title || username}'s ${mediaType} content${locked ? ' (locked)' : ''}`}
+          >
             {mediaType === 'image' ? (
               <img
                 src={src}
@@ -90,7 +95,12 @@ const ContentCard = ({
                 </Avatar>
                 <span className="text-sm text-white">{username}</span>
               </div>
-              <Button size="sm" variant="secondary" onClick={(e) => e.stopPropagation()}>
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={(e) => e.stopPropagation()}
+                aria-label={`Follow ${username}`}
+              >
                 Follow
               </Button>
             </div>
@@ -132,15 +142,15 @@ const ContentCard = ({
               </div>
             )}
             <div className="flex gap-4">
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" aria-label={`Like - ${likes} likes`}>
                 <Heart className="mr-1 h-4 w-4" />
                 {likes}
               </Button>
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" aria-label={`Comment - ${comments} comments`}>
                 <MessageCircle className="mr-1 h-4 w-4" />
                 {comments}
               </Button>
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" aria-label="Share content">
                 <Share2 className="mr-1 h-4 w-4" />
                 Share
               </Button>
