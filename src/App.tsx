@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from 'next-themes';
 import Auth from './pages/Auth';
 import Index from './pages/Index';
+import IndexRefactored from './pages/IndexRefactored';
 import TokenShop from './pages/TokenShop';
 import CallRoom from './pages/CallRoom';
 import Dashboard from './pages/Dashboard';
@@ -53,6 +54,7 @@ const App = () => (
             <Navbar />
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/refactored" element={<IndexRefactored />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/explore" element={<Explore />} />
               <Route path="/discover" element={<Explore />} />

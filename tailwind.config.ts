@@ -20,6 +20,9 @@ export default {
     },
     extend: {
       colors: {
+        primary: '#ff66cc',
+        secondary: '#7a4df3',
+        glass: 'rgba(255,255,255,0.1)',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
@@ -104,6 +107,9 @@ export default {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
       },
       keyframes: {
         'accordion-down': {

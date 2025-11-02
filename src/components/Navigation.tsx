@@ -1,27 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import {
-  Compass,
-  Gauge,
-  Home,
-  Languages,
-  Menu,
-  Radio,
-  Sparkles,
-  UserRound,
-  PhoneCall,
-} from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Slider } from '@/components/ui/slider';
+import { Compass, Gauge, Home, Menu, Radio, Sparkles, UserRound, PhoneCall } from 'lucide-react';
 import feelynxWordmark from '@/assets/feelynx-wordmark.svg';
 import PreviewBanner from '@/components/PreviewBanner';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -62,10 +43,6 @@ interface NavigationProps {
 export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
   const [coins] = useState(2547);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [language, setLanguage] = useState('EN');
-  const [experienceTheme, setExperienceTheme] = useState<'vibe' | 'midnight' | 'electric'>('vibe');
-  const [brightness, setBrightness] = useState(1);
-  const [fontScale, setFontScale] = useState(1);
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
@@ -86,46 +63,6 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
       return 'profile';
     return 'home';
   }, [activeTab, pathname]);
-
-  useEffect(() => {
-    // Read Feelynx keys first, then fall back to legacy ivibes.* keys for compatibility
-    const storedLanguage =
-      localStorage.getItem('feelynx.language') || localStorage.getItem('ivibes.language');
-    const storedTheme =
-      localStorage.getItem('feelynx.experienceTheme') ||
-      localStorage.getItem('ivibes.experienceTheme');
-    const storedBrightness =
-      localStorage.getItem('feelynx.brightness') || localStorage.getItem('ivibes.brightness');
-    const storedFontScale =
-      localStorage.getItem('feelynx.fontScale') || localStorage.getItem('ivibes.fontScale');
-    if (storedLanguage) setLanguage(storedLanguage);
-    if (storedTheme === 'midnight' || storedTheme === 'electric') setExperienceTheme(storedTheme);
-    if (storedBrightness) setBrightness(Number(storedBrightness));
-    if (storedFontScale) setFontScale(Number(storedFontScale));
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.style.setProperty('--app-brightness', brightness.toFixed(2));
-    localStorage.setItem('feelynx.brightness', brightness.toString());
-  }, [brightness]);
-
-  useEffect(() => {
-    document.documentElement.style.setProperty('--app-font-scale', fontScale.toFixed(2));
-    localStorage.setItem('feelynx.fontScale', fontScale.toString());
-  }, [fontScale]);
-
-  useEffect(() => {
-    if (experienceTheme === 'vibe') {
-      document.documentElement.removeAttribute('data-experience-theme');
-    } else {
-      document.documentElement.setAttribute('data-experience-theme', experienceTheme);
-    }
-    localStorage.setItem('feelynx.experienceTheme', experienceTheme);
-  }, [experienceTheme]);
-
-  useEffect(() => {
-    localStorage.setItem('feelynx.language', language);
-  }, [language]);
 
   const handleNav = (id: (typeof navItems)[number]['id'], to: string) => {
     onTabChange?.(id);
@@ -209,86 +146,6 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
               >
                 Leaderboard
               </Button>
-            </div>
-          </div>
-
-          <div className="space-y-4 rounded-3xl border border-border/40 bg-sidebar-accent/60 p-4">
-            <div className="flex items-center justify-between text-xs uppercase tracking-widest text-muted-foreground">
-              <span>Comfort Controls</span>
-              <Languages className="h-4 w-4" />
-            </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="secondary" className="w-full justify-between">
-                  <span className="flex items-center gap-2 text-sm font-semibold">
-                    {language}
-                    <span className="text-xs text-muted-foreground">Localized</span>
-                  </span>
-                  <Menu className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-44">
-                <DropdownMenuLabel>Select language</DropdownMenuLabel>
-                <DropdownMenuRadioGroup
-                  value={language}
-                  onValueChange={(value) => setLanguage(value)}
-                >
-                  {['EN', 'ES', 'PT', 'FR'].map((lng) => (
-                    <DropdownMenuRadioItem key={lng} value={lng}>
-                      {lng === 'EN' && 'English'}
-                      {lng === 'ES' && 'Español'}
-                      {lng === 'PT' && 'Português'}
-                      {lng === 'FR' && 'Français'}
-                    </DropdownMenuRadioItem>
-                  ))}
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span>Brightness</span>
-                <span>{Math.round(brightness * 100)}%</span>
-              </div>
-              <Slider
-                value={[brightness]}
-                min={0.6}
-                max={1.2}
-                step={0.05}
-                onValueChange={([value]) => setBrightness(Number(value.toFixed(2)))}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span>Font size</span>
-                <span>{Math.round(fontScale * 100)}%</span>
-              </div>
-              <Slider
-                value={[fontScale]}
-                min={0.9}
-                max={1.3}
-                step={0.05}
-                onValueChange={([value]) => setFontScale(Number(value.toFixed(2)))}
-              />
-            </div>
-
-            <div className="flex gap-2">
-              {[
-                { id: 'vibe', label: 'Vibe' },
-                { id: 'midnight', label: 'Midnight' },
-                { id: 'electric', label: 'Electric' },
-              ].map((theme) => (
-                <Button
-                  key={theme.id}
-                  variant={experienceTheme === theme.id ? 'default' : 'secondary'}
-                  size="sm"
-                  className="flex-1"
-                  onClick={() => setExperienceTheme(theme.id as typeof experienceTheme)}
-                >
-                  {theme.label}
-                </Button>
-              ))}
             </div>
           </div>
 
