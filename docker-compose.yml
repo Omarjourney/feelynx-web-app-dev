@@ -43,6 +43,7 @@ services:
     image: livekit/livekit-server:latest
     restart: unless-stopped
     ports:
+      - "7880:7880"
       - "7881:7881/udp"
     volumes:
       - ./livekit.yaml:/etc/livekit/livekit.yaml
@@ -70,7 +71,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "7880:7880"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - ./caddy_data:/data

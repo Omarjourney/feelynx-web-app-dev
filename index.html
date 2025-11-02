@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Feelynx</title>
+    <meta name="description" content="Feelynx — live entertainment with neon energy." />
+    <meta name="author" content="Feelynx" />
+
+    <meta property="og:title" content="Feelynx" />
+    <meta property="og:description" content="Feelynx — live entertainment with neon energy." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/icons/feelynx-icon-1024.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@feelynx" />
+    <meta name="twitter:image" content="/icons/feelynx-icon-1024.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet" />
+
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="196x196" href="/icons/feelynx-favicon-196.png" />
+    <link rel="apple-touch-icon" href="/icons/feelynx-apple-180.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" content="#0B0720" />
+  </head>
+
+  <body>
+    <script>
+      try {
+        var mode =
+          localStorage.getItem('feelynx:themeMode') || localStorage.getItem('ivibes:themeMode');
+        var stored = localStorage.getItem('theme');
+        var isDark;
+        if (mode === 'auto') {
+          var hours = new Date().getHours();
+          isDark = !(hours >= 7 && hours < 19);
+        } else if (stored) {
+          isDark = stored === 'dark';
+        } else {
+          isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
+        if (isDark) document.documentElement.classList.add('dark');
+      } catch (e) {
+        /* no-op */
+      }
+    </script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
