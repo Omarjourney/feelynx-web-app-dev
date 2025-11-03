@@ -34,20 +34,7 @@ export default defineConfig(({ mode }) => ({
     chunkSizeWarningLimit: 1500,
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('livekit')) return 'livekit';
-            if (id.includes('react')) return 'react-vendor';
-            if (id.includes('@radix-ui')) return 'ui-vendor';
-            return 'vendor';
-          }
-          if (id.includes('/src/features/live/')) return 'feature-live';
-          if (id.includes('/src/features/groups/')) return 'feature-groups';
-          if (id.includes('/src/features/patterns/')) return 'feature-patterns';
-          if (id.includes('/src/features/remote/')) return 'feature-remote';
-          if (id.includes('/src/features/companions/')) return 'feature-companions';
-          if (id.includes('/src/features/contests/')) return 'feature-contests';
-        },
+        manualChunks: undefined,
       },
     },
   },
