@@ -138,7 +138,7 @@ const Index = () => {
       badge: 'Interactive toys',
       description: 'Sync toys, launch interactive patterns, and run playbooks in one tap.',
       icon: Workflow,
-      action: () => navigate('/call-room'),
+      action: () => navigate('/toys'),
       actionLabel: 'Open control',
     },
     {
@@ -215,7 +215,7 @@ const Index = () => {
         <section className="relative mx-auto mt-10 flex w-full max-w-6xl flex-col gap-12 px-4">
           <HeroSection
             stats={heroStats}
-            onPrimaryCta={() => navigate('/call-room')}
+            onPrimaryCta={() => navigate('/live-creator')}
             onSecondaryCta={() => navigate('/discover')}
           />
 

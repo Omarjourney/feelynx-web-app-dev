@@ -12,7 +12,7 @@ const NAV_ITEMS = [
   { id: 'home', label: 'Home', to: '/', icon: Home },
   { id: 'discover', label: 'Discover', to: '/discover', icon: Compass },
   { id: 'connect', label: 'Connect', to: '/connect', icon: PhoneCall },
-  { id: 'go-live', label: 'Go Live', to: '/call-room', icon: Radio },
+  { id: 'go-live', label: 'Go Live', to: '/live-creator', icon: Radio },
   { id: 'profile', label: 'Profile', to: '/dashboard', icon: UserRound },
 ] as const;
 
@@ -27,7 +27,6 @@ const NAV_ALIAS: Record<string, (typeof NAV_ITEMS)[number]['id']> = {
   groups: 'discover',
   live: 'discover',
   'live-creator': 'go-live',
-  'call-room': 'go-live',
   go: 'go-live',
   dm: 'profile',
   dashboard: 'profile',
@@ -54,7 +53,7 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
       return 'discover';
     if (pathname.startsWith('/creators') || pathname.startsWith('/live')) return 'discover';
     if (pathname.startsWith('/connect')) return 'connect';
-    if (pathname.startsWith('/calls') || pathname.startsWith('/call-room')) return 'go-live';
+    if (pathname.startsWith('/calls')) return 'go-live';
     if (
       pathname.startsWith('/dashboard') ||
       pathname.startsWith('/settings') ||

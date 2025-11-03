@@ -15,7 +15,7 @@ type NavItem = {
 const navItems: NavItem[] = [
   { id: 'home', label: 'Home', to: '/', icon: Home },
   { id: 'discover', label: 'Discover', to: '/discover', icon: Compass },
-  { id: 'go-live', label: 'Go Live', to: '/call-room', icon: Radio },
+  { id: 'go-live', label: 'Go Live', to: '/live-creator', icon: Radio },
   { id: 'profile', label: 'Profile', to: '/dashboard', icon: UserRound },
 ];
 
@@ -31,7 +31,7 @@ export const Navbar = () => {
     if (location.pathname === '/' || location.pathname === '/index') return navItems[0];
     if (location.pathname.startsWith('/discover') || location.pathname.startsWith('/explore'))
       return navItems[1];
-    if (location.pathname.startsWith('/live') || location.pathname.startsWith('/call-room'))
+    if (location.pathname.startsWith('/live'))
       return navItems[2];
     if (
       location.pathname.startsWith('/dashboard') ||

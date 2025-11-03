@@ -52,7 +52,7 @@ export default function IncomingCall() {
                 if (ring?.from) qs.set('from', ring.from);
                 if (ring?.mode) qs.set('mode', ring.mode);
                 if (typeof ring?.rate === 'number') qs.set('rate', String(ring.rate));
-                window.location.href = `/call-room?${qs.toString()}`;
+                window.location.href = `/connect?${qs.toString()}`;
               }}
             >
               Accept

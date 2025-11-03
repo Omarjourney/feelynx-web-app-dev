@@ -9,7 +9,6 @@ import Auth from './pages/Auth';
 import Index from './pages/Index';
 import IndexRefactored from './pages/IndexRefactored';
 import TokenShop from './pages/TokenShop';
-import CallRoom from './pages/CallRoom';
 import Dashboard from './pages/Dashboard';
 import Explore from './pages/Explore';
 import Creators from './pages/Creators';
@@ -78,7 +77,6 @@ const App = () => (
               <Route path="/companions" element={<CompanionsHome />} />
               <Route path="/contests" element={<ContestsFeed />} />
               <Route path="/styleguide" element={<Styleguide />} />
-              <Route path="/call-room" element={<CallRoom />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
