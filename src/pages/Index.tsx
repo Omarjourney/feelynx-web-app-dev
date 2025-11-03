@@ -60,8 +60,8 @@ const Index = () => {
       return;
     }
 
-    let intervalId: number | undefined;
-    let mutationObserver: MutationObserver | undefined;
+    let intervalId: number | undefined; // eslint-disable-line prefer-const
+    let mutationObserver: MutationObserver | undefined; // eslint-disable-line prefer-const
 
     const cleanup = () => {
       mutationObserver?.disconnect();

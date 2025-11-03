@@ -14,7 +14,6 @@ if ((import.meta as any).env?.VITE_AUDIT_SHIM === 'true' && typeof window !== 'u
     .then((mod) => {
       try {
         (window as any).React = (mod as any).default ?? mod;
-        // eslint-disable-next-line no-console
         console.info('Audit shim enabled: window.React provided');
       } catch {
         // ignore
@@ -33,7 +32,6 @@ window.addEventListener('error', (ev) => {
   try {
     // ev.error may be undefined for resource/script load errors
     // Log as much useful information as possible for diagnostics
-    // eslint-disable-next-line no-console
     console.error('Global error captured:', ev.error ?? ev.message, ev.error?.stack ?? `${ev.filename}:${ev.lineno}:${ev.colno}`);
   } catch (e) {
     // ignore
@@ -42,48 +40,23 @@ window.addEventListener('error', (ev) => {
 
 window.addEventListener('unhandledrejection', (ev) => {
   try {
-    // eslint-disable-next-line no-console
     console.error('Unhandled promise rejection:', ev.reason, ev.reason?.stack ?? 'no-stack');
   } catch (e) {
     // ignore
   }
 });
 
-// Improve console.error output to surface Error stacks and non-serializable objects
-(() => {
-  try {
-    const orig = console.error.bind(console);
-    // eslint-disable-next-line no-console
-    console.error = (...args: any[]) => {
-      for (const a of args) {
-        try {
-          if (a && typeof a === 'object') {
-            // If it's a puppeteer JSHandle-like object, attempt to print common fields
-            if ((a as any).stack) {
-              orig('Captured error stack:', (a as any).stack);
-            } else if ((a as any).message) {
-              orig('Captured error message:', (a as any).message, (a as any).stack ?? 'no-stack');
-            } else {
-              // Fallback: stringify own properties
-              try {
-                const plain = JSON.stringify(a, Object.getOwnPropertyNames(a), 2);
-                orig('Captured object:', plain);
-              } catch (e) {
-                orig('Captured object [non-serializable]:', a);
-              }
-            }
-          } else {
-            orig(a);
-          }
-        } catch (inner) {
-          orig('Error while logging console.error arg:', inner, a);
-        }
-      }
-    };
-  } catch (e) {
-    /* noop */
+// Enhanced console.error to help diagnose runtime issues in headless or production
+const originalConsoleError = console.error;
+console.error = (...args: unknown[]) => {
+  // Log stack if available
+  const stack = args.find((a) => a instanceof Error)?.stack;
+  if (stack) {
+    originalConsoleError(...args, '\nStack:', stack);
+  } else {
+    originalConsoleError(...args);
   }
-})();
+};
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

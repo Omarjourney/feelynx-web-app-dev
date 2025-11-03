@@ -2,8 +2,9 @@ import { defineConfig } from 'vite';
 let react: any;
 try {
   // Use require inside try/catch to avoid TypeScript resolving the module at compile time.
-  // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-assignment
+  /* eslint-disable @typescript-eslint/no-require-imports */
   const pkg = require('@vitejs/plugin-react-swc') as any;
+  /* eslint-enable @typescript-eslint/no-require-imports */
   react = pkg?.default ?? pkg ?? (() => undefined);
 } catch {
   // Fallback to a no-op plugin factory so TS and runtime won't fail if the package is missing.
@@ -13,8 +14,9 @@ import path from 'path';
 // Bundle visualizer for analysis
 let visualizer: any;
 try {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-assignment
+  /* eslint-disable @typescript-eslint/no-require-imports */
   const pkg = require('rollup-plugin-visualizer') as any;
+  /* eslint-enable @typescript-eslint/no-require-imports */
   visualizer = pkg?.default ?? pkg ?? (() => undefined);
 } catch {
   visualizer = () => undefined;
@@ -22,8 +24,9 @@ try {
 // Optional image optimization plugin
 let viteImagemin: any;
 try {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-assignment
+  /* eslint-disable @typescript-eslint/no-require-imports */
   const imgPkg = require('vite-plugin-imagemin') as any;
+  /* eslint-enable @typescript-eslint/no-require-imports */
   viteImagemin = imgPkg?.default ?? imgPkg ?? null;
 } catch {
   viteImagemin = null;
@@ -34,8 +37,9 @@ try {
 let componentTagger: any;
 try {
   // Use require inside try/catch to avoid TypeScript resolving the module at compile time.
-  // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-assignment
+  /* eslint-disable @typescript-eslint/no-require-imports */
   const pkg = require('lovable-tagger') as any;
+  /* eslint-enable @typescript-eslint/no-require-imports */
   componentTagger = pkg?.componentTagger ?? (() => undefined);
 } catch {
   componentTagger = () => undefined;

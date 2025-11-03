@@ -1,11 +1,11 @@
 #!/usr/bin/env node
+/* eslint-disable @typescript-eslint/no-require-imports, no-undef, @typescript-eslint/no-unused-vars, @typescript-eslint/no-unused-expressions */
 /**
- * Puppeteer diagnostic script
- * - Navigates to PREVIEW_URL (default http://127.0.0.1:5175)
- * - Captures console messages, page errors, failed requests
- * - Saves logs to ./lhci/puppeteer-logs.json
- * - Writes a screenshot to /tmp/feelynx_puppeteer.png
+ * Puppeteer diagnostics: console logs, page errors, failed requests, screenshot.
+ * Run with PREVIEW_URL=http://127.0.0.1:5177 node ./scripts/puppeteer-diagnose.cjs
+ * Output: ./lhci/puppeteer-logs.json and /tmp/feelynx_puppeteer.png
  */
+
 const fs = require('fs');
 const path = require('path');
 const puppeteer = require('puppeteer');

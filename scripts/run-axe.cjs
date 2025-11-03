@@ -1,5 +1,9 @@
 #!/usr/bin/env node
-// Run axe-core against a live, rendered page in Chromium via Puppeteer
+/* eslint-disable @typescript-eslint/no-require-imports, no-undef */
+/**
+ * Run axe-core in a real Chromium context via Puppeteer.
+ * Output: ./lhci/axe-report.json
+ */
 const fs = require('fs');
 const path = require('path');
 const puppeteer = require('puppeteer');
