@@ -127,12 +127,6 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
   return (
     <div>
       <h2 className="text-3xl font-bold mb-4 text-center">VibeCoin Packages</h2>
-      <p className="text-center text-muted-foreground mb-6">
-        Every purchase instantly grants VibeCoins and pays creators 75% of the pack price. Feelynx
-        keeps a transparent 25% margin (at least ${MIN_PLATFORM_PROFIT_PER_COIN.toFixed(3)} profit per
-        coin) to operate the platform. Creators only encounter a minimal processing fee when they
-        cash out.
-      </p>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {packages.map((pkg) => {
           const displayedTokens = platform === 'app' ? pkg.appTokens : pkg.tokens;
@@ -183,15 +177,6 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
 
               <CardContent className="text-center space-y-4">
                 <div className="text-4xl font-bold text-primary">${pkg.price}</div>
-                
-                <div className="space-y-2 text-sm text-muted-foreground">
-                  <p>${(pkg.price / displayedTokens).toFixed(3)} per VibeCoin</p>
-                  <p>Creators receive ${creatorEarnings.toFixed(2)} (75%)</p>
-                  <p>
-                    Feelynx margin ${platformMarginAmount.toFixed(2)} (25%) ·{' '}
-                    ${platformProfitPerCoin.toFixed(3)} per coin
-                  </p>
-                </div>
 
                 <Button
                   className={`w-full mt-4 ${
