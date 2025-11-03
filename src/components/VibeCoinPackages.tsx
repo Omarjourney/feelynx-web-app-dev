@@ -1,18 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import {
-  vibeCoinPackages,
-  VibeCoinPackage,
-  PLATFORM_MARGIN,
-  CREATOR_SHARE,
-  MIN_PLATFORM_PROFIT_PER_COIN,
-} from '@/data/vibecoinPackages';
 import { PaymentReceipt } from './PaymentReceipt';
+import { request } from '@/lib/api';
+import { getUserMessage } from '@/lib/errors';
+
 const toast = {
   success: (msg: string) => {
-    // Prefer a global app-provided toast if available, otherwise fallback to console
     if (typeof window !== 'undefined' && (window as any).toast?.success) {
       try {
         (window as any).toast.success(msg);
@@ -35,32 +30,34 @@ const toast = {
     console.error('Toast error:', msg);
   },
 };
-import { request } from '@/lib/api';
-import { getUserMessage } from '@/lib/errors';
 
-const formatPercent = (value: number) => {
-  if (Number.isInteger(value)) {
-    return value.toFixed(0);
-  }
-
-  return value.toFixed(1);
-};
+interface PricingPackage {
+  id: number;
+  price: number;
+  coins: number;
+  web_bonus?: string;
+  app_price?: number;
+  popular?: boolean;
+  creator_split: number;
+  platform_fee: number;
+}
 
 interface VibeCoinPackagesProps {
   /**
    * Display mode for the component.
-   * - 'web'  : show web coin amounts and indicate app value
-   * - 'app'  : show app coin amounts and highlight web bonus
+   * - 'web'  : show web pricing
+   * - 'app'  : show app pricing
    */
   platform?: 'web' | 'app';
   /**
    * Callback fired when a package is purchased.
    */
-  onPurchase?: (pkg: VibeCoinPackage) => void | Promise<void>;
+  onPurchase?: (pkg: PricingPackage) => void | Promise<void>;
 }
 
 export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPackagesProps) => {
-  const packages: VibeCoinPackage[] = vibeCoinPackages;
+  const [packages, setPackages] = useState<PricingPackage[]>([]);
+  const [loading, setLoading] = useState(true);
   const [receipt, setReceipt] = useState<{
     receiptUrl: string;
     disputeUrl: string;
@@ -68,7 +65,33 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
   const [loadingPackageId, setLoadingPackageId] = useState<number | null>(null);
   const [purchaseError, setPurchaseError] = useState<string | null>(null);
 
-  const handlePurchase = async (packageData: VibeCoinPackage) => {
+  useEffect(() => {
+    const loadPackages = async () => {
+      try {
+        const file = platform === 'app' ? '/config/pricingApp.json' : '/config/pricing.json';
+        const response = await fetch(file);
+        if (!response.ok) {
+          throw new Error(`Failed to load ${file}`);
+        }
+        const data = await response.json();
+        // Mark package 7 as popular
+        const packagesWithPopular = data.map((pkg: PricingPackage) => ({
+          ...pkg,
+          popular: pkg.id === 7,
+        }));
+        setPackages(packagesWithPopular);
+      } catch (error) {
+        console.error('Failed to load pricing:', error);
+        toast.error('Failed to load pricing packages');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadPackages();
+  }, [platform]);
+
+  const handlePurchase = async (packageData: PricingPackage) => {
     setPurchaseError(null);
 
     if (onPurchase) {
@@ -91,8 +114,6 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
       setLoadingPackageId(packageData.id);
       console.log('Purchasing:', packageData);
 
-      const tokensToCredit = platform === 'app' ? packageData.appTokens : packageData.tokens;
-
       const { paymentIntentId } = await request<{ paymentIntentId: string }>(
         '/payments/create-intent',
         {
@@ -100,7 +121,7 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             amount: packageData.price,
-            coins: tokensToCredit,
+            coins: packageData.coins,
             currency: 'usd',
             userId: 1,
           }),
@@ -124,26 +145,25 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
     }
   };
 
+  if (loading) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-muted-foreground">Loading VibeCoin packages...</p>
+      </div>
+    );
+  }
+
   return (
     <div>
       <h2 className="text-3xl font-bold mb-4 text-center">VibeCoin Packages</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="flex flex-wrap justify-center gap-6 pb-20">
         {packages.map((pkg) => {
-          const displayedTokens = platform === 'app' ? pkg.appTokens : pkg.tokens;
-          const platformMarginAmount = pkg.price * PLATFORM_MARGIN;
-          const creatorEarnings = pkg.price * CREATOR_SHARE;
-          const platformProfitPerCoin = platformMarginAmount / displayedTokens;
-
-          if (platformProfitPerCoin < MIN_PLATFORM_PROFIT_PER_COIN) {
-            console.warn(
-              `Platform profit per coin dropped below the minimum for package ${pkg.id}.`,
-            );
-          }
+          const displayPrice = platform === 'app' && pkg.app_price ? pkg.app_price : pkg.price;
 
           return (
             <Card
               key={pkg.id}
-              className={`relative bg-gradient-card transition-all hover:shadow-premium ${
+              className={`relative bg-gradient-card transition-all hover:shadow-premium w-full md:w-auto ${
                 pkg.popular ? 'ring-2 ring-primary shadow-premium scale-105' : ''
               }`}
             >
@@ -156,27 +176,17 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
               <CardHeader className="text-center pb-4">
                 <div className="text-6xl mb-4">💎</div>
                 <CardTitle className="text-2xl font-bold">
-                  {displayedTokens.toLocaleString()} VibeCoins
+                  {pkg.coins.toLocaleString()} VibeCoins
                 </CardTitle>
-                {platform === 'web' ? (
-                  <div className="text-sm text-muted-foreground">
-                    {pkg.appTokens.toLocaleString()} in app
-                  </div>
-                ) : (
-                  <div className="text-sm text-muted-foreground">
-                    Get +{formatPercent(pkg.percentMore)}% more on Feelynx web (
-                    {pkg.tokens.toLocaleString()} total)
-                  </div>
-                )}
-                {platform === 'web' && (
-                  <Badge variant="secondary" className="bg-primary/20 text-primary">
-                    +{formatPercent(pkg.percentMore)}% on web
+                {pkg.web_bonus && platform === 'web' && (
+                  <Badge variant="secondary" className="bg-primary/20 text-primary mt-2">
+                    {pkg.web_bonus} Web Bonus
                   </Badge>
                 )}
               </CardHeader>
 
               <CardContent className="text-center space-y-4">
-                <div className="text-4xl font-bold text-primary">${pkg.price}</div>
+                <div className="text-4xl font-bold text-primary">${displayPrice.toFixed(2)}</div>
 
                 <Button
                   className={`w-full mt-4 ${
@@ -189,11 +199,6 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
                 >
                   {loadingPackageId === pkg.id ? 'Processing…' : 'Purchase Now'}
                 </Button>
-                {platform === 'app' && (
-                  <div className="text-xs text-muted-foreground mt-2">
-                    Get +{formatPercent(pkg.percentMore)}% more VibeCoins on Feelynx web!
-                  </div>
-                )}
               </CardContent>
             </Card>
           );

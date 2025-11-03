@@ -3,90 +3,90 @@
     "id": 1,
     "price": 0.99,
     "coins": 75,
+    "web_bonus": "+30% Bonus",
     "creator_split": 0.75,
     "platform_fee": 0.25,
     "app_price": 1.29,
-    "web_bonus": "+30% Bonus",
     "store": "app"
   },
   {
     "id": 2,
     "price": 4.99,
     "coins": 400,
+    "web_bonus": "+30% Bonus",
     "creator_split": 0.75,
     "platform_fee": 0.25,
     "app_price": 6.49,
-    "web_bonus": "+30% Bonus",
     "store": "app"
   },
   {
     "id": 3,
     "price": 9.99,
     "coins": 850,
+    "web_bonus": "+30% Bonus",
     "creator_split": 0.75,
     "platform_fee": 0.25,
     "app_price": 12.99,
-    "web_bonus": "+30% Bonus",
     "store": "app"
   },
   {
     "id": 4,
     "price": 15.99,
     "coins": 1450,
+    "web_bonus": "+30% Bonus",
     "creator_split": 0.75,
     "platform_fee": 0.25,
     "app_price": 20.79,
-    "web_bonus": "+30% Bonus",
     "store": "app"
   },
   {
     "id": 5,
     "price": 19.99,
     "coins": 1950,
+    "web_bonus": "+30% Bonus",
     "creator_split": 0.75,
     "platform_fee": 0.25,
     "app_price": 25.99,
-    "web_bonus": "+30% Bonus",
     "store": "app"
   },
   {
     "id": 6,
     "price": 24.99,
     "coins": 2490,
+    "web_bonus": "+30% Bonus",
     "creator_split": 0.75,
     "platform_fee": 0.25,
     "app_price": 32.49,
-    "web_bonus": "+30% Bonus",
     "store": "app"
   },
   {
     "id": 7,
     "price": 49.99,
     "coins": 4990,
+    "web_bonus": "+30% Bonus",
     "creator_split": 0.75,
     "platform_fee": 0.25,
     "app_price": 64.99,
-    "web_bonus": "+30% Bonus",
     "store": "app"
   },
   {
     "id": 8,
     "price": 99.99,
     "coins": 9990,
+    "web_bonus": "+30% Bonus",
     "creator_split": 0.75,
     "platform_fee": 0.25,
     "app_price": 129.99,
-    "web_bonus": "+30% Bonus",
     "store": "app"
   },
   {
     "id": 9,
     "price": 149.99,
     "coins": 14990,
+    "web_bonus": "+30% Bonus",
     "creator_split": 0.75,
     "platform_fee": 0.25,
     "app_price": 194.99,
-    "web_bonus": "+30% Bonus",
     "store": "app"
   }
 ]

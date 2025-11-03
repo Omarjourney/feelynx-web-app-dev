@@ -1,11 +1,11 @@
 [
-  { "id": 1, "price": 0.99, "coins": 75, "creator_split": 0.75, "platform_fee": 0.25 },
-  { "id": 2, "price": 4.99, "coins": 400, "creator_split": 0.75, "platform_fee": 0.25 },
-  { "id": 3, "price": 9.99, "coins": 850, "creator_split": 0.75, "platform_fee": 0.25 },
-  { "id": 4, "price": 15.99, "coins": 1450, "creator_split": 0.75, "platform_fee": 0.25 },
-  { "id": 5, "price": 19.99, "coins": 1950, "creator_split": 0.75, "platform_fee": 0.25 },
-  { "id": 6, "price": 24.99, "coins": 2490, "creator_split": 0.75, "platform_fee": 0.25 },
-  { "id": 7, "price": 49.99, "coins": 4990, "creator_split": 0.75, "platform_fee": 0.25 },
-  { "id": 8, "price": 99.99, "coins": 9990, "creator_split": 0.75, "platform_fee": 0.25 },
-  { "id": 9, "price": 149.99, "coins": 14990, "creator_split": 0.75, "platform_fee": 0.25 }
+  { "id": 1, "price": 0.99, "coins": 75, "web_bonus": "+30%", "creator_split": 0.75, "platform_fee": 0.25 },
+  { "id": 2, "price": 4.99, "coins": 400, "web_bonus": "+30%", "creator_split": 0.75, "platform_fee": 0.25 },
+  { "id": 3, "price": 9.99, "coins": 850, "web_bonus": "+30%", "creator_split": 0.75, "platform_fee": 0.25 },
+  { "id": 4, "price": 15.99, "coins": 1450, "web_bonus": "+30%", "creator_split": 0.75, "platform_fee": 0.25 },
+  { "id": 5, "price": 19.99, "coins": 1950, "web_bonus": "+30%", "creator_split": 0.75, "platform_fee": 0.25 },
+  { "id": 6, "price": 24.99, "coins": 2490, "web_bonus": "+30%", "creator_split": 0.75, "platform_fee": 0.25 },
+  { "id": 7, "price": 49.99, "coins": 4990, "web_bonus": "+30%", "creator_split": 0.75, "platform_fee": 0.25 },
+  { "id": 8, "price": 99.99, "coins": 9990, "web_bonus": "+30%", "creator_split": 0.75, "platform_fee": 0.25 },
+  { "id": 9, "price": 149.99, "coins": 14990, "web_bonus": "+30%", "creator_split": 0.75, "platform_fee": 0.25 }
 ]
