@@ -184,7 +184,6 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
                       ? 'bg-gradient-primary text-primary-foreground hover:shadow-glow'
                       : 'bg-secondary hover:bg-secondary/80'
                   }`}
-                  size="lg"
                   onClick={() => handlePurchase(pkg)}
                   disabled={loadingPackageId === pkg.id}
                 >

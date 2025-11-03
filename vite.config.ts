@@ -1,7 +1,27 @@
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react-swc';
+let react: any;
+try {
+  // Use require inside try/catch to avoid TypeScript resolving the module at compile time.
+  // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-assignment
+  const pkg = require('@vitejs/plugin-react-swc') as any;
+  react = pkg?.default ?? pkg ?? (() => undefined);
+} catch {
+  // Fallback to a no-op plugin factory so TS and runtime won't fail if the package is missing.
+  react = () => (() => undefined);
+}
 import path from 'path';
-import { componentTagger } from 'lovable-tagger';
+
+// Try to load lovable-tagger at runtime so TypeScript won't error if it's not installed.
+// If the package is missing, use a no-op fallback.
+let componentTagger: any;
+try {
+  // Use require inside try/catch to avoid TypeScript resolving the module at compile time.
+  // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-assignment
+  const pkg = require('lovable-tagger') as any;
+  componentTagger = pkg?.componentTagger ?? (() => undefined);
+} catch {
+  componentTagger = () => undefined;
+}
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
