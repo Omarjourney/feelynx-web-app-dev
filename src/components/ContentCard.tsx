@@ -54,6 +54,8 @@ const ContentCard = ({
                 src={src}
                 alt={title ?? username}
                 className={`h-64 w-full object-cover ${displayLocked ? 'blur-md' : ''}`}
+                loading="lazy"
+                decoding="async"
               />
             ) : (
               <video
@@ -103,6 +105,8 @@ const ContentCard = ({
                 src={src}
                 alt={title ?? username}
                 className={`w-full object-cover ${displayLocked ? 'blur-md' : ''}`}
+                loading="lazy"
+                decoding="async"
               />
             ) : (
               <video

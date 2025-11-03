@@ -62,7 +62,13 @@ const GroupPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="w-full h-40 md:h-56 overflow-hidden">
-        <img src={group.thumbnail} alt={group.name} className="w-full h-full object-cover" />
+        <img
+          src={group.thumbnail}
+          alt={group.name}
+          className="w-full h-full object-cover"
+          loading="lazy"
+          decoding="async"
+        />
       </div>
       <div className="container mx-auto p-4 space-y-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">

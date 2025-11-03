@@ -10,7 +10,7 @@ export const PostCard = ({ post }: { post: Post }) => {
     <div className="border rounded-lg overflow-hidden bg-card">
       <div className="relative">
         {post.mediaType === 'image' ? (
-          <img src={post.src} alt="post" className="w-full object-cover" />
+          <img src={post.src} alt="post" className="w-full object-cover" loading="lazy" decoding="async" />
         ) : (
           <video src={post.src} className="w-full" autoPlay muted loop />
         )}

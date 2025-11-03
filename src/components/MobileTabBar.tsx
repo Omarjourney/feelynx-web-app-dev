@@ -52,7 +52,11 @@ export default function MobileTabBar() {
   }, [pathname]);
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-border/60 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/70">
+    <nav
+      className="md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-border/60 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/70"
+      role="navigation"
+      aria-label="Mobile primary navigation"
+    >
       <div className="absolute -top-8 left-1/2 w-32 -translate-x-1/2 rounded-full bg-primary/40 py-1 text-center text-xs font-semibold text-primary-foreground/90 shadow-glow">
         Swipe to swap streams
       </div>
@@ -65,12 +69,20 @@ export default function MobileTabBar() {
               <button
                 className={cn(
                   'relative flex h-14 w-full flex-col items-center justify-center gap-1 text-xs font-semibold transition-colors',
+                  // keyboard focus styles
+                  'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500',
                   active
                     ? 'text-primary-foreground'
                     : 'text-muted-foreground hover:text-foreground',
                 )}
+                type="button"
                 onClick={() => navigate(t.to)}
                 aria-current={active ? 'page' : undefined}
+                aria-label={t.label}
+                // visible focus ring for keyboard users
+                // keep styles consistent with other components
+                // (adds focus-visible ring and offset)
+                
               >
                 <div
                   className={cn(

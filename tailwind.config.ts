@@ -8,6 +8,7 @@ export default {
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
+    './stories/**/*.{ts,tsx,js,jsx}',
   ],
   prefix: '',
   theme: {
@@ -34,6 +35,18 @@ export default {
       },
     },
     extend: {
+      // Base facelift tokens
+      transitionTimingFunction: {
+        soft: 'cubic-bezier(0.4, 0, 0.2, 1)',
+      },
+      transitionDuration: {
+        DEFAULT: '250ms',
+      },
+      spacing: {
+        'section-sm': '2rem',
+        'section-md': '4rem',
+        'section-lg': '6rem',
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -103,8 +116,15 @@ export default {
         premium: 'var(--shadow-premium)',
         glow: 'var(--shadow-glow)',
         'glow-strong': '0 0 45px rgba(159, 47, 255, 0.4)',
+        // Facelift additions
+        base: '0 2px 12px rgba(0,0,0,0.25)',
+        elevated: '0 8px 24px rgba(147,51,234,0.20)',
       },
       backdropBlur: {
+        // Facelift additions
+        xs: '2px',
+        sm: '4px',
+        md: '8px',
         xl: '28px',
         '2xl': '40px',
       },
@@ -112,6 +132,9 @@ export default {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+        // Facelift additions
+        card: '16px',
+        button: '12px',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

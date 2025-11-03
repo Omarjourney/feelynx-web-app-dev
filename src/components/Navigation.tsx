@@ -76,8 +76,8 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
       </a>
       <aside className="hidden md:flex md:h-screen md:w-72 md:flex-shrink-0 md:flex-col md:border-r md:border-border/60 md:bg-sidebar-background/80 md:backdrop-blur-xl md:pt-safe">
         <div className="flex items-center gap-3 px-6 pt-8 pb-6">
-          <div className="relative rounded-2xl bg-gradient-primary p-2 shadow-glow">
-            <img src={feelynxWordmark} alt="Feelynx" className="h-10 w-auto" />
+            <div className="relative rounded-2xl bg-gradient-primary p-2 shadow-glow">
+            <img src={feelynxWordmark} alt="Feelynx" className="h-10 w-auto" width={40} height={40} loading="eager" decoding="sync" />
           </div>
           <div>
             <p className="text-sm uppercase tracking-widest text-muted-foreground">Entertainment</p>
@@ -180,8 +180,8 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
       <nav className="md:hidden bg-background/95 backdrop-blur-sm border-b border-border sticky top-0 z-50 pt-safe px-safe">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-2">
-              <img src={feelynxWordmark} alt="Feelynx" className="h-8 w-auto" />
+              <div className="flex items-center space-x-2">
+              <img src={feelynxWordmark} alt="Feelynx" className="h-8 w-auto" width={32} height={32} loading="eager" decoding="sync" />
             </div>
 
             <div className="flex items-center space-x-3">
@@ -195,6 +195,7 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
                 className="flex items-center justify-center min-h-11 min-w-11"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 aria-expanded={isMenuOpen}
+                aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
               >
                 <Menu className="h-6 w-6" />
               </button>

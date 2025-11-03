@@ -39,7 +39,7 @@ const LiveChatPanel = ({
   };
 
   return (
-    <Card className="h-fit border border-border/60 bg-background/80">
+    <Card className="h-fit border border-white/10 rounded-card shadow-base hover:shadow-elevated transition-shadow duration-300 bg-black/45 backdrop-blur-md">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg">Live Chat</CardTitle>
@@ -78,8 +78,13 @@ const LiveChatPanel = ({
             onChange={onChange}
             placeholder="Type a message..."
             onKeyDown={handleKeyDown}
+            className="rounded-button bg-neutral-900/70 border border-white/10 focus:ring-2 focus:ring-primary focus:ring-offset-2 placeholder-gray-500"
           />
-          <Button onClick={onSend} size="sm">
+          <Button
+            onClick={onSend}
+            size="sm"
+            className="rounded-button bg-gradient-to-r from-primary to-secondary text-white shadow-glow hover:scale-105 motion-safe:transition-transform motion-safe:duration-200"
+          >
             Send
           </Button>
         </div>
@@ -89,7 +94,7 @@ const LiveChatPanel = ({
               key={amount}
               variant="secondary"
               size="sm"
-              className="button-ripple rounded-full"
+              className="button-ripple rounded-full shadow-base hover:shadow-elevated motion-safe:transition-transform motion-safe:duration-200 hover:scale-105"
               onClick={() => onQuickTip(amount)}
             >
               +{amount}💎
@@ -98,7 +103,7 @@ const LiveChatPanel = ({
           <Button
             variant="ghost"
             size="sm"
-            className="rounded-full"
+            className="rounded-full shadow-base hover:shadow-elevated motion-safe:transition-transform motion-safe:duration-200 hover:scale-105"
             onClick={() => onQuickTip(200)}
           >
             Milestone boost +200💎

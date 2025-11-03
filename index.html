@@ -22,13 +22,14 @@
       href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet" />
 
     <link rel="manifest" href="/manifest.json" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="196x196" href="/icons/feelynx-favicon-196.png" />
     <link rel="apple-touch-icon" href="/icons/feelynx-apple-180.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="theme-color" content="#0B0720" />
   </head>
 
@@ -52,6 +53,11 @@
         /* no-op */
       }
     </script>
+    <!-- Landmark wrapper for skip link to satisfy "region" containment -->
+    <header role="banner">
+      <!-- Skip link for keyboard users -->
+      <a href="#main" class="skip-link" aria-label="Skip to main content">Skip to main content</a>
+    </header>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

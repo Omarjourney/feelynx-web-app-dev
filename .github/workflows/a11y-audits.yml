@@ -1,0 +1,39 @@
+name: a11y-audits
+
+on:
+  pull_request:
+    branches: [ dev ]
+  push:
+    branches: [ dev ]
+
+jobs:
+  run-audits:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Run audits (build + preview + puppeteer + axe + optional lighthouse)
+        env:
+          PREVIEW_HOST: 127.0.0.1
+          PREVIEW_PORT: 5177
+        run: node ./scripts/run-audits.cjs
+
+      - name: Upload audit artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: a11y-audit-artifacts
+          if-no-files-found: ignore
+          path: |
+            lhci/**
+            /tmp/feelynx_puppeteer.png

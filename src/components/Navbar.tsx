@@ -102,7 +102,7 @@ export const Navbar = () => {
                 type="button"
                 onClick={() => handleNavigate(item)}
                 className={cn(
-                  'relative flex flex-1 flex-col items-center gap-0.5 sm:gap-1 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70 min-h-[48px] sm:min-h-[52px] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-transparent rounded-lg motion-safe:transition-colors motion-safe:duration-300',
+                  'relative flex flex-1 flex-col items-center gap-0.5 sm:gap-1 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70 min-h-[48px] sm:min-h-[52px] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-transparent rounded-lg motion-safe:transition-colors motion-safe:duration-300 motion-safe:transition-transform motion-safe:duration-200 hover:scale-105',
                   isActive && 'text-white',
                 )}
               >
@@ -117,7 +117,7 @@ export const Navbar = () => {
                 <div
                   className={cn(
                     'relative flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/70 shadow-[0_10px_35px_-20px_rgba(0,0,0,0.9)] backdrop-blur-lg motion-safe:transition-all motion-safe:duration-300',
-                    isActive && 'bg-gradient-primary text-white shadow-glow',
+                    isActive && 'bg-gradient-primary text-white shadow-glow drop-shadow-[0_0_6px_rgba(147,51,234,0.5)]',
                     isGoLive && 'h-12 w-12 sm:h-14 sm:w-14 -mt-3 sm:-mt-4 shadow-glow-strong',
                   )}
                 >

@@ -32,10 +32,10 @@ const LiveVideoPanel = ({
 }: LiveVideoPanelProps) => {
   const progressPercent = Math.min(100, Math.round((milestoneProgress / milestoneGoal) * 100));
   return (
-    <Card className="lg:col-span-3 border border-border/60 bg-background/80">
+    <Card className="lg:col-span-3 border border-white/10 rounded-card shadow-base hover:shadow-elevated transition-shadow duration-300 bg-neutral-900/60 backdrop-blur-md">
       <CardContent className="p-0">
-        <div className="relative aspect-video overflow-hidden rounded-3xl bg-black">
-          <video ref={videoRef} className="h-full w-full object-cover" autoPlay playsInline>
+        <div className="relative aspect-video md:h-[75vh] overflow-hidden rounded-card bg-black">
+          <video ref={videoRef} className="h-full w-full object-cover rounded-card" autoPlay playsInline>
             <track kind="captions" srcLang="en" label="auto" />
           </video>
 
@@ -53,19 +53,19 @@ const LiveVideoPanel = ({
           )}
 
           <div className="absolute left-4 top-4 flex flex-wrap gap-3 text-xs text-muted-foreground">
-            <div className="rounded-full bg-background/70 px-3 py-1 text-foreground shadow-premium">
+            <div className="rounded-full bg-background/70 px-3 py-1 text-foreground shadow-base">
               Balance:{' '}
               <span className="font-semibold text-primary-foreground">
                 💎 {coinBalance.toLocaleString()}
               </span>
             </div>
-            <div className="rounded-full bg-background/70 px-3 py-1 shadow-premium">
+            <div className="rounded-full bg-background/70 px-3 py-1 shadow-base">
               {toyConnected ? 'Interactive Toy Connected 💗' : 'Toy offline'}
             </div>
           </div>
 
           <div className="absolute right-4 top-4 flex flex-col gap-2 text-right text-xs text-muted-foreground">
-            <div className="rounded-2xl bg-background/70 px-3 py-2 shadow-premium">
+            <div className="rounded-2xl bg-background/70 px-3 py-2 shadow-base">
               <p className="uppercase tracking-widest">Top fans</p>
               <ul className="mt-2 space-y-1 text-sm text-foreground">
                 {topFans.map((fan, index) => (
@@ -81,7 +81,7 @@ const LiveVideoPanel = ({
           </div>
 
           <div className="absolute bottom-4 left-4 right-4 space-y-3">
-            <div className="rounded-3xl bg-background/70 px-4 py-3 shadow-premium">
+            <div className="rounded-3xl bg-background/70 px-4 py-3 shadow-base">
               <div className="flex items-center justify-between text-xs uppercase tracking-widest text-muted-foreground">
                 <span>Milestone goal</span>
                 <span>
@@ -105,18 +105,18 @@ const LiveVideoPanel = ({
             {isConnected && (
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex gap-2">
-                  <Button variant="secondary" size="sm">
+                  <Button variant="secondary" size="sm" className="rounded-button shadow-glow motion-safe:transition-transform motion-safe:duration-200 hover:scale-105">
                     🎤 Mute
                   </Button>
-                  <Button variant="secondary" size="sm">
+                  <Button variant="secondary" size="sm" className="rounded-button shadow-glow motion-safe:transition-transform motion-safe:duration-200 hover:scale-105">
                     📹 Camera Off
                   </Button>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="secondary" size="sm" onClick={onOpenTip}>
+                  <Button variant="secondary" size="sm" onClick={onOpenTip} className="rounded-button shadow-glow motion-safe:transition-transform motion-safe:duration-200 hover:scale-105">
                     💝 Tip
                   </Button>
-                  <Button variant="secondary" size="sm">
+                  <Button variant="secondary" size="sm" className="rounded-button shadow-glow motion-safe:transition-transform motion-safe:duration-200 hover:scale-105">
                     🎮 Control Toy
                   </Button>
                 </div>

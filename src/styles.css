@@ -6,6 +6,27 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Skip link styles: visually hidden until focused */
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: auto;
+  width: auto;
+  height: auto;
+  padding: 0.5rem 1rem;
+  background: rgba(255,255,255,0.98);
+  color: #0b0720;
+  border-radius: 6px;
+  z-index: 9999;
+  box-shadow: 0 6px 18px rgba(11,7,32,0.35);
+  transition: left 160ms ease, top 160ms ease;
+}
+.skip-link:focus {
+  left: 1rem;
+  top: 1rem;
+  outline: 3px solid rgba(88, 99, 255, 0.9);
+}
+
 /* Liora-inspired glassmorphism system for Feelynx */
 
 @layer base {

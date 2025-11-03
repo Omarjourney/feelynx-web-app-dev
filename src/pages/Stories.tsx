@@ -92,7 +92,7 @@ const Stories = () => {
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
-      <img src={story.media_url} alt="story" className="h-full w-full object-cover" />
+  <img src={story.media_url} alt="story" className="h-full w-full object-cover" loading="eager" decoding="async" />
       {story.visibility !== 'public' && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/50">
           <Lock className="w-16 h-16" />

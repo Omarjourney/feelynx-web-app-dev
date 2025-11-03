@@ -10,6 +10,24 @@ try {
   react = () => (() => undefined);
 }
 import path from 'path';
+// Bundle visualizer for analysis
+let visualizer: any;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-assignment
+  const pkg = require('rollup-plugin-visualizer') as any;
+  visualizer = pkg?.default ?? pkg ?? (() => undefined);
+} catch {
+  visualizer = () => undefined;
+}
+// Optional image optimization plugin
+let viteImagemin: any;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-assignment
+  const imgPkg = require('vite-plugin-imagemin') as any;
+  viteImagemin = imgPkg?.default ?? imgPkg ?? null;
+} catch {
+  viteImagemin = null;
+}
 
 // Try to load lovable-tagger at runtime so TypeScript won't error if it's not installed.
 // If the package is missing, use a no-op fallback.
@@ -49,20 +67,35 @@ export default defineConfig(({ mode }) => ({
       '/patterns': { target: 'http://localhost:3001', changeOrigin: true },
     },
   },
-  build: {
+    build: {
     target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14'],
     chunkSizeWarningLimit: 1500,
-    rollupOptions: {
-      output: {
-        manualChunks: undefined,
-      },
-    },
+    // Using default Rollup chunking for now to avoid runtime ordering issues found in production bundles.
+    // If needed we can reintroduce a safer manualChunks strategy that groups react + react-dom + closely-coupled libs.
+    rollupOptions: {},
   },
   preview: {
     host: '0.0.0.0',
     port: 4173,
   },
-  plugins: [react(), mode === 'development' && componentTagger()].filter(Boolean),
+  plugins: [
+  // Ensure the SWC react plugin uses the automatic JSX runtime to match
+  // the project's TypeScript setting (tsconfig.app.json: "jsx": "react-jsx").
+  // This avoids the plugin inserting legacy/classic React imports that can
+  // conflict with existing imports in files.
+  react({ jsxRuntime: 'automatic' }),
+    mode === 'development' && componentTagger(),
+    process.env.ANALYZE === 'true' ? visualizer({ filename: 'dist/stats.html' }) : null,
+    mode === 'production' && viteImagemin
+      ? viteImagemin({
+          gifsicle: { optimizationLevel: 7, interlaced: false },
+          optipng: { optimizationLevel: 7 },
+          mozjpeg: { quality: 75 },
+          pngquant: { quality: [0.7, 0.9], speed: 4 },
+          svgo: { plugins: [{ removeViewBox: false }] },
+        })
+      : null,
+  ].filter(Boolean),
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

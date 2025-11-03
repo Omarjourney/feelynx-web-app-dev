@@ -78,7 +78,15 @@ const LiveStreamCard = ({
         {viewers.toLocaleString()} watching
       </div>
       <div className="flex items-center p-3 space-x-3">
-        <img src={avatar} alt={`@${username}`} className="w-10 h-10 rounded-full object-cover" />
+        <img
+          src={avatar}
+          alt={`@${username}`}
+          className="w-10 h-10 rounded-full object-cover"
+          width={40}
+          height={40}
+          loading="lazy"
+          decoding="async"
+        />
         <div className="flex-1">
           <p className="font-medium leading-none">@{username}</p>
         </div>

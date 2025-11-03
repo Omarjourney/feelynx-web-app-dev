@@ -1,0 +1,140 @@
+{
+  "url": "http://127.0.0.1:5177",
+  "timestamp": "2025-11-03T22:32:23.484Z",
+  "console": [
+    {
+      "type": "warn",
+      "text": "Missing environment variable: VITE_SUPABASE_URL. Using fallback.",
+      "args": [
+        {}
+      ],
+      "timestamp": 1762209143907
+    },
+    {
+      "type": "warn",
+      "text": "Missing environment variable: VITE_SUPABASE_ANON_KEY. Using fallback.",
+      "args": [
+        {}
+      ],
+      "timestamp": 1762209143907
+    },
+    {
+      "type": "info",
+      "text": "Audit shim enabled: window.React provided",
+      "args": [
+        {}
+      ],
+      "timestamp": 1762209143917
+    }
+  ],
+  "pageErrors": [],
+  "requestFailures": [],
+  "responses": [
+    {
+      "url": "http://127.0.0.1:5177/",
+      "status": 200,
+      "ok": true,
+      "contentType": "text/html",
+      "timestamp": 1762209143780
+    },
+    {
+      "url": "http://127.0.0.1:5177/assets/index-CFeSP3-t.css",
+      "status": 200,
+      "ok": true,
+      "contentType": "text/css",
+      "timestamp": 1762209143790
+    },
+    {
+      "url": "http://127.0.0.1:5177/assets/index-CwAjbK8c.js",
+      "status": 200,
+      "ok": true,
+      "contentType": "text/javascript",
+      "timestamp": 1762209143851
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Bangers&display=swap",
+      "status": 200,
+      "ok": true,
+      "contentType": "text/css; charset=utf-8",
+      "timestamp": 1762209143857
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap",
+      "status": 200,
+      "ok": true,
+      "contentType": "text/css; charset=utf-8",
+      "timestamp": 1762209143858
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap",
+      "status": 200,
+      "ok": true,
+      "contentType": "text/css; charset=utf-8",
+      "timestamp": 1762209143867
+    },
+    {
+      "url": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA3MjAgMTYwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IkZlZWx5bngiPgogIDxkZWZzPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJmeC13b3JkIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI0U4MzM4QiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM5RjJGRkYiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImZ4LXJpbmciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjRTgzMzhCIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzlGMkZGRiIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxmaWx0ZXIgaWQ9ImZ4LWdsb3ciIHg9Ii00MCUiIHk9Ii00MCUiIHdpZHRoPSIxODAlIiBoZWlnaHQ9IjE4MCUiPgogICAgICA8ZmVHYXVzc2lhbkJsdXIgaW49IlNvdXJjZUdyYXBoaWMiIHN0ZERldmlhdGlvbj0iMyIgcmVzdWx0PSJibHVyIi8+CiAgICAgIDxmZU1lcmdlPgogICAgICAgIDxmZU1lcmdlTm9kZSBpbj0iYmx1ciIvPgogICAgICAgIDxmZU1lcmdlTm9kZSBpbj0iU291cmNlR3JhcGhpYyIvPgogICAgICA8L2ZlTWVyZ2U+CiAgICA8L2ZpbHRlcj4KICA8L2RlZnM+CgogIDwhLS0gRGFyayBiYXNlIHN0cmlwIGZvciBjb250cmFzdCAob3B0aW9uYWwpIC0tPgogIDxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMwRTBFMTAiIHJ4PSIxMiIvPgoKICA8IS0tIE5lb24gY2lyY2xlIG1hcmsgLS0+CiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMjAsMjApIiBmaWx0ZXI9InVybCgjZngtZ2xvdykiPgogICAgPGNpcmNsZSBjeD0iNjAiIGN5PSI2MCIgcj0iNTQiIGZpbGw9Im5vbmUiIHN0cm9rZT0idXJsKCNmeC1yaW5nKSIgc3Ryb2tlLXdpZHRoPSIxMCIvPgogICAgPGNpcmNsZSBjeD0iNjAiIGN5PSI2MCIgcj0iMzQiIGZpbGw9IiMwRTBFMTAiIHN0cm9rZT0iIzFCMTIzMCIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPC9nPgoKICA8IS0tIFdvcmRtYXJrIC0tPgogIDxnIGZpbHRlcj0idXJsKCNmeC1nbG93KSI+CiAgICA8dGV4dCB4PSIxNDAiIHk9IjEwNSIgZm9udC1mYW1pbHk9IkJhbmdlcnMsIEltcGFjdCwgc3lzdGVtLXVpLCBzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iOTAwIiBmb250LXNpemU9Ijg0IgogICAgICAgICAgZmlsbD0idXJsKCNmeC13b3JkKSIgc3Ryb2tlPSIjMUIxMjMwIiBzdHJva2Utd2lkdGg9IjYiIHRyYW5zZm9ybT0ic2tld1goLTgpIj5GZWVseW54PC90ZXh0PgogIDwvZz4KPC9zdmc+Cg==",
+      "status": 200,
+      "ok": true,
+      "contentType": "image/svg+xml",
+      "timestamp": 1762209144011
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/plusjakartasans/v12/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko20yw.woff2",
+      "status": 200,
+      "ok": true,
+      "contentType": "font/woff2",
+      "timestamp": 1762209144011
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLDD4Z1xlFQ.woff2",
+      "status": 200,
+      "ok": true,
+      "contentType": "font/woff2",
+      "timestamp": 1762209144065
+    },
+    {
+      "url": "http://127.0.0.1:5177/config/pricing.json",
+      "status": 200,
+      "ok": true,
+      "contentType": "application/json",
+      "timestamp": 1762209144066
+    },
+    {
+      "url": "http://127.0.0.1:5177/health",
+      "status": 200,
+      "ok": true,
+      "contentType": "text/html",
+      "timestamp": 1762209144066
+    },
+    {
+      "url": "http://127.0.0.1:5177/assets/CreatorGrid-BWiQ00Ma.js",
+      "status": 200,
+      "ok": true,
+      "contentType": "text/javascript",
+      "timestamp": 1762209144066
+    },
+    {
+      "url": "http://127.0.0.1:5177/manifest.json",
+      "status": 304,
+      "ok": false,
+      "contentType": "",
+      "timestamp": 1762209144150
+    },
+    {
+      "url": "http://127.0.0.1:5177/favicon.ico",
+      "status": 200,
+      "ok": true,
+      "contentType": "image/x-icon",
+      "timestamp": 1762209144150
+    },
+    {
+      "url": "http://127.0.0.1:5177/icons/feelynx-icon-512.png",
+      "status": 200,
+      "ok": true,
+      "contentType": "image/png",
+      "timestamp": 1762209144157
+    }
+  ],
+  "screenshot": "/tmp/feelynx_puppeteer.png"
+}

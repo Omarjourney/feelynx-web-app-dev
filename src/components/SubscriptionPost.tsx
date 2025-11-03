@@ -24,7 +24,7 @@ const SubscriptionPost = ({
       <Dialog>
         <DialogTrigger asChild>
           <div className="relative cursor-pointer">
-            <img src={contentUrl} alt="post" className="w-full object-cover" />
+            <img src={contentUrl} alt="post" className="w-full object-cover" loading="lazy" decoding="async" />
             {isLocked && (
               <div className="absolute inset-0 flex flex-col items-center justify-center backdrop-blur-sm bg-black/40 space-y-2">
                 {price ? (
@@ -39,12 +39,12 @@ const SubscriptionPost = ({
           </div>
         </DialogTrigger>
         <DialogContent className="p-0">
-          <img src={contentUrl} alt="preview" className="w-full object-cover" />
+          <img src={contentUrl} alt="preview" className="w-full object-cover" loading="lazy" decoding="async" />
         </DialogContent>
       </Dialog>
       <div className="p-3 space-y-2">
         <div className="flex items-center space-x-2">
-          <img src={avatar} alt="avatar" className="w-8 h-8 rounded-full" />
+          <img src={avatar} alt="avatar" className="w-8 h-8 rounded-full" width={32} height={32} loading="lazy" decoding="async" />
           {caption && <p className="text-sm flex-1">{caption}</p>}
         </div>
         <div className="flex space-x-2">
