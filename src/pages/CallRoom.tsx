@@ -127,7 +127,7 @@ const CallRoom = () => {
   }, []);
 
   return (
-    <div className="container mx-auto p-4 space-y-4">
+    <div className="container mx-auto p-4 pb-32 sm:pb-36 lg:pb-40 space-y-4">
       <Card className="bg-gradient-card">
         <CardHeader>
           <CardTitle>

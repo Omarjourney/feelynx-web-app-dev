@@ -65,18 +65,18 @@ export const Navbar = () => {
           className="glass-elevated relative flex items-center justify-between gap-2 sm:gap-3 rounded-[var(--radius-card)] px-3 sm:px-4 py-2.5 sm:py-3 backdrop-blur-2xl"
         >
           <motion.div
-            className="absolute -top-10 sm:-top-12 left-0 right-0 flex items-center justify-between px-3 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-white/70"
+            className="absolute -top-10 sm:-top-12 left-0 right-0 flex items-center justify-between px-3 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-white/70 pointer-events-none"
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
-            <span className="glass-chip !px-2.5 sm:!px-3 !py-1.5 text-[10px] sm:text-[11px] font-semibold text-white/80">
+            <span className="glass-chip !px-2.5 sm:!px-3 !py-1.5 text-[10px] sm:text-[11px] font-semibold text-white/80 pointer-events-auto">
               💎 <span className="ml-1">0/min</span>
             </span>
             {user ? (
               <button 
                 onClick={handleSignOut} 
-                className="glass-chip hover:text-white text-[10px] sm:text-[11px] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-transparent min-h-[44px] min-w-[44px] flex items-center justify-center motion-safe:transition-colors motion-safe:duration-300" 
+                className="glass-chip hover:text-white text-[10px] sm:text-[11px] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-transparent min-h-[44px] min-w-[44px] flex items-center justify-center motion-safe:transition-colors motion-safe:duration-300 pointer-events-auto" 
                 type="button"
               >
                 Sign out
@@ -84,7 +84,7 @@ export const Navbar = () => {
             ) : (
               <Link 
                 to="/auth" 
-                className="glass-chip hover:text-white text-[10px] sm:text-[11px] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-transparent min-h-[44px] min-w-[44px] flex items-center justify-center motion-safe:transition-colors motion-safe:duration-300"
+                className="glass-chip hover:text-white text-[10px] sm:text-[11px] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-transparent min-h-[44px] min-w-[44px] flex items-center justify-center motion-safe:transition-colors motion-safe:duration-300 pointer-events-auto"
               >
                 Sign in
               </Link>
@@ -133,7 +133,7 @@ export const Navbar = () => {
                     </span>
                   )}
                 </div>
-                <span className="hidden sm:block">{item.label}</span>
+                <span className="sr-only sm:not-sr-only sm:block text-[10px] sm:text-[11px]">{item.label}</span>
               </button>
             );
           })}
