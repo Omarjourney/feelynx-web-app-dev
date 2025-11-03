@@ -154,64 +154,70 @@ export const VibeCoinPackages = ({ platform = 'web', onPurchase }: VibeCoinPacka
   }
 
   return (
-    <div className="w-full">
-      <h2 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8 text-center">VibeCoin Packages</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 md:gap-6 pb-20 max-w-7xl mx-auto px-4">
-        {packages.map((pkg) => {
-          const displayPrice = platform === 'app' && pkg.app_price ? pkg.app_price : pkg.price;
+    <div className="w-full overflow-x-hidden">
+      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 sm:mb-8 lg:mb-12 text-center">
+          VibeCoin Packages
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 pb-20">
+          {packages.map((pkg) => {
+            const displayPrice = platform === 'app' && pkg.app_price ? pkg.app_price : pkg.price;
 
-          return (
-            <Card
-              key={pkg.id}
-              className={`relative bg-gradient-card transition-all hover:shadow-premium ${
-                pkg.popular ? 'ring-2 ring-primary shadow-premium md:scale-105' : ''
-              }`}
-            >
-              {pkg.popular && (
-                <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-primary text-primary-foreground px-4 py-1 text-xs md:text-sm">
-                  Most Popular
-                </Badge>
-              )}
-
-              <CardHeader className="text-center pb-3 md:pb-4">
-                <div className="text-4xl md:text-6xl mb-3 md:mb-4">💎</div>
-                <CardTitle className="text-xl md:text-2xl font-bold">
-                  {pkg.coins.toLocaleString()} VibeCoins
-                </CardTitle>
-                {pkg.web_bonus && platform === 'web' && (
-                  <Badge variant="secondary" className="bg-primary/20 text-primary mt-2 text-xs">
-                    {pkg.web_bonus} Web Bonus
+            return (
+              <Card
+                key={pkg.id}
+                className={`relative bg-gradient-card motion-safe:transition-all motion-safe:duration-300 hover:shadow-premium ${
+                  pkg.popular ? 'ring-2 ring-primary shadow-premium lg:scale-105' : ''
+                }`}
+              >
+                {pkg.popular && (
+                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-primary text-primary-foreground px-4 py-1 text-xs sm:text-sm">
+                    Most Popular
                   </Badge>
                 )}
-              </CardHeader>
 
-              <CardContent className="text-center space-y-3 md:space-y-4">
-                <div className="text-3xl md:text-4xl font-bold text-primary">${displayPrice.toFixed(2)}</div>
+                <CardHeader className="text-center pb-3 sm:pb-4 lg:pb-6">
+                  <div className="text-4xl sm:text-5xl lg:text-6xl mb-3 sm:mb-4">💎</div>
+                  <CardTitle className="text-xl sm:text-2xl lg:text-3xl font-bold">
+                    {pkg.coins.toLocaleString()} VibeCoins
+                  </CardTitle>
+                  {pkg.web_bonus && platform === 'web' && (
+                    <Badge variant="secondary" className="bg-primary/20 text-primary mt-2 text-xs">
+                      {pkg.web_bonus} Web Bonus
+                    </Badge>
+                  )}
+                </CardHeader>
 
-                <Button
-                  className={`w-full mt-3 md:mt-4 min-h-12 md:min-h-14 text-base ${
-                    pkg.popular
-                      ? 'bg-gradient-primary text-primary-foreground hover:shadow-glow'
-                      : 'bg-secondary hover:bg-secondary/80'
-                  }`}
-                  onClick={() => handlePurchase(pkg)}
-                  disabled={loadingPackageId === pkg.id}
-                >
-                  {loadingPackageId === pkg.id ? 'Processing…' : 'Purchase Now'}
-                </Button>
-              </CardContent>
-            </Card>
-          );
-        })}
+                <CardContent className="text-center space-y-4 sm:space-y-5 lg:space-y-6">
+                  <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary">
+                    ${displayPrice.toFixed(2)}
+                  </div>
+
+                  <Button
+                    className={`w-full min-h-[48px] sm:min-h-[52px] lg:min-h-[56px] text-base sm:text-lg px-6 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 motion-safe:transition-all motion-safe:duration-300 ${
+                      pkg.popular
+                        ? 'bg-gradient-primary text-primary-foreground hover:shadow-glow'
+                        : 'bg-secondary hover:bg-secondary/80'
+                    }`}
+                    onClick={() => handlePurchase(pkg)}
+                    disabled={loadingPackageId === pkg.id}
+                  >
+                    {loadingPackageId === pkg.id ? 'Processing…' : 'Purchase Now'}
+                  </Button>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+        {purchaseError && (
+          <p className="mt-4 text-sm text-center text-destructive px-4" role="alert">
+            {purchaseError}
+          </p>
+        )}
+        {receipt && (
+          <PaymentReceipt receiptUrl={receipt.receiptUrl} disputeUrl={receipt.disputeUrl} />
+        )}
       </div>
-      {purchaseError && (
-        <p className="mt-4 text-sm text-center text-destructive px-4" role="alert">
-          {purchaseError}
-        </p>
-      )}
-      {receipt && (
-        <PaymentReceipt receiptUrl={receipt.receiptUrl} disputeUrl={receipt.disputeUrl} />
-      )}
     </div>
   );
 };

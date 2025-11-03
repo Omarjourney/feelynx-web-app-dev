@@ -11,18 +11,30 @@ export default {
   ],
   prefix: '',
   theme: {
+    screens: {
+      sm: '480px',
+      md: '768px',
+      lg: '1024px',
+      xl: '1280px',
+      '2xl': '1536px',
+    },
     container: {
       center: true,
-      padding: '2rem',
+      padding: {
+        DEFAULT: '1rem',
+        sm: '1.5rem',
+        lg: '2rem',
+      },
       screens: {
-        '2xl': '1400px',
+        sm: '480px',
+        md: '768px',
+        lg: '1024px',
+        xl: '1280px',
+        '2xl': '1536px',
       },
     },
     extend: {
       colors: {
-        primary: '#ff66cc',
-        secondary: '#7a4df3',
-        glass: 'rgba(255,255,255,0.1)',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
@@ -31,13 +43,6 @@ export default {
         surface: {
           DEFAULT: 'rgba(255,255,255,0.05)',
           elevated: 'rgba(255,255,255,0.08)',
-        },
-        feelynx: {
-          pink: '#E8338B',
-          cyan: '#5CC8FF',
-          ink: '#0B0720',
-          outline: '#1B1230',
-          light: '#F6F8FB',
         },
         primary: {
           DEFAULT: 'hsl(var(--primary))',

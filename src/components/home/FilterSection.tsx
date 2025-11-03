@@ -19,7 +19,7 @@ export function FilterSection({ onChange, onOpenDirectory, ...filters }: FilterS
       transition={{ delay: 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
     >
       <Card className="border-none bg-transparent shadow-none">
-        <CardHeader className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <CardTitle className="text-2xl font-semibold text-white">Tailor your feed</CardTitle>
             <CardDescription className="text-sm text-white/70">

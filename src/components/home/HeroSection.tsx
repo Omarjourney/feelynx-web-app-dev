@@ -19,7 +19,7 @@ export function HeroSection({ onPrimaryCta, onSecondaryCta, stats }: HeroSection
   return (
     <motion.section
       aria-labelledby="hero-intro"
-      className="relative overflow-hidden rounded-[30px] border border-white/10 bg-white/[0.08] p-8 shadow-premium backdrop-blur-xl md:p-12"
+      className="relative overflow-hidden rounded-[30px] border border-white/10 bg-white/[0.08] p-6 sm:p-8 lg:p-12 shadow-premium backdrop-blur-xl"
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
@@ -28,11 +28,11 @@ export function HeroSection({ onPrimaryCta, onSecondaryCta, stats }: HeroSection
         className="pointer-events-none absolute inset-0 bg-gradient-primary opacity-20 blur-3xl"
         aria-hidden
       />
-      <div className="relative flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
+      <div className="relative flex flex-col gap-6 sm:gap-8 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
         <div className="max-w-2xl space-y-6">
           <LiveIndicator label="Immersive streaming" />
           <div className="space-y-4">
-            <h1 id="hero-intro" className="text-4xl font-semibold leading-tight text-white md:text-5xl">
+            <h1 id="hero-intro" className="text-3xl font-semibold leading-tight text-white sm:text-4xl lg:text-5xl">
               A premium glassmorphism home for your live vibes
             </h1>
             <p className="max-w-xl text-base text-white/75">

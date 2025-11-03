@@ -48,11 +48,11 @@ export function CreatorGridSection({ id, title, creators, onSelect, onViewAll, v
       >
         <Suspense
           fallback={
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {Array.from({ length: Math.min(3, Math.max(creators.length, 1)) }).map((_, index) => (
                 <div
                   key={`creator-skeleton-${index}`}
-                  className="h-[420px] rounded-3xl border border-white/10 bg-white/5"
+                  className="h-[380px] sm:h-[400px] lg:h-[420px] rounded-2xl sm:rounded-3xl border border-white/10 bg-white/5"
                   aria-hidden
                 />
               ))}

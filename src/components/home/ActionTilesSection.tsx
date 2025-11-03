@@ -25,7 +25,7 @@ type ActionTilesSectionProps = {
 };
 
 export function ActionTilesSection({ id, title, description, actions, tiles, gridClassName }: ActionTilesSectionProps) {
-  const gridClasses = gridClassName ?? 'grid gap-5 md:grid-cols-2 xl:grid-cols-4';
+  const gridClasses = gridClassName ?? 'grid gap-4 sm:gap-5 lg:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4';
 
   return (
     <motion.div
@@ -39,7 +39,7 @@ export function ActionTilesSection({ id, title, description, actions, tiles, gri
             ({ id: tileId, title: tileTitle, badge, description: tileDescription, icon: Icon, actionLabel, onAction }) => (
               <Card
                 key={tileId}
-                className="glass-panel h-full border-white/10 bg-white/5 p-6 transition duration-300 hover:-translate-y-1"
+                className="glass-panel h-full border-white/10 bg-white/5 p-4 sm:p-5 lg:p-6 motion-safe:transition-all motion-safe:duration-300 hover:-translate-y-1"
               >
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 text-white/80">

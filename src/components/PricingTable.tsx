@@ -78,7 +78,7 @@ export function PricingTable() {
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {packages.map((pkg) => {
           const creatorPayout = (pkg.price * pkg.creator_split).toFixed(2);
           const platformRevenue = (pkg.price * pkg.platform_fee).toFixed(2);

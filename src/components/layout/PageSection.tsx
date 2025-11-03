@@ -29,19 +29,19 @@ export function PageSection({
       className={cn('flex flex-col gap-6', className)}
     >
       {(title || description || actions) && (
-        <header className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between lg:gap-6">
           <div className={cn('space-y-2', containerClassName)}>
             {title && (
               <h2
                 id={title ? `${id}-title` : undefined}
-                className={cn('text-2xl font-semibold text-white md:text-3xl', headingClassName)}
+                className={cn('text-2xl font-semibold text-white sm:text-3xl lg:text-4xl', headingClassName)}
               >
                 {title}
               </h2>
             )}
-            {description && <p className="text-sm text-white/70">{description}</p>}
+            {description && <p className="text-sm sm:text-base text-white/70">{description}</p>}
           </div>
-          {actions && <div className="flex shrink-0 items-center gap-3 text-sm">{actions}</div>}
+          {actions && <div className="flex shrink-0 items-center gap-3 text-sm sm:text-base">{actions}</div>}
         </header>
       )}
       {children}

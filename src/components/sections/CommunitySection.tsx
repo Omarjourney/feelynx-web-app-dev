@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { CrewCard } from '@/components/ui/CrewCard';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { Tooltip } from '@/components/ui/Tooltip';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface CommunityGroup {
   id: string | number;
@@ -32,10 +32,15 @@ export const CommunitySection = ({ groups }: CommunitySectionProps) => {
           <h2 id="community-section" className="text-3xl font-semibold tracking-tight text-white">
             Family Crews
           </h2>
-          <Tooltip content="Fan Crew: Curated micro-communities where fans gather for exclusive content, live chat boosts, and shared quests.">
-            <p className="mt-1 text-base leading-relaxed text-white/70 cursor-help underline decoration-dotted">
-              Join exclusive communities and unlock rewards
-            </p>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <p className="mt-1 text-base leading-relaxed text-white/70 cursor-help underline decoration-dotted">
+                Join exclusive communities and unlock rewards
+              </p>
+            </TooltipTrigger>
+            <TooltipContent>
+              Fan Crew: Curated micro-communities where fans gather for exclusive content, live chat boosts, and shared quests.
+            </TooltipContent>
           </Tooltip>
         </div>
         <Button
@@ -49,7 +54,7 @@ export const CommunitySection = ({ groups }: CommunitySectionProps) => {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {groups.slice(0, 6).map((group) => (
           <CrewCard
             key={group.id}
