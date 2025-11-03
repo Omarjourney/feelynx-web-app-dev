@@ -22,10 +22,10 @@ const rawPackages: RawVibeCoinPackage[] = [
   { id: 3, tokens: 850, appTokens: 654, price: 9.99 },
   { id: 4, tokens: 1450, appTokens: 1115, price: 15.99 },
   { id: 5, tokens: 1950, appTokens: 1500, price: 19.99 },
-  { id: 6, tokens: 2450, appTokens: 1885, price: 24.99 },
-  { id: 7, tokens: 4900, appTokens: 3769, price: 49.99, popular: true },
-  { id: 8, tokens: 9800, appTokens: 7538, price: 99.99 },
-  { id: 9, tokens: 14700, appTokens: 11308, price: 149.99 },
+  { id: 6, tokens: 2495, appTokens: 1919, price: 24.99 },
+  { id: 7, tokens: 4995, appTokens: 3842, price: 49.99, popular: true },
+  { id: 8, tokens: 9995, appTokens: 7688, price: 99.99 },
+  { id: 9, tokens: 14995, appTokens: 11535, price: 149.99 },
 ];
 
 export const vibeCoinPackages: VibeCoinPackage[] = rawPackages.map((pkg) => {
