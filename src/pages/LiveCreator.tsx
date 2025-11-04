@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Room, RoomEvent, Track, createLocalTracks } from 'livekit-client';
 import { Button } from '@/components/ui/button';
@@ -6,11 +6,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { isApiError, request } from '@/lib/api';
+import { isApiError } from '@/lib/api';
 import { requestMediaPermissions } from '@/lib/mediaPermissions';
-import { toast } from 'sonner';
-import { getUserMessage, toApiError } from '@/lib/errors';
+import { getUserMessage } from '@/lib/errors';
 import FlowBreadcrumb from '@/components/FlowBreadcrumb';
+import { toast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
+import {
+  createLivekitRoom,
+  requestCreatorToken,
+  updateCreatorLiveStatus,
+} from '@/lib/livekit/host';
 
 interface ChatMessage {
   id: number;
@@ -33,19 +39,20 @@ const LiveCreator = () => {
   const roomRef = useRef<Room | null>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const roomName = searchParams.get('room') || 'default_room';
-
-  useEffect(() => {
-    return () => {
-      endStream();
-    };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const { user } = useAuth();
+  const fallbackIdentityRef = useRef(`creator_${Date.now()}`);
+  const fallbackUsernameRef = useRef(`creator_${Date.now()}`);
+  const identity = user?.id ?? fallbackIdentityRef.current;
+  const creatorUsername =
+    (user?.user_metadata as { username?: string } | undefined)?.username ??
+    user?.email ??
+    fallbackUsernameRef.current;
 
   const startLiveStream = async () => {
     try {
       await requestMediaPermissions();
       setIsVideoReady(false);
 
-      const identity = `creator_${Date.now()}`;
       const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL;
       const demoMode = searchParams.get('mode') === 'demo' || !wsUrl;
       if (demoMode) {
@@ -57,14 +64,14 @@ const LiveCreator = () => {
           setIsVideoReady(true);
         }
         setIsLive(true);
-        toast.success('Camera preview started (demo mode)');
+        toast({
+          title: 'Camera preview started',
+          description: 'Demo mode enabled because LiveKit is not configured.',
+        });
       } else {
         // Get token for creator and connect to LiveKit
-        const { token } = await request<{ token: string }>('/livekit/token', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ room: roomName, identity }),
-        });
+        await createLivekitRoom({ name: roomName });
+        const token = await requestCreatorToken(roomName, identity);
 
         const room = new Room();
         await room.connect(wsUrl, token);
@@ -83,10 +90,13 @@ const LiveCreator = () => {
         updateParticipants();
         roomRef.current = room;
         setIsLive(true);
-        toast.success('You are now live!', { description: 'Viewers can now join your stream.' });
+        await updateCreatorLiveStatus(creatorUsername, true);
+        toast({
+          title: 'You are now live!',
+          description: 'Viewers can now join your stream.',
+        });
       }
     } catch (error) {
-      console.error('Failed to start live stream:', error);
       const apiError = isApiError(error) ? error : undefined;
       let description = getUserMessage(error);
       let action: { label: string; onClick: () => void } | undefined;
@@ -113,48 +123,61 @@ const LiveCreator = () => {
         }
       }
 
-      toast.error('Stream failed to start', {
+      toast({
+        title: 'Stream failed to start',
         description,
         action,
+        variant: 'destructive',
       });
     }
   };
 
-  const endStream = async () => {
-    const activeRoom = roomRef.current;
-    if (activeRoom) {
-      activeRoom.disconnect();
-      roomRef.current = null;
-    }
-    // Detach any attached video stream tracks in demo mode
-    if (localVideoRef.current && localVideoRef.current.srcObject) {
-      const ms = localVideoRef.current.srcObject as MediaStream;
-      ms.getTracks().forEach((t) => t.stop());
-      localVideoRef.current.srcObject = null;
-    }
-
-    // Update creator status to offline
-    try {
-      const res = await fetch('/creators/creator_username/status', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isLive: false }),
-      });
-      if (!res.ok) {
-        throw await toApiError(res);
+  const endStream = useCallback(
+    async ({ silent = false }: { silent?: boolean } = {}) => {
+      const activeRoom = roomRef.current;
+      if (activeRoom) {
+        activeRoom.disconnect();
+        roomRef.current = null;
       }
-    } catch (error) {
-      console.error('Failed to update status:', error);
-      toast.error(getUserMessage(error));
-    }
+      // Detach any attached video stream tracks in demo mode
+      if (localVideoRef.current && localVideoRef.current.srcObject) {
+        const ms = localVideoRef.current.srcObject as MediaStream;
+        ms.getTracks().forEach((t) => t.stop());
+        localVideoRef.current.srcObject = null;
+      }
 
-    setIsLive(false);
-    setIsVideoReady(false);
-    toast.success('Stream ended', {
-      description: 'You are now offline.',
-    });
-    navigate('/');
-  };
+      if (isLive) {
+        try {
+          await updateCreatorLiveStatus(creatorUsername, false);
+        } catch (error) {
+          if (!silent) {
+            toast({
+              title: 'Unable to update creator status',
+              description: getUserMessage(error),
+              variant: 'destructive',
+            });
+          }
+        }
+      }
+
+      setIsLive(false);
+      setIsVideoReady(false);
+      if (!silent) {
+        toast({
+          title: 'Stream ended',
+          description: 'You are now offline.',
+        });
+        navigate('/');
+      }
+    },
+    [creatorUsername, isLive, navigate],
+  );
+
+  useEffect(() => {
+    return () => {
+      void endStream({ silent: true });
+    };
+  }, [endStream]);
 
   const sendMessage = () => {
     if (!chatMessage.trim()) return;
@@ -192,7 +215,13 @@ const LiveCreator = () => {
         </div>
         <Button
           variant={isLive ? 'destructive' : 'outline'}
-          onClick={isLive ? endStream : startLiveStream}
+          onClick={() => {
+            if (isLive) {
+              void endStream();
+            } else {
+              void startLiveStream();
+            }
+          }}
         >
           {isLive ? 'End Stream' : 'Start Stream'}
         </Button>

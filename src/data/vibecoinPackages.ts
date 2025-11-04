@@ -1,53 +1,58 @@
+import { z } from 'zod';
+import { request } from '@/lib/api';
+
 export interface VibeCoinPackage {
   id: number;
-  /** VibeCoins awarded when purchasing on the web */
   tokens: number;
-  /** VibeCoins a user would receive in the mobile app */
-  appTokens: number;
-  /** Percentage increase of web coins compared to the app */
-  percentMore: number;
   price: number;
+  appPrice?: number;
+  webBonus?: string;
+  creatorSplit?: number;
+  platformFee?: number;
   popular?: boolean;
 }
 
-export const PLATFORM_MARGIN = 0.25;
-export const CREATOR_SHARE = 0.75;
-export const MIN_PLATFORM_PROFIT_PER_COIN = 0.0025;
-
-type RawVibeCoinPackage = Omit<VibeCoinPackage, 'percentMore'> & { percentMore?: number };
-
-const rawPackages: RawVibeCoinPackage[] = [
-  { id: 1, tokens: 75, appTokens: 58, price: 0.99 },
-  { id: 2, tokens: 400, appTokens: 308, price: 4.99 },
-  { id: 3, tokens: 850, appTokens: 654, price: 9.99 },
-  { id: 4, tokens: 1450, appTokens: 1115, price: 15.99 },
-  { id: 5, tokens: 1950, appTokens: 1500, price: 19.99 },
-  { id: 6, tokens: 2490, appTokens: 1915, price: 24.99 },
-  { id: 7, tokens: 4990, appTokens: 3838, price: 49.99, popular: true },
-  { id: 8, tokens: 9990, appTokens: 7685, price: 99.99 },
-  { id: 9, tokens: 14990, appTokens: 11531, price: 149.99 },
-];
-
-export const vibeCoinPackages: VibeCoinPackage[] = rawPackages.map((pkg) => {
-  const percentMore = ((pkg.tokens - pkg.appTokens) / pkg.appTokens) * 100;
-  const platformMarginAmount = pkg.price * PLATFORM_MARGIN;
-  const webProfitPerCoin = platformMarginAmount / pkg.tokens;
-  const appProfitPerCoin = platformMarginAmount / pkg.appTokens;
-
-  if (webProfitPerCoin < MIN_PLATFORM_PROFIT_PER_COIN) {
-    throw new Error(
-      `Platform profit per coin (${webProfitPerCoin.toFixed(4)}) is below the minimum for web package ${pkg.id}.`,
-    );
-  }
-
-  if (appProfitPerCoin < MIN_PLATFORM_PROFIT_PER_COIN) {
-    throw new Error(
-      `Platform profit per coin (${appProfitPerCoin.toFixed(4)}) is below the minimum for app package ${pkg.id}.`,
-    );
-  }
-
-  return {
-    ...pkg,
-    percentMore: Number(percentMore.toFixed(1)),
-  };
+const packageSchema = z.object({
+  id: z.union([z.number(), z.string()]),
+  tokens: z.union([z.number(), z.string()]),
+  price: z.union([z.number(), z.string()]),
+  appPrice: z.union([z.number(), z.string()]).optional(),
+  webBonus: z.string().optional(),
+  creatorSplit: z.union([z.number(), z.string()]).optional(),
+  platformFee: z.union([z.number(), z.string()]).optional(),
+  popular: z.boolean().optional(),
 });
+
+const toNumber = (value: unknown) => {
+  if (typeof value === 'number') return value;
+  if (typeof value === 'string') {
+    const parsed = Number.parseFloat(value.replace(/[^0-9.]/g, ''));
+    return Number.isNaN(parsed) ? 0 : parsed;
+  }
+  return 0;
+};
+
+export async function fetchVibeCoinPackages(signal?: AbortSignal): Promise<VibeCoinPackage[]> {
+  const data = await request<unknown>('/api/payments/pricing', { signal });
+  const parsed = z.array(packageSchema).safeParse(data);
+  if (!parsed.success) {
+    throw new Error('Invalid pricing payload received from API');
+  }
+
+  return parsed.data.map((pkg) => {
+    const id = typeof pkg.id === 'string' ? Number.parseInt(pkg.id, 10) : pkg.id;
+    const tokens = toNumber(pkg.tokens);
+    const price = toNumber(pkg.price);
+    const appPrice = pkg.appPrice != null ? toNumber(pkg.appPrice) : undefined;
+    return {
+      id,
+      tokens,
+      price,
+      appPrice,
+      webBonus: pkg.webBonus,
+      creatorSplit: pkg.creatorSplit != null ? toNumber(pkg.creatorSplit) : undefined,
+      platformFee: pkg.platformFee != null ? toNumber(pkg.platformFee) : undefined,
+      popular: pkg.popular ?? false,
+    } satisfies VibeCoinPackage;
+  });
+}

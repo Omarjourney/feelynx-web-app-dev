@@ -1,18 +1,39 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Navigation } from '@/components/Navigation';
-import { groups } from '@/data/groups';
+import { useQuery } from '@tanstack/react-query';
 import { GroupCard } from '@/components/GroupCard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { fetchGroups } from '@/data/groups';
+import { toast } from '@/hooks/use-toast';
+import { getUserMessage } from '@/lib/errors';
 
 const Groups = () => {
   const navigate = useNavigate();
-  const handleTab = (t: string) => navigate(t === 'groups' ? '/groups' : `/${t}`);
+  const {
+    data: groups = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ['groups-directory'],
+    queryFn: ({ signal }) => fetchGroups(signal),
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
+  });
+
+  useEffect(() => {
+    if (!error) return;
+    toast({
+      title: 'Unable to load groups',
+      description: getUserMessage(error),
+      variant: 'destructive',
+    });
+  }, [error]);
+
   return (
-    <div className="min-h-screen bg-background md:flex">
-      <Navigation activeTab="groups" onTabChange={handleTab} />
+    <div className="min-h-screen bg-background">
       <main className="flex-1 overflow-x-hidden pb-24 md:pb-12">
         <section className="mx-auto w-full max-w-6xl space-y-6 px-4 py-12">
           <Card className="border border-border/60 bg-background/80 backdrop-blur">
@@ -21,8 +42,8 @@ const Groups = () => {
                 <Badge className="w-fit bg-primary/30 text-primary-foreground">Family crews</Badge>
                 <CardTitle className="text-3xl font-bold">Find your Family</CardTitle>
                 <CardDescription className="max-w-2xl text-sm text-muted-foreground">
-                  Join Family crews built around creators and shared vibes. Earn crew XP, unlock
-                  goals together, and light up chat with synchronized reactions.
+                  Join Family crews built around creators and shared vibes. Earn crew XP, unlock goals
+                  together, and light up chat with synchronized reactions.
                 </CardDescription>
               </div>
               <div className="flex flex-col gap-3 sm:flex-row">
@@ -54,11 +75,27 @@ const Groups = () => {
             </TabsList>
 
             <TabsContent value="explore" className="space-y-4">
-              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {groups.map((g) => (
-                  <GroupCard key={g.id} group={g} />
-                ))}
-              </div>
+              {isLoading ? (
+                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {Array.from({ length: 6 }).map((_, index) => (
+                    <div
+                      key={`group-skeleton-${index}`}
+                      className="h-64 rounded-3xl border border-border/60 bg-background/60"
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {groups.map((group) => (
+                    <GroupCard key={group.id} group={group} />
+                  ))}
+                </div>
+              )}
+              {!isLoading && !groups.length ? (
+                <Card className="border border-border/60 bg-background/70 p-8 text-center text-sm text-muted-foreground">
+                  There are no public crews yet. Check back soon or create your own.
+                </Card>
+              ) : null}
             </TabsContent>
 
             <TabsContent value="mine">
@@ -81,11 +118,7 @@ const Groups = () => {
                   </CardHeader>
                   <CardContent className="flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
                     <div>Win streak boosts crew XP by 25%.</div>
-                    <Button
-                      size="sm"
-                      className="button-ripple"
-                      onClick={() => navigate('/pkbattle')}
-                    >
+                    <Button size="sm" className="button-ripple" onClick={() => navigate('/pkbattle')}>
                       Set reminder
                     </Button>
                   </CardContent>

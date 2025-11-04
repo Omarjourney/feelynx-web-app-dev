@@ -1,4 +1,12 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import {
+  Room,
+  RoomEvent,
+  Track,
+  createLocalTracks,
+  type LocalTrack,
+} from 'livekit-client';
 import {
   Dialog,
   DialogTrigger,
@@ -18,21 +26,93 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { requestMediaPermissions } from '@/lib/mediaPermissions';
-import { toast } from 'sonner';
+import { toast } from '@/hooks/use-toast';
 import {
   createLivekitRoom,
   requestCreatorToken,
   updateCreatorLiveStatus,
 } from '@/lib/livekit/host';
+import { useAuth } from '@/contexts/AuthContext';
 
 const GoLiveButton = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [mediaEnabled, setMediaEnabled] = useState(true);
   const [category, setCategory] = useState('chat');
   const [mediaError, setMediaError] = useState('');
   const [isStarting, setIsStarting] = useState(false);
+  const [isVideoReady, setIsVideoReady] = useState(false);
+  const localVideoRef = useRef<HTMLVideoElement>(null);
+  const previewTracksRef = useRef<LocalTrack[]>([]);
+  const roomRef = useRef<Room | null>(null);
 
   const STREAM_ERROR_MESSAGE = "We couldn't start your stream. Please try again.";
+
+  const stopPreview = useCallback(() => {
+    previewTracksRef.current.forEach((track) => {
+      track.stop();
+      track.detach();
+    });
+    previewTracksRef.current = [];
+    if (localVideoRef.current) {
+      localVideoRef.current.srcObject = null;
+    }
+    setIsVideoReady(false);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      stopPreview();
+      roomRef.current?.disconnect();
+      roomRef.current = null;
+    };
+  }, [stopPreview]);
+
+  useEffect(() => {
+    if (!open || !mediaEnabled) {
+      stopPreview();
+      return;
+    }
+
+    let cancelled = false;
+
+    const startPreview = async () => {
+      try {
+        await requestMediaPermissions();
+        const tracks = await createLocalTracks({ audio: true, video: true });
+        if (cancelled) {
+          tracks.forEach((track) => track.stop());
+          return;
+        }
+
+        previewTracksRef.current = tracks;
+        const videoTrack = tracks.find((track) => track.kind === Track.Kind.Video);
+        if (videoTrack && localVideoRef.current) {
+          videoTrack.attach(localVideoRef.current);
+          setIsVideoReady(true);
+        }
+        setMediaError('');
+      } catch (error) {
+        const description =
+          error instanceof Error ? error.message : 'Unable to access camera or microphone.';
+        setMediaError(description);
+        toast({
+          title: 'Camera access failed',
+          description,
+          variant: 'destructive',
+        });
+      }
+    };
+
+    startPreview();
+
+    return () => {
+      cancelled = true;
+      stopPreview();
+    };
+  }, [mediaEnabled, open, stopPreview]);
 
   const handleStart = async () => {
     if (isStarting) return;
@@ -45,26 +125,70 @@ const GoLiveButton = () => {
       }
       setMediaError('');
 
-      const roomName = `live_creator_${Date.now()}`;
+      const qsRoom = searchParams.get('room');
+      const roomName = qsRoom && qsRoom.trim().length > 0 ? qsRoom : `live_creator_${Date.now()}`;
+      const identity = user?.id ?? `creator_${Date.now()}`;
+      const creatorUsername =
+        (user?.user_metadata as { username?: string } | undefined)?.username ??
+        user?.email ??
+        'creator';
       const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL;
-      if (wsUrl) {
+      const isDemo = searchParams.get('mode') === 'demo' || !wsUrl;
+
+      if (!isDemo && wsUrl) {
         await createLivekitRoom({ name: roomName });
-        await requestCreatorToken(roomName, `creator_${Date.now()}`);
-        await updateCreatorLiveStatus('creator_username', true);
-        toast.success('Stream is ready! Redirecting to your live room.');
+        const token = await requestCreatorToken(roomName, identity);
+        const room = new Room();
+        roomRef.current = room;
+        room.once(RoomEvent.Disconnected, () => {
+          roomRef.current = null;
+        });
+
+        const localTracks = mediaEnabled
+          ? previewTracksRef.current.length > 0
+            ? previewTracksRef.current
+            : await createLocalTracks({ audio: true, video: true })
+          : [];
+
+        if (localTracks.length > 0 && previewTracksRef.current.length === 0) {
+          previewTracksRef.current = localTracks;
+          const videoTrack = localTracks.find((track) => track.kind === Track.Kind.Video);
+          if (videoTrack && localVideoRef.current) {
+            videoTrack.attach(localVideoRef.current);
+            setIsVideoReady(true);
+          }
+        }
+
+        await room.connect(wsUrl, token);
+        await Promise.all(
+          localTracks.map(async (track) => {
+            await room.localParticipant.publishTrack(track);
+          }),
+        );
+
+        room.disconnect();
+        await updateCreatorLiveStatus(creatorUsername, true);
+        toast({
+          title: 'Stream is ready!',
+          description: 'Redirecting to your live room.',
+        });
         setOpen(false);
-        window.location.href = `/live-creator?room=${roomName}`;
+        stopPreview();
+        navigate(`/live-creator?room=${encodeURIComponent(roomName)}`);
       } else {
-        // Demo mode: no LiveKit configured; navigate to creator with demo flag
-        toast.success('Starting camera preview (demo mode).');
+        toast({
+          title: 'Starting camera preview (demo mode).',
+          description: 'Join your live room to continue.',
+        });
         setOpen(false);
-        window.location.href = `/live-creator?room=${roomName}&mode=demo`;
+        stopPreview();
+        const demoSuffix = roomName ? `?room=${encodeURIComponent(roomName)}` : '';
+        navigate(`/live-creator${demoSuffix}${demoSuffix ? '&' : '?'}mode=demo`);
       }
     } catch (error) {
-      console.error('Failed to start stream:', error);
-      const message = error instanceof Error ? error.message : String(error);
+      const message = error instanceof Error ? error.message : STREAM_ERROR_MESSAGE;
       setMediaError(message);
-      toast.error(message);
+      toast({ title: 'Failed to start stream', description: message, variant: 'destructive' });
     } finally {
       setIsStarting(false);
     }
@@ -110,6 +234,26 @@ const GoLiveButton = () => {
               Enable Camera &amp; Mic
             </label>
           </div>
+          {mediaEnabled && (
+            <div className="space-y-2">
+              <p className="text-sm font-medium">Preview</p>
+              <div className="relative aspect-video overflow-hidden rounded-lg bg-muted">
+                <video
+                  ref={localVideoRef}
+                  className="h-full w-full object-cover"
+                  muted
+                  autoPlay
+                  playsInline
+                  aria-label="Camera preview"
+                />
+                {!isVideoReady && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-background/70 text-sm text-muted-foreground">
+                    Checking camera…
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
           {mediaError && <p className="text-sm text-destructive">{mediaError}</p>}
           <Button
             className="w-full bg-gradient-primary text-primary-foreground"

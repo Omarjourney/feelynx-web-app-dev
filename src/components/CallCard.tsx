@@ -9,16 +9,18 @@ interface Creator {
   name: string;
   username: string;
   initial: string;
-  gradientColors: string;
-  videoRate: number;
+  gradientColors?: string;
+  videoRate?: number;
 }
 
-export const CallCard = ({ creator, status }: { creator: Creator; status?: PresenceStatus }) => (
+export const CallCard = ({ creator, status }: { creator: Creator; status?: PresenceStatus }) => {
+  const rateLabel = creator.videoRate != null ? `${creator.videoRate}💎/min` : '—';
+  const gradient = creator.gradientColors ?? 'bg-gradient-to-br from-purple-600 to-pink-500';
+
+  return (
   <Dialog>
     <div className="border rounded-lg overflow-hidden bg-card">
-      <div
-        className={`h-32 flex items-center justify-center text-6xl text-white ${creator.gradientColors}`}
-      >
+      <div className={`h-32 flex items-center justify-center text-6xl text-white ${gradient}`}>
         {creator.initial}
       </div>
       <div className="p-3 space-y-2">
@@ -43,7 +45,7 @@ export const CallCard = ({ creator, status }: { creator: Creator; status?: Prese
               </span>
             )}
           </div>
-          <Badge>{creator.videoRate}💎/min</Badge>
+          <Badge>{rateLabel}</Badge>
         </div>
         <DialogTrigger asChild>
           <Button className="w-full bg-gradient-primary text-primary-foreground" size="sm">
@@ -53,7 +55,8 @@ export const CallCard = ({ creator, status }: { creator: Creator; status?: Prese
       </div>
     </div>
     <DialogContent>
-      <CallSession creatorName={creator.name} ratePerMinute={creator.videoRate} />
+      <CallSession creatorName={creator.name} ratePerMinute={creator.videoRate ?? 0} />
     </DialogContent>
   </Dialog>
-);
+  );
+};

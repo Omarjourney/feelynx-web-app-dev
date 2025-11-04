@@ -120,7 +120,7 @@ export function AppShell() {
               </div>
             </div>
 
-            <nav className="flex-1 space-y-6">
+            <nav className="flex-1 space-y-6" aria-label="Primary navigation">
               <div className="space-y-2">
                 {NAV_ITEMS.map((item) => {
                   const Icon = item.icon;
@@ -209,7 +209,10 @@ export function AppShell() {
           <div className="sticky top-0 z-40">
             <PreviewBanner />
             {isMobile && (
-              <nav className="bg-background/95 backdrop-blur-sm border-b border-border pt-safe">
+              <nav
+                className="bg-background/95 backdrop-blur-sm border-b border-border pt-safe"
+                aria-label="Mobile navigation"
+              >
                 <div className="px-safe">
                   <div className="flex h-16 items-center justify-between px-4">
                     <div className="flex items-center space-x-2">
