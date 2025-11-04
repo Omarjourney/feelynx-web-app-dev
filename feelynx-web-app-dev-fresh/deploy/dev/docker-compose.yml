@@ -1,0 +1,21 @@
+services:
+  backend:
+    image: feelynx-dev-backend
+    container_name: feelynx-dev-backend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=development
+      - LIVEKIT_URL=wss://feelynxlive-rtnczet2.livekit.cloud
+      - LIVEKIT_API_KEY=APIbMCz3twGVNco
+      - LIVEKIT_API_SECRET=MXcQubC6sP4vj7eLJdVBjXdF2FIe77nh7Btz1aGLZMP
+    ports:
+      - "3001:3001"
+
+  nginx:
+    image: feelynx-dev-nginx
+    container_name: feelynx-dev-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend

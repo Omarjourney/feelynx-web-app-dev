@@ -1,0 +1,34 @@
+{
+  "name": "Feelynx",
+  "short_name": "Feelynx",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B0720",
+  "theme_color": "#0B0720",
+  "icons": [
+    {
+      "src": "/icons/feelynx-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/feelynx-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/feelynx-icon-1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/feelynx-icon-1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

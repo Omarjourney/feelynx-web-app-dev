@@ -1,0 +1,15 @@
+:root {
+  --feelynx-bg-dark: #0b0720;
+  --feelynx-bg-light: #f6f8fb;
+}
+
+body {
+  background: var(--feelynx-bg-dark);
+  transition: background 0.4s ease;
+}
+
+@media (prefers-color-scheme: light) {
+  body {
+    background: var(--feelynx-bg-light);
+  }
+}
