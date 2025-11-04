@@ -11,8 +11,11 @@ type Health = {
 };
 
 export default function PreviewBanner() {
-  // Hide banner by default; enable only when explicitly requested
-  const show = (import.meta as any).env?.VITE_SHOW_PREVIEW_BANNER === 'true';
+  const mode = import.meta.env.MODE;
+  const show =
+    (import.meta as any).env?.VITE_SHOW_PREVIEW_BANNER === 'true' ||
+    mode === 'development' ||
+    mode === 'preview';
   const [health, setHealth] = useState<Health | null>(null);
   useEffect(() => {
     if (!show) return;

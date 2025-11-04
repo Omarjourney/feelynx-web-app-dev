@@ -1,10 +1,10 @@
 import { ReactNode } from 'react';
-import { Navigation } from '@/components/Navigation';
 import { BalanceBar } from '@/components/ui/BalanceBar';
 import { SettingsDrawer } from '@/components/ui/SettingsDrawer';
 import { Button } from '@/components/ui/button';
 import { Video } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useWallet, selectWalletBalance } from '@/stores/useWallet';
 
 interface HomeLayoutProps {
   children: ReactNode;
@@ -12,25 +12,21 @@ interface HomeLayoutProps {
   coins?: number;
 }
 
-export const HomeLayout = ({ children, showBalance = true, coins = 2547 }: HomeLayoutProps) => {
+export const HomeLayout = ({ children, showBalance = true, coins }: HomeLayoutProps) => {
   const navigate = useNavigate();
+  const walletCoins = useWallet(selectWalletBalance);
+  const balance = coins ?? walletCoins;
 
   return (
-    <div className="relative min-h-screen bg-transparent md:flex">
-      <Navigation activeTab="home" onTabChange={() => undefined} />
-
-      <main
-        id="main-content"
-        className="relative flex-1 overflow-x-hidden pb-[calc(9rem+var(--safe-area-bottom))]"
-        role="main"
-      >
+    <div className="relative min-h-screen bg-transparent">
+      <section className="relative overflow-x-hidden pb-[calc(9rem+var(--safe-area-bottom))]">
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-white/5 to-transparent opacity-40" />
 
         {/* Top bar with balance and settings */}
         {showBalance && (
           <div className="sticky top-0 z-40 bg-black/50 backdrop-blur-md border-b border-white/10 px-6 md:px-10 py-4">
             <div className="mx-auto max-w-6xl flex items-center justify-between gap-4">
-              <BalanceBar coins={coins} />
+              <BalanceBar coins={balance} />
               <SettingsDrawer />
             </div>
           </div>
@@ -50,7 +46,7 @@ export const HomeLayout = ({ children, showBalance = true, coins = 2547 }: HomeL
           <Video className="h-6 w-6" />
           <span className="ml-2 font-semibold">Go Live</span>
         </Button>
-      </main>
+      </section>
     </div>
   );
 };
