@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate, Link } from 'react-router-dom';
-import { Navigation } from '@/components/Navigation';
+import { useQuery } from '@tanstack/react-query';
 import HeroLogoReveal from '../../components/brand/HeroLogoReveal';
 import type { SearchFiltersState } from '@/components/SearchFilters';
 import { VibeCoinPackages } from '@/components/VibeCoinPackages';
 import { useCreatorLive } from '@/hooks/useCreatorLive';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { groups } from '@/data/groups';
+import { fetchGroups } from '@/data/groups';
 import { MessageCircle, Radio, Sparkles, Users, Workflow, Video } from 'lucide-react';
 import FeelynxLogo from '@/components/brand/FeelynxLogo';
 import { BRAND } from '@/config';
@@ -17,9 +17,20 @@ import { FilterSection } from '@/components/home/FilterSection';
 import { ActionTilesSection } from '@/components/home/ActionTilesSection';
 import { CreatorGridSection } from '@/components/home/CreatorGridSection';
 import { PageSection } from '@/components/layout/PageSection';
+import { toast } from '@/hooks/use-toast';
+import { getUserMessage } from '@/lib/errors';
 
 const Index = () => {
   const creators = useCreatorLive();
+  const {
+    data: groups = [],
+    error: groupsError,
+  } = useQuery({
+    queryKey: ['home-groups'],
+    queryFn: ({ signal }) => fetchGroups(signal),
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
+  });
   const navigate = useNavigate();
   const [filters, setFilters] = useState<SearchFiltersState>({
     search: '',
@@ -200,9 +211,17 @@ const Index = () => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
   };
 
+  useEffect(() => {
+    if (!groupsError) return;
+    toast({
+      title: 'Unable to load groups',
+      description: getUserMessage(groupsError),
+      variant: 'destructive',
+    });
+  }, [groupsError]);
+
   return (
     <div className="relative min-h-screen bg-[#05010f] text-white md:flex">
-      <Navigation activeTab="home" onTabChange={() => undefined} />
       <main
         id="main-content"
         className="relative flex-1 overflow-x-hidden pb-[calc(9rem+var(--safe-area-bottom))]"

@@ -12,6 +12,13 @@ interface CreatorCardProps {
 }
 
 export const CreatorCard = ({ creator, onViewProfile }: CreatorCardProps) => {
+  const gradientClass = creator.gradientColors || 'bg-gradient-to-br from-purple-600 to-pink-500';
+  const subscriberLabel = creator.subscribers ?? '—';
+  const videoRateLabel = creator.videoRate != null ? `${creator.videoRate}💎/min` : '—';
+  const voiceRateLabel = creator.voiceRate != null ? `${creator.voiceRate}💎/min` : '—';
+  const locationLabel = creator.country ? `📍 ${creator.country}` : '📍 Worldwide';
+  const ageLabel = creator.age != null ? `🎂 ${creator.age}` : null;
+
   return (
     <motion.article
       layout
@@ -24,7 +31,7 @@ export const CreatorCard = ({ creator, onViewProfile }: CreatorCardProps) => {
     >
       <Card className="group relative overflow-hidden border-white/5 bg-white/5 p-0 shadow-[0_35px_80px_-45px_rgba(15,15,30,0.9)] h-full flex flex-col">
         <CardContent className="flex h-full flex-col gap-0 p-0">
-          <div className={cn('relative aspect-[3/4] w-full overflow-hidden', creator.gradientColors)}>
+          <div className={cn('relative aspect-[3/4] w-full overflow-hidden', gradientClass)}>
             <div className="absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-white/10" />
             <div className="absolute inset-0 bg-gradient-glow opacity-70" />
             <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-black/75 via-black/20 to-transparent backdrop-blur-sm" />
@@ -59,15 +66,15 @@ export const CreatorCard = ({ creator, onViewProfile }: CreatorCardProps) => {
                 </div>
               </div>
               <div className="text-right text-[10px] sm:text-xs text-white/80">
-                <p>📍 {creator.country}</p>
-                <p>🎂 {creator.age}</p>
+                <p>{locationLabel}</p>
+                {ageLabel ? <p>{ageLabel}</p> : null}
               </div>
             </div>
           </div>
 
           <div className="flex flex-1 flex-col gap-3 sm:gap-4 p-4 sm:p-5 lg:p-6">
             <div className="flex items-center justify-between text-xs text-white/70">
-              <span className="glass-chip !px-2 sm:!px-2.5 !py-1 text-[10px] sm:text-xs">👥 {creator.subscribers}</span>
+              <span className="glass-chip !px-2 sm:!px-2.5 !py-1 text-[10px] sm:text-xs">👥 {subscriberLabel}</span>
               <span
                 className={cn(
                   'glass-chip !px-2 sm:!px-2.5 !py-1 text-[10px] sm:text-xs',
@@ -93,15 +100,11 @@ export const CreatorCard = ({ creator, onViewProfile }: CreatorCardProps) => {
             <div className="grid grid-cols-2 gap-2 sm:gap-3 text-sm text-white/70">
               <div className="glass-elevated flex flex-col items-start gap-1 rounded-xl lg:rounded-2xl px-3 sm:px-4 py-2 sm:py-3">
                 <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] text-white/50">Video</span>
-                <span className="text-sm sm:text-base font-semibold text-white">
-                  {creator.videoRate}💎/min
-                </span>
+                <span className="text-sm sm:text-base font-semibold text-white">{videoRateLabel}</span>
               </div>
               <div className="glass-elevated flex flex-col items-start gap-1 rounded-xl lg:rounded-2xl px-3 sm:px-4 py-2 sm:py-3">
                 <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] text-white/50">Voice</span>
-                <span className="text-sm sm:text-base font-semibold text-white">
-                  {creator.voiceRate}💎/min
-                </span>
+                <span className="text-sm sm:text-base font-semibold text-white">{voiceRateLabel}</span>
               </div>
             </div>
 

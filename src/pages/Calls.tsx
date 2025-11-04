@@ -1,7 +1,5 @@
-import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { Navigation } from '@/components/Navigation';
-import { creators } from '@/data/creators';
+import { useQuery } from '@tanstack/react-query';
 import { CallCard } from '@/components/CallCard';
 import { usePresence } from '@/lib/presence';
 import FeelynxLogo from '@/components/brand/FeelynxLogo';
@@ -14,39 +12,62 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
+import { fetchCreators } from '@/data/creators';
+import type { Creator } from '@/types/creator';
+import { toast } from '@/hooks/use-toast';
+import { getUserMessage } from '@/lib/errors';
 
 const Calls = () => {
-  const navigate = useNavigate();
-  const handleTab = (t: string) => navigate(t === 'calls' ? '/calls' : `/${t}`);
   const presence = usePresence();
   const [format, setFormat] = useState<'any' | 'video' | 'voice'>('any');
   const [maxRate, setMaxRate] = useState<number | ''>('');
   const [onlyAvailable, setOnlyAvailable] = useState(false);
 
-  const filterRate = (c: any) => {
-    const rate = format === 'voice' ? c.voiceRate : c.videoRate;
-    return maxRate === '' || rate <= Number(maxRate);
+  const {
+    data: creators = [],
+    isLoading,
+  } = useQuery({
+    queryKey: ['calls-creators'],
+    queryFn: ({ signal }) => fetchCreators({}, signal),
+    staleTime: 30_000,
+    onError: (error) =>
+      toast({
+        title: 'Unable to load calls roster',
+        description: getUserMessage(error),
+        variant: 'destructive',
+      }),
+  });
+
+  const matchRate = (creator: Creator) => {
+    const rate = format === 'voice' ? creator.voiceRate : creator.videoRate;
+    if (maxRate === '') return true;
+    if (rate == null) return false;
+    return rate <= Number(maxRate);
   };
-  const filterAvail = (c: any) => !onlyAvailable || presence[c.username] === 'available';
-  const sortByAvail = (a: any, b: any) => {
-    const sa = presence[a.username] === 'available' ? 0 : 1;
-    const sb = presence[b.username] === 'available' ? 0 : 1;
-    if (sa !== sb) return sa - sb;
-    const ra = format === 'voice' ? a.voiceRate : a.videoRate;
-    const rb = format === 'voice' ? b.voiceRate : b.videoRate;
-    return ra - rb;
+
+  const filterAvailability = (creator: Creator) =>
+    !onlyAvailable || presence[creator.username] === 'available';
+
+  const sortCreators = (a: Creator, b: Creator) => {
+    const availabilityA = presence[a.username] === 'available' ? 0 : 1;
+    const availabilityB = presence[b.username] === 'available' ? 0 : 1;
+    if (availabilityA !== availabilityB) return availabilityA - availabilityB;
+    const rateA = format === 'voice' ? a.voiceRate ?? Infinity : a.videoRate ?? Infinity;
+    const rateB = format === 'voice' ? b.voiceRate ?? Infinity : b.videoRate ?? Infinity;
+    return rateA - rateB;
   };
-  const list = creators.filter(filterRate).filter(filterAvail).slice().sort(sortByAvail);
-  const available = list.filter((c) => presence[c.username] === 'available');
+
+  const filteredCreators = creators.filter(matchRate).filter(filterAvailability).sort(sortCreators);
+  const available = filteredCreators.filter((creator) => presence[creator.username] === 'available');
+
   return (
-    <div className="min-h-screen bg-background md:flex">
-      <Navigation activeTab="calls" onTabChange={handleTab} />
+    <div className="min-h-screen bg-background">
       <main className="flex-1 overflow-x-hidden pb-24 md:pb-12">
         <div className="mx-auto w-full max-w-6xl space-y-6 px-4 py-10">
           <div className="flex flex-wrap items-end gap-3 rounded-3xl border border-border/60 bg-background/80 p-4">
             <div>
               <div className="mb-1 text-xs text-muted-foreground">Format</div>
-              <Select value={format} onValueChange={(v) => setFormat(v as any)}>
+              <Select value={format} onValueChange={(value) => setFormat(value as any)}>
                 <SelectTrigger className="w-40">
                   <SelectValue />
                 </SelectTrigger>
@@ -64,9 +85,9 @@ const Calls = () => {
                 inputMode="numeric"
                 placeholder="No cap"
                 value={maxRate}
-                onChange={(e) => {
-                  const v = e.target.value;
-                  setMaxRate(v === '' ? '' : Number(v.replace(/[^0-9]/g, '')));
+                onChange={(event) => {
+                  const value = event.target.value;
+                  setMaxRate(value === '' ? '' : Number(value.replace(/[^0-9]/g, '')));
                 }}
               />
             </div>
@@ -74,7 +95,7 @@ const Calls = () => {
               <input
                 type="checkbox"
                 checked={onlyAvailable}
-                onChange={(e) => setOnlyAvailable(e.target.checked)}
+                onChange={(event) => setOnlyAvailable(event.target.checked)}
               />
               Only available now
             </label>
@@ -87,11 +108,13 @@ const Calls = () => {
                   <FeelynxLogo
                     size={160}
                     glow={false}
-                    tagline="No one is available right now"
+                    tagline={isLoading ? 'Syncing availability…' : 'No one is available right now'}
                     theme="light"
                   />
                 ) : (
-                  <p className="text-sm text-muted-foreground">No one is available right now.</p>
+                  <p className="text-sm text-muted-foreground">
+                    {isLoading ? 'Syncing availability…' : 'No one is available right now.'}
+                  </p>
                 )}
                 <p className="mt-3 text-xs text-muted-foreground">
                   Check back soon to line up your call.
@@ -99,8 +122,8 @@ const Calls = () => {
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                {available.map((c) => (
-                  <CallCard key={c.id} creator={c} status={presence[c.username]} />
+                {available.map((creator) => (
+                  <CallCard key={creator.id} creator={creator} status={presence[creator.username]} />
                 ))}
               </div>
             )}
@@ -108,8 +131,8 @@ const Calls = () => {
           <div>
             <h2 className="text-2xl font-semibold text-foreground">All Creators</h2>
             <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-              {list.map((c) => (
-                <CallCard key={c.id} creator={c} status={presence[c.username]} />
+              {filteredCreators.map((creator) => (
+                <CallCard key={creator.id} creator={creator} status={presence[creator.username]} />
               ))}
             </div>
           </div>

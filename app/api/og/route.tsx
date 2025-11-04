@@ -1,6 +1,6 @@
 // If you encounter type errors for 'next/og', ensure you have the correct Next.js types installed or configure TypeScript accordingly.
 
-// @ts-ignore - suppress "Cannot find module 'next/og'" in environments without Next.js types
+// @ts-expect-error -- suppress "Cannot find module 'next/og'" in environments without Next.js types
 import { ImageResponse } from 'next/og';
 export const runtime = 'edge';
 

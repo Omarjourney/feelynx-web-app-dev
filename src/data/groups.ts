@@ -1,35 +1,50 @@
-import { UNSPLASH_RANDOM_BASE_URL } from '@/config';
+import { z } from 'zod';
+import { request } from '@/lib/api';
 
 export interface Group {
   id: number;
   name: string;
-  description: string;
-  thumbnail: string;
+  description?: string;
+  thumbnail?: string;
   members: number;
   isLive?: boolean;
+  inviteCodeRequired?: boolean;
 }
 
-export const groups: Group[] = [
-  {
-    id: 1,
-    name: 'VIP Lounge',
-    description: 'Exclusive access for top fans',
-    thumbnail: `${UNSPLASH_RANDOM_BASE_URL}400x300?sig=10`,
-    members: 1200,
-    isLive: true,
-  },
-  {
-    id: 2,
-    name: 'Behind the Scenes',
-    description: 'Get a sneak peek into daily life',
-    thumbnail: `${UNSPLASH_RANDOM_BASE_URL}400x300?sig=11`,
-    members: 860,
-  },
-  {
-    id: 3,
-    name: 'Fitness Squad',
-    description: 'Workouts and wellness tips',
-    thumbnail: `${UNSPLASH_RANDOM_BASE_URL}400x300?sig=12`,
-    members: 540,
-  },
-];
+const groupSchema = z.object({
+  id: z.union([z.number(), z.string()]),
+  name: z.string(),
+  description: z.string().optional(),
+  thumbnail: z.string().optional(),
+  members: z.union([z.number(), z.string()]).optional(),
+  isLive: z.boolean().optional(),
+  inviteCodeRequired: z.boolean().optional(),
+});
+
+export type GroupApi = z.infer<typeof groupSchema>;
+
+export async function fetchGroups(signal?: AbortSignal): Promise<Group[]> {
+  const data = await request<unknown>('/api/groups', { signal });
+  const parsed = z.array(groupSchema).safeParse(data);
+  if (!parsed.success) {
+    throw new Error('Invalid group payload received from API');
+  }
+
+  return parsed.data.map((group) => {
+    const id = typeof group.id === 'string' ? Number.parseInt(group.id, 10) : group.id;
+    const membersNumeric =
+      typeof group.members === 'string'
+        ? Number.parseInt(group.members.replace(/[^0-9]/g, ''), 10)
+        : group.members ?? 0;
+
+    return {
+      id,
+      name: group.name,
+      description: group.description,
+      thumbnail: group.thumbnail,
+      members: Number.isNaN(membersNumeric) ? 0 : membersNumeric,
+      isLive: group.isLive ?? false,
+      inviteCodeRequired: group.inviteCodeRequired ?? true,
+    } satisfies Group;
+  });
+}
