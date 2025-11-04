@@ -20,6 +20,8 @@ import controlRoutes from './routes/control';
 import toysRoutes from './routes/toys';
 import patternsRoutes from './routes/patterns';
 import groupsApiRoutes from './routes/groupsApi';
+import walletRoutes from './routes/wallet';
+import creatorEarningsRoutes from './routes/creatorEarnings';
 import subscriptionsRoutes from './routes/subscriptions';
 import { webhookHandler as subscriptionsWebhookHandler } from './routes/subscriptions';
 import payoutsRoutes from './routes/payouts';
@@ -78,6 +80,8 @@ app.use('/control', controlRoutes);
 app.use('/toys', toysRoutes);
 app.use('/patterns', patternsRoutes);
 app.use('/api/groups', groupsApiRoutes);
+app.use('/api/wallet', walletRoutes);
+app.use('/api/creator/earnings', creatorEarningsRoutes);
 
 const port = process.env.PORT || 3001;
 

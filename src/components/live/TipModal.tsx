@@ -3,6 +3,8 @@ import { Dialog, DialogContent, DialogOverlay, DialogPortal } from '@/components
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { useWallet, selectWalletBalance } from '@/stores/useWallet';
+import { toast } from 'sonner';
 
 export interface TipModalProps {
   isVisible: boolean;
@@ -14,6 +16,8 @@ const TipModal = ({ isVisible, onClose, onSubmit }: TipModalProps) => {
   const [amount, setAmount] = useState(10);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState('');
+  const balance = useWallet(selectWalletBalance);
+  const addCoins = useWallet((state) => state.add);
 
   const send = () => {
     if (!Number.isFinite(amount) || amount <= 0) {
@@ -21,8 +25,17 @@ const TipModal = ({ isVisible, onClose, onSubmit }: TipModalProps) => {
       return;
     }
 
+    if (amount > balance) {
+      setError('Insufficient balance for this tip.');
+      return;
+    }
+
     setError('');
     onSubmit(amount);
+    addCoins(-amount);
+    toast.success('Tip sent', {
+      description: `You tipped ${amount} coins. Remaining balance: ${Math.max(0, balance - amount).toLocaleString()}💎`,
+    });
     setSent(true);
     setTimeout(() => {
       setSent(false);
@@ -44,7 +57,7 @@ const TipModal = ({ isVisible, onClose, onSubmit }: TipModalProps) => {
             <div className="space-y-4">
               <div className="text-center">
                 <Badge className="bg-gradient-primary text-primary-foreground">
-                  Balance: 1000💎
+                  Balance: {balance.toLocaleString()}💎
                 </Badge>
               </div>
               <div className="flex space-x-2 justify-center">

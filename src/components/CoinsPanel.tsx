@@ -1,18 +1,20 @@
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { useWallet, selectWalletBalance } from '@/stores/useWallet';
+import { toast } from 'sonner';
 
 interface CoinPackage {
   id: number;
-  coins: number;
+  coins?: number;
+  tokens?: number;
   price: number;
   bonus?: number;
   popular?: boolean;
 }
 
 export const CoinsPanel = () => {
-  const [currentCoins] = useState(2547);
+  const currentCoins = useWallet(selectWalletBalance);
 
   const packages: CoinPackage[] = [
     { id: 1, coins: 100, price: 9.99 },
@@ -50,11 +52,18 @@ export const CoinsPanel = () => {
       <div>
         <h2 className="text-2xl font-bold mb-4">Buy Coins</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {packages.map((pkg) => (
-            <Card
-              key={pkg.id}
-              className={`relative bg-gradient-card ${pkg.popular ? 'ring-2 ring-primary shadow-premium' : ''}`}
-            >
+          {packages.map((pkg) => {
+            const normalized = pkg as CoinPackage & { tokens?: number };
+            const coins = normalized.tokens ?? normalized.coins ?? 0;
+            if (coins <= 0) {
+              return null;
+            }
+            const perHundred = ((pkg.price / coins) * 100).toFixed(2);
+            return (
+              <Card
+                key={pkg.id}
+                className={`relative bg-gradient-card ${pkg.popular ? 'ring-2 ring-primary shadow-premium' : ''}`}
+              >
               {pkg.popular && (
                 <Badge className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-gradient-primary text-primary-foreground">
                   Most Popular
@@ -62,7 +71,7 @@ export const CoinsPanel = () => {
               )}
               <CardHeader className="text-center">
                 <div className="text-4xl mb-2">💎</div>
-                <CardTitle className="text-2xl">{pkg.coins.toLocaleString()} Coins</CardTitle>
+                <CardTitle className="text-2xl">{coins.toLocaleString()} Coins</CardTitle>
                 {pkg.bonus && (
                   <Badge variant="secondary" className="bg-live text-white">
                     +{pkg.bonus} Bonus!
@@ -72,8 +81,8 @@ export const CoinsPanel = () => {
               <CardContent className="text-center space-y-4">
                 <div className="text-3xl font-bold text-primary">${pkg.price}</div>
                 <div className="text-sm text-muted-foreground">
-                  {pkg.bonus && <div>Total: {(pkg.coins + pkg.bonus).toLocaleString()} coins</div>}
-                  <div>${((pkg.price / pkg.coins) * 100).toFixed(2)} per 100 coins</div>
+                  {pkg.bonus && <div>Total: {(coins + pkg.bonus).toLocaleString()} coins</div>}
+                  <div>${perHundred} per 100 coins</div>
                 </div>
                 <Button
                   className={`w-full ${
@@ -81,12 +90,18 @@ export const CoinsPanel = () => {
                       ? 'bg-gradient-primary text-primary-foreground hover:shadow-glow'
                       : ''
                   }`}
+                  onClick={() => {
+                    toast.success('Checkout coming soon', {
+                      description: 'Coin purchases are disabled in preview builds.',
+                    });
+                  }}
                 >
                   Purchase
                 </Button>
               </CardContent>
-            </Card>
-          ))}
+              </Card>
+            );
+          })}
         </div>
       </div>
 
