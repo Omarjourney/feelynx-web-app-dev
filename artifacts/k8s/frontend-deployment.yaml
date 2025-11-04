@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: feelynx-frontend
+  labels:
+    app: feelynx-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: feelynx-frontend
+  template:
+    metadata:
+      labels:
+        app: feelynx-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: feelynx-web-app-dev-fresh-frontend:latest
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "256Mi"

@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: feelynx-backend
+  labels:
+    app: feelynx-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: feelynx-backend
+  template:
+    metadata:
+      labels:
+        app: feelynx-backend
+    spec:
+      containers:
+        - name: backend
+          image: feelynx-web-app-dev-fresh-backend:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: LIVEKIT_KEYS
+              value: "" # set via k8s Secret or override in your environment
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
