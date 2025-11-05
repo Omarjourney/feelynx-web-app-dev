@@ -5,8 +5,14 @@ import { Message, useChatStore } from '@/state/chatStore';
 import { cn } from '@/lib/utils';
 
 export type ChatBubbleProps = {
-  message: Message;
+  message: Message | (Omit<Message, 'threadId' | 'authorId'> & { threadId?: string; authorId?: string });
   onMediaClick?: (messageId: string, index: number) => void;
+  authorOverride?: {
+    id: string;
+    name?: string;
+    avatar?: string;
+  };
+  isOwnOverride?: boolean;
 };
 
 const bubbleVariants = {
@@ -18,10 +24,11 @@ function formatTime(timestamp: number) {
   return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
-function ChatBubbleInner({ message, onMediaClick }: ChatBubbleProps) {
+function ChatBubbleInner({ message, onMediaClick, authorOverride, isOwnOverride }: ChatBubbleProps) {
   const { me, users } = useChatStore();
-  const isMine = message.authorId === me?.id;
-  const author = users[message.authorId];
+  const authorId = message.authorId ?? authorOverride?.id;
+  const isMine = isOwnOverride ?? (authorId ? authorId === me?.id : false);
+  const author = authorOverride ?? (authorId ? users[authorId] : undefined);
 
   return (
     <motion.article
