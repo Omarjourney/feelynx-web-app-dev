@@ -3,241 +3,219 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   LiveMessage,
   LiveMessageInput,
+  LiveMessageAttachment,
   useLiveStore,
 } from '@/state/liveStore';
 
-const VIEWER_DEBOUNCE_MS = 200;
+type LiveRoomEvent =
+  | { type: 'viewer:update'; count: number }
+  | { type: 'earnings:tokens'; delta: number }
+  | { type: 'chat:message'; message: LiveMessage }
+  | { type: 'room:error'; message: string }
+  | { type: string; [key: string]: unknown };
 
-const encodeFile = (file: File) =>
-  new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(typeof reader.result === 'string' ? reader.result : '');
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(file);
-  });
-
-type ConnectionState = 'idle' | 'connecting' | 'open' | 'closing' | 'closed' | 'error';
+type LiveRoomConnectionState = 'idle' | 'connecting' | 'open' | 'closed' | 'error';
 
 type UseLiveRoomOptions = {
-  roomId?: string | null;
   enabled?: boolean;
 };
 
-type LiveRoomApi = {
-  connectionState: ConnectionState;
-  sendChatMessage: (message: LiveMessageInput) => Promise<void>;
-  sendReaction: (emoji: string) => void;
-  setTyping: (typing: boolean) => void;
-};
+const VIEWER_UPDATE_DEBOUNCE = 200;
 
-export function useLiveRoom({ roomId, enabled = true }: UseLiveRoomOptions): LiveRoomApi {
-  const setViewerCount = useLiveStore((state) => state.setViewerCount);
-  const addTokens = useLiveStore((state) => state.addTokens);
-  const addMessage = useLiveStore((state) => state.addMessage);
-  const setTypingUsers = useLiveStore((state) => state.setTypingUsers);
-  const setError = useLiveStore((state) => state.setError);
+function serializeAttachments(files: File[] | undefined) {
+  if (!files?.length) return Promise.resolve<LiveMessageAttachment[] | undefined>(undefined);
+
+  return Promise.all(
+    files.map(
+      (file) =>
+        new Promise<LiveMessageAttachment>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            resolve({
+              type: 'image',
+              url: typeof reader.result === 'string' ? reader.result : '',
+              alt: file.name,
+            });
+          };
+          reader.onerror = () => reject(reader.error);
+          reader.readAsDataURL(file);
+        }),
+    ),
+  );
+}
+
+export function useLiveRoom(roomId: string | null | undefined, options: UseLiveRoomOptions = {}) {
+  const { enabled = true } = options;
+  const [connectionState, setConnectionState] = useState<LiveRoomConnectionState>('idle');
+  const {
+    setViewerCount,
+    addTokens,
+    addMessage,
+    setError,
+  } = useLiveStore((state) => ({
+    setViewerCount: state.setViewerCount,
+    addTokens: state.addTokens,
+    addMessage: state.addMessage,
+    setError: state.setError,
+  }));
 
   const wsRef = useRef<WebSocket | null>(null);
-  const viewerCountRef = useRef<number | null>(null);
-  const viewerTimerRef = useRef<number | undefined>(undefined);
-  const [connectionState, setConnectionState] = useState<ConnectionState>('idle');
-  const typingTimeoutRef = useRef<number | undefined>(undefined);
+  const viewerDebounceRef = useRef<number>();
+  const pendingViewerCountRef = useRef<number | null>(null);
 
-  const clearViewerTimer = () => {
-    if (viewerTimerRef.current !== undefined) {
-      window.clearTimeout(viewerTimerRef.current);
-      viewerTimerRef.current = undefined;
+  const clearViewerDebounce = useCallback(() => {
+    if (viewerDebounceRef.current) {
+      window.clearTimeout(viewerDebounceRef.current);
+      viewerDebounceRef.current = undefined;
     }
-  };
+  }, []);
 
-  const flushViewerCount = useCallback(() => {
-    if (viewerCountRef.current !== null) {
-      setViewerCount(viewerCountRef.current);
-      viewerCountRef.current = null;
+  const close = useCallback(() => {
+    clearViewerDebounce();
+    const socket = wsRef.current;
+    if (socket) {
+      socket.close(1000, 'closing');
+      wsRef.current = null;
     }
-    clearViewerTimer();
-  }, [setViewerCount]);
+  }, [clearViewerDebounce]);
 
   useEffect(() => {
     if (!roomId || !enabled) {
-      setConnectionState('idle');
-      return () => undefined;
+      close();
+      setConnectionState(roomId && enabled ? 'idle' : 'closed');
+      return undefined;
     }
 
-    const envUrl = (import.meta as any).env?.VITE_WS_URL as string | undefined;
-    if (!envUrl) {
-      setError('Live updates are unavailable: VITE_WS_URL is not configured.');
+    const wsBase = import.meta.env.VITE_WS_URL;
+    if (!wsBase) {
+      setError('Live WebSocket URL is not configured.');
       setConnectionState('error');
-      return () => undefined;
+      return undefined;
     }
 
-    let url = `${envUrl.replace(/\/$/, '')}/live/${encodeURIComponent(roomId)}`;
-    if (
-      typeof window !== 'undefined' &&
-      window.location.protocol === 'https:' &&
-      url.startsWith('ws://')
-    ) {
-      url = url.replace(/^ws:/, 'wss:');
-    }
+    const normalized = wsBase.endsWith('/') ? wsBase.slice(0, -1) : wsBase;
+    const url = `${normalized}/live/${roomId}`;
 
-    setConnectionState('connecting');
-    const ws = new WebSocket(url);
-    wsRef.current = ws;
-
-    ws.onopen = () => {
-      setConnectionState('open');
-      setError(null);
-    };
-
-    ws.onclose = () => {
-      setConnectionState('closed');
-      flushViewerCount();
-      wsRef.current = null;
-    };
-
-    ws.onerror = () => {
-      setConnectionState('error');
-      setError('Connection to the live room failed.');
-    };
-
-    ws.onmessage = (event) => {
-      try {
-        if (typeof event.data !== 'string') return;
-        const payload = JSON.parse(event.data) as { type: string } & Record<string, unknown>;
-        switch (payload.type) {
-          case 'viewer:update': {
-            const count = typeof payload.count === 'number' ? payload.count : undefined;
-            if (typeof count === 'number' && Number.isFinite(count)) {
-              viewerCountRef.current = count;
-              clearViewerTimer();
-              viewerTimerRef.current = window.setTimeout(flushViewerCount, VIEWER_DEBOUNCE_MS);
-            }
-            break;
-          }
-          case 'earnings:tokens': {
-            const delta = typeof payload.delta === 'number' ? payload.delta : 0;
-            if (delta) {
-              addTokens(delta);
-            }
-            break;
-          }
-          case 'chat:message': {
-            const message = payload.message as LiveMessage | undefined;
-            if (message?.id) {
-              addMessage({
-                ...message,
-                createdAt: typeof message.createdAt === 'number' ? message.createdAt : Date.now(),
-              });
-            }
-            break;
-          }
-          case 'chat:typing': {
-            const ids = Array.isArray(payload.ids) ? (payload.ids.filter((item) => typeof item === 'string') as string[]) : [];
-            setTypingUsers(ids);
-            break;
-          }
-          case 'room:error': {
-            const message = typeof payload.message === 'string' ? payload.message : 'Live room error';
-            setError(message);
-            break;
-          }
-          default:
-            break;
-        }
-      } catch {
-        // ignore malformed message
-      }
-    };
-
-    return () => {
-      setConnectionState((state) => (state === 'closed' ? 'closed' : 'closing'));
-      clearViewerTimer();
-      if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
-        ws.close();
-      }
-      wsRef.current = null;
-    };
-  }, [roomId, enabled, addMessage, addTokens, flushViewerCount, setTypingUsers, setError]);
-
-  const sendThroughSocket = useCallback((payload: unknown) => {
-    const ws = wsRef.current;
-    if (!ws || ws.readyState !== WebSocket.OPEN) {
-      return;
-    }
     try {
-      ws.send(JSON.stringify(payload));
-    } catch {
-      setError('Unable to send a live room event right now.');
+      const socket = new WebSocket(url);
+      wsRef.current = socket;
+      setConnectionState('connecting');
+      setError(null);
+
+      const handleMessage = (event: MessageEvent) => {
+        try {
+          const payload = JSON.parse(event.data as string) as LiveRoomEvent;
+          switch (payload.type) {
+            case 'viewer:update': {
+              pendingViewerCountRef.current = payload.count;
+              if (!viewerDebounceRef.current) {
+                viewerDebounceRef.current = window.setTimeout(() => {
+                  if (pendingViewerCountRef.current !== null) {
+                    setViewerCount(pendingViewerCountRef.current);
+                    pendingViewerCountRef.current = null;
+                  }
+                  viewerDebounceRef.current = undefined;
+                }, VIEWER_UPDATE_DEBOUNCE);
+              }
+              break;
+            }
+            case 'earnings:tokens': {
+              addTokens(payload.delta);
+              break;
+            }
+            case 'chat:message': {
+              addMessage(payload.message);
+              break;
+            }
+            case 'room:error': {
+              setError(payload.message);
+              break;
+            }
+            default: {
+              break;
+            }
+          }
+        } catch (error) {
+          setError(error instanceof Error ? error.message : 'Failed to parse live event');
+        }
+      };
+
+      const handleOpen = () => {
+        setConnectionState('open');
+      };
+
+      const handleClose = () => {
+        setConnectionState('closed');
+        clearViewerDebounce();
+      };
+
+      const handleError = (event: Event) => {
+        if (import.meta.env.DEV) {
+          console.error('Live room socket error', event);
+        }
+        setConnectionState('error');
+        setError('Live connection error. Please try again.');
+      };
+
+      socket.addEventListener('open', handleOpen);
+      socket.addEventListener('message', handleMessage);
+      socket.addEventListener('error', handleError);
+      socket.addEventListener('close', handleClose);
+
+      return () => {
+        socket.removeEventListener('open', handleOpen);
+        socket.removeEventListener('message', handleMessage);
+        socket.removeEventListener('error', handleError);
+        socket.removeEventListener('close', handleClose);
+        close();
+      };
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Unable to connect to live room');
+      setConnectionState('error');
+      return undefined;
     }
-  }, [setError]);
+  }, [roomId, enabled, addMessage, addTokens, close, clearViewerDebounce, setError, setViewerCount]);
+
+  const send = useCallback((data: Record<string, unknown>) => {
+    const socket = wsRef.current;
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
+      throw new Error('Live chat is not connected');
+    }
+    socket.send(JSON.stringify(data));
+  }, []);
 
   const sendChatMessage = useCallback(
-    async (message: LiveMessageInput) => {
-      if (!message.text && !message.attachments?.length) {
-        return;
-      }
-      const attachments = message.attachments?.length
-        ? await Promise.all(
-            message.attachments.map(async (file) => ({
-              name: file.name,
-              type: file.type,
-              data: await encodeFile(file),
-            })),
-          )
-        : undefined;
-
-      sendThroughSocket({
-        type: 'chat:send',
-        message: {
-          text: message.text?.trim() || undefined,
-          attachments,
-        },
-      });
+    async (input: LiveMessageInput) => {
+      const attachments = await serializeAttachments(input.attachments);
+      send({ type: 'chat:send', message: { text: input.text, attachments } });
     },
-    [sendThroughSocket],
+    [send],
   );
 
   const sendReaction = useCallback(
     (emoji: string) => {
-      if (!emoji) return;
-      sendThroughSocket({
-        type: 'reaction:send',
-        emoji,
-      });
-    },
-    [sendThroughSocket],
-  );
-
-  const setTyping = useCallback(
-    (typing: boolean) => {
-      clearTimeout(typingTimeoutRef.current);
-      sendThroughSocket({ type: 'chat:typing', typing });
-      if (typing) {
-        typingTimeoutRef.current = window.setTimeout(() => {
-          sendThroughSocket({ type: 'chat:typing', typing: false });
-        }, 3000);
+      try {
+        send({ type: 'reaction:send', emoji });
+      } catch (error) {
+        // surface via store error to notify UI without throwing.
+        setError(error instanceof Error ? error.message : 'Unable to send reaction');
       }
     },
-    [sendThroughSocket],
+    [send, setError],
   );
 
-  useEffect(
-    () => () => {
-      clearViewerTimer();
-      if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current);
-      }
-    },
-    [],
-  );
-
-  return useMemo(
+  const value = useMemo(
     () => ({
       connectionState,
       sendChatMessage,
       sendReaction,
-      setTyping,
+      close,
+      isConnected: connectionState === 'open',
     }),
-    [connectionState, sendChatMessage, sendReaction, setTyping],
+    [close, connectionState, sendChatMessage, sendReaction],
   );
+
+  return value;
 }
+
+export type { LiveRoomConnectionState };

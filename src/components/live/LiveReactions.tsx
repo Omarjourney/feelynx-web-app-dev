@@ -1,106 +1,78 @@
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { createPortal } from 'react-dom';
 
-import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+
+const REACTIONS = ['❤️', '🔥', '😂', '😍', '🫶'];
+const RATE_LIMIT_MS = 400;
 
 export type LiveReactionsProps = {
-  onReact?: (emoji: string) => void;
+  onSend: (emoji: string) => void;
   disabled?: boolean;
-  container?: HTMLElement | null;
-  className?: string;
 };
 
-type ReactionBurst = {
+type Burst = {
   id: number;
   emoji: string;
-  left: number;
 };
 
-const REACTIONS = ['❤️', '🔥', '😂', '😍', '🫶'] as const;
-const REACTION_COOLDOWN = 350;
+export function LiveReactions({ onSend, disabled }: LiveReactionsProps) {
+  const [bursts, setBursts] = useState<Burst[]>([]);
+  const lastSentRef = useRef<number>(0);
 
-export function LiveReactions({ onReact, disabled, container, className }: LiveReactionsProps) {
-  const [bursts, setBursts] = useState<ReactionBurst[]>([]);
-  const lastSentRef = useRef(0);
-  const timeoutsRef = useRef<number[]>([]);
-
-  const emitBurst = useCallback(
+  const handleReaction = useCallback(
     (emoji: string) => {
       const now = Date.now();
-      if (now - lastSentRef.current < REACTION_COOLDOWN) {
-        return;
-      }
+      if (now - lastSentRef.current < RATE_LIMIT_MS) return;
       lastSentRef.current = now;
-      onReact?.(emoji);
-      const burst: ReactionBurst = {
-        id: now + Math.random(),
-        emoji,
-        left: 15 + Math.random() * 70,
-      };
-      setBursts((current) => [...current.slice(-12), burst]);
-      const timeout = window.setTimeout(() => {
-        setBursts((current) => current.filter((item) => item.id !== burst.id));
-      }, 1800);
-      timeoutsRef.current.push(timeout);
+      onSend(emoji);
+      setBursts((current) => [...current, { id: now, emoji }].slice(-20));
     },
-    [onReact],
+    [onSend],
   );
 
-  useEffect(() => () => {
-    timeoutsRef.current.forEach((id) => window.clearTimeout(id));
-    timeoutsRef.current = [];
-  }, []);
-
-  const renderOverlay = useMemo(() => {
-    if (!container) return null;
-    return createPortal(
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <AnimatePresence>
-          {bursts.map((burst) => (
-            <motion.span
-              key={burst.id}
-              initial={{ opacity: 0, y: 40, scale: 0.6 }}
-              animate={{ opacity: 1, y: -220, scale: 1 }}
-              exit={{ opacity: 0, y: -260, scale: 0.8 }}
-              transition={{ duration: 1.2, ease: 'easeOut' }}
-              style={{ left: `${burst.left}%` }}
-              className="absolute bottom-8 text-3xl drop-shadow-lg"
-            >
-              {burst.emoji}
-            </motion.span>
-          ))}
-        </AnimatePresence>
-      </div>,
-      container,
-    );
-  }, [bursts, container]);
+  const buttons = useMemo(
+    () =>
+      REACTIONS.map((emoji) => (
+        <Button
+          key={emoji}
+          type="button"
+          size="sm"
+          onClick={() => handleReaction(emoji)}
+          disabled={disabled}
+          className="relative rounded-full bg-white/10 px-4 py-2 text-lg text-white shadow-md shadow-fuchsia-500/20 transition-all duration-200 hover:bg-white/20 hover:shadow-fuchsia-400/30 focus-visible:ring-2 focus-visible:ring-fuchsia-400"
+          aria-label={`Send reaction: ${emoji}`}
+        >
+          {emoji}
+        </Button>
+      )),
+    [disabled, handleReaction],
+  );
 
   return (
-    <Fragment>
-      {renderOverlay}
-      <div
-        className={cn(
-          'flex w-full items-center justify-center gap-4 rounded-3xl border border-white/10 bg-white/5 px-6 py-3 text-2xl text-white/90 shadow-inner shadow-fuchsia-500/10 backdrop-blur-xl',
-          disabled && 'opacity-50',
-          className,
-        )}
-        aria-label="Live reactions"
-      >
-        {REACTIONS.map((reaction) => (
-          <button
-            key={reaction}
-            type="button"
-            disabled={disabled}
-            aria-label={`Send reaction: ${reaction}`}
-            onClick={() => emitBurst(reaction)}
-            className="rounded-full bg-white/0 px-3 py-1 text-2xl transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fuchsia-400/70"
-          >
-            {reaction}
-          </button>
-        ))}
+    <div className="relative">
+      <div className="flex flex-wrap items-center gap-3" aria-label="Quick reactions">
+        {buttons}
       </div>
-    </Fragment>
+      <AnimatePresence>
+        {bursts.map((burst) => (
+          <motion.span
+            key={burst.id}
+            initial={{ opacity: 0.8, y: 0, scale: 0.9 }}
+            animate={{ opacity: 0, y: -120, scale: 1.4 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.4, ease: 'easeOut' }}
+            className="pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 select-none text-3xl"
+            onAnimationComplete={() => {
+              setBursts((current) => current.filter((item) => item.id !== burst.id));
+            }}
+            aria-hidden
+          >
+            {burst.emoji}
+          </motion.span>
+        ))}
+      </AnimatePresence>
+    </div>
   );
 }
 

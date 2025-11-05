@@ -1,25 +1,20 @@
 import { create } from 'zustand';
 
-export type LiveAttachment = {
-  id: string;
-  type: 'image';
+export type LiveMessageAttachment = {
   url: string;
+  type: 'image';
   thumb?: string;
-  alt?: string;
   width?: number;
   height?: number;
+  alt?: string;
 };
 
 export type LiveMessage = {
   id: string;
   userId: string;
-  userName?: string;
-  userAvatar?: string;
   text?: string;
-  attachments?: LiveAttachment[];
+  attachments?: LiveMessageAttachment[];
   createdAt: number;
-  delivered?: boolean;
-  read?: boolean;
 };
 
 export type LiveMessageInput = {
@@ -34,77 +29,64 @@ type LiveState = {
   tokenEarnings: number;
   startTime: number | null;
   messages: LiveMessage[];
-  typingUserIds: string[];
   error: string | null;
-  setLive: (next: boolean) => void;
+  setLive: (isLive: boolean, startTime?: number | null) => void;
   setViewerCount: (count: number) => void;
   addTokens: (delta: number) => void;
   addMessage: (message: LiveMessage) => void;
-  setTypingUsers: (ids: string[]) => void;
-  setStartTime: (timestamp: number | null) => void;
-  setError: (message: string | null) => void;
   reset: () => void;
+  setError: (message: string | null) => void;
 };
 
-const initialState: Pick<
-  LiveState,
-  | 'isLive'
-  | 'viewerCount'
-  | 'peakViewers'
-  | 'tokenEarnings'
-  | 'startTime'
-  | 'messages'
-  | 'typingUserIds'
-  | 'error'
-> = {
+const INITIAL_STATE: Omit<LiveState, 'setLive' | 'setViewerCount' | 'addTokens' | 'addMessage' | 'reset' | 'setError'> = {
   isLive: false,
   viewerCount: 0,
   peakViewers: 0,
   tokenEarnings: 0,
   startTime: null,
   messages: [],
-  typingUserIds: [],
   error: null,
 };
 
-export const useLiveStore = create<LiveState>((set, get) => ({
-  ...initialState,
-  setLive: (next) => {
-    const wasLive = get().isLive;
-    set({ isLive: next });
-    if (next && !wasLive) {
-      set({ startTime: Date.now(), error: null });
-    }
-    if (!next) {
-      set({ typingUserIds: [] });
+export const useLiveStore = create<LiveState>((set) => ({
+  ...INITIAL_STATE,
+  setLive: (isLive, startTime = Date.now()) => {
+    if (isLive) {
+      set({ isLive: true, startTime: startTime ?? Date.now(), error: null });
+    } else {
+      set({
+        ...INITIAL_STATE,
+        isLive: false,
+        startTime: null,
+      });
     }
   },
-  setViewerCount: (count) =>
+  setViewerCount: (count) => {
     set((state) => ({
       viewerCount: count,
       peakViewers: Math.max(state.peakViewers, count),
-    })),
-  addTokens: (delta) =>
-    set((state) => ({
-      tokenEarnings: Math.max(0, state.tokenEarnings + delta),
-    })),
-  addMessage: (message) =>
+    }));
+  },
+  addTokens: (delta) => {
+    if (!delta) return;
+    set((state) => ({ tokenEarnings: Math.max(0, state.tokenEarnings + delta) }));
+  },
+  addMessage: (message) => {
     set((state) => {
       const existingIndex = state.messages.findIndex((item) => item.id === message.id);
       const nextMessages = existingIndex >= 0
         ? state.messages.map((item, index) => (index === existingIndex ? { ...item, ...message } : item))
         : [...state.messages, message];
 
-      nextMessages.sort((a, b) => a.createdAt - b.createdAt);
+      const trimmed = nextMessages.length > 500 ? nextMessages.slice(nextMessages.length - 500) : nextMessages;
 
-      return {
-        messages: nextMessages,
-      };
-    }),
-  setTypingUsers: (ids) => set({ typingUserIds: Array.from(new Set(ids)) }),
-  setStartTime: (timestamp) => set({ startTime: timestamp }),
-  setError: (message) => set({ error: message }),
-  reset: () => set({ ...initialState }),
+      return { messages: trimmed };
+    });
+  },
+  reset: () => {
+    set({ ...INITIAL_STATE });
+  },
+  setError: (error) => set({ error }),
 }));
 
-export type LiveStore = ReturnType<typeof useLiveStore>;
+export type { LiveState };

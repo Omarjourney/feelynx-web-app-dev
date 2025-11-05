@@ -9,6 +9,7 @@ import {
   createLocalTracks,
 } from 'livekit-client';
 
+import FlowBreadcrumb from '@/components/FlowBreadcrumb';
 import LiveChatDock from '@/components/live/LiveChatDock';
 import LiveControls from '@/components/live/LiveControls';
 import LiveEarningsTicker from '@/components/live/LiveEarningsTicker';
@@ -16,132 +17,114 @@ import LiveReactions from '@/components/live/LiveReactions';
 import LiveViewerBadge from '@/components/live/LiveViewerBadge';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { toast } from '@/hooks/use-toast';
 import { useLiveRoom } from '@/hooks/useLiveRoom';
-import { useLiveStore } from '@/state/liveStore';
-import { getUserMessage } from '@/lib/errors';
-import { isApiError } from '@/lib/api';
-import { requestMediaPermissions } from '@/lib/mediaPermissions';
+import { toast } from '@/hooks/use-toast';
 import {
   createLivekitRoom,
   requestCreatorToken,
   updateCreatorLiveStatus,
 } from '@/lib/livekit/host';
+import { getUserMessage } from '@/lib/errors';
+import { requestMediaPermissions } from '@/lib/mediaPermissions';
+import { useLiveStore } from '@/state/liveStore';
 
-const GRADIENT_CLASSES = 'bg-[radial-gradient(circle_at_top,_rgba(146,87,255,0.35)_0%,_transparent_55%),radial-gradient(circle_at_bottom,_rgba(16,227,255,0.18)_0%,_transparent_60%)]';
+const gradientBackground = 'bg-[radial-gradient(circle_at_top,_rgba(128,0,255,0.28),_transparent_60%),radial-gradient(circle_at_bottom,_rgba(14,165,233,0.18),_transparent_55%),linear-gradient(145deg,_#0a0118,_#030617_60%,_#02010a)]';
 
-const isAbortError = (error: unknown) =>
-  error instanceof DOMException && error.name === 'AbortError';
+const DEFAULT_ROOM = 'default_room';
 
-export default function LiveCreator() {
-  const [searchParams] = useSearchParams();
+const LiveCreator = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user } = useAuth();
-  const roomName = searchParams.get('room') || 'default_room';
-  const fallbackIdentityRef = useRef(`creator_${Date.now()}`);
-  const fallbackUsernameRef = useRef(`creator_${Date.now()}`);
-  const identity = user?.id ?? fallbackIdentityRef.current;
-  const creatorUsername =
-    (user?.user_metadata as { username?: string } | undefined)?.username ??
-    user?.email ??
-    fallbackUsernameRef.current;
-
+  const roomName = searchParams.get('room') ?? DEFAULT_ROOM;
+  const [isBusy, setIsBusy] = useState(false);
   const [isVideoReady, setIsVideoReady] = useState(false);
-  const [isConnecting, setIsConnecting] = useState(false);
   const [micEnabled, setMicEnabled] = useState(true);
   const [cameraEnabled, setCameraEnabled] = useState(true);
 
-  const localVideoRef = useRef<HTMLVideoElement | null>(null);
-  const overlayRef = useRef<HTMLDivElement | null>(null);
-  const roomRef = useRef<Room | null>(null);
-  const videoTrackRef = useRef<LocalVideoTrack | null>(null);
-  const audioTrackRef = useRef<LocalAudioTrack | null>(null);
+  const {
+    isLive,
+    viewerCount,
+    peakViewers,
+    tokenEarnings,
+    startTime,
+    messages,
+    error,
+    setLive,
+    reset,
+  } = useLiveStore((state) => ({
+    isLive: state.isLive,
+    viewerCount: state.viewerCount,
+    peakViewers: state.peakViewers,
+    tokenEarnings: state.tokenEarnings,
+    startTime: state.startTime,
+    messages: state.messages,
+    error: state.error,
+    setLive: state.setLive,
+    reset: state.reset,
+  }));
 
-  const isLive = useLiveStore((state) => state.isLive);
-  const setLive = useLiveStore((state) => state.setLive);
-  const resetLive = useLiveStore((state) => state.reset);
-  const setViewerCount = useLiveStore((state) => state.setViewerCount);
-
-  const { connectionState, sendChatMessage, sendReaction, setTyping } = useLiveRoom({
-    roomId: roomName,
+  const { connectionState, sendChatMessage, sendReaction, close, isConnected } = useLiveRoom(roomName, {
     enabled: isLive,
   });
 
-  const connectionLabel = useMemo(() => {
-    switch (connectionState) {
-      case 'connecting':
-        return 'Connecting…';
-      case 'open':
-        return 'Live updates on';
-      case 'error':
-        return 'Live updates offline';
-      default:
-        return 'Standby';
-    }
-  }, [connectionState]);
+  const roomRef = useRef<Room | null>(null);
+  const videoElementRef = useRef<HTMLVideoElement | null>(null);
+  const audioTrackRef = useRef<LocalAudioTrack | null>(null);
+  const videoTrackRef = useRef<LocalVideoTrack | null>(null);
 
-  const attachVideoTrack = useCallback((track: LocalVideoTrack | null) => {
-    if (!track || !localVideoRef.current) return;
-    track.attach(localVideoRef.current);
-    setIsVideoReady(true);
-  }, []);
+  const identity = useMemo(() => user?.id ?? `creator_${Date.now()}`, [user?.id]);
+  const creatorUsername = useMemo(() => {
+    const meta = user?.user_metadata as { username?: string } | undefined;
+    return meta?.username ?? user?.email ?? 'Creator';
+  }, [user?.email, user?.user_metadata]);
 
-  const detachVideoTrack = useCallback(() => {
-    const track = videoTrackRef.current;
-    if (track) {
-      track.detach();
-      track.stop();
-      videoTrackRef.current = null;
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: 'Live connection issue',
+        description: error,
+        variant: 'destructive',
+      });
     }
-    if (localVideoRef.current) {
-      localVideoRef.current.srcObject = null;
-    }
-    setIsVideoReady(false);
-  }, []);
-
-  const stopAudioTrack = useCallback(() => {
-    const track = audioTrackRef.current;
-    if (track) {
-      track.stop();
-      audioTrackRef.current = null;
-    }
-  }, []);
+  }, [error]);
 
   const cleanupTracks = useCallback(() => {
-    detachVideoTrack();
-    stopAudioTrack();
-  }, [detachVideoTrack, stopAudioTrack]);
+    audioTrackRef.current?.stop();
+    audioTrackRef.current = null;
+    videoTrackRef.current?.stop();
+    videoTrackRef.current = null;
+    const videoEl = videoElementRef.current;
+    if (videoEl) {
+      const mediaStream = videoEl.srcObject as MediaStream | null;
+      mediaStream?.getTracks().forEach((track) => track.stop());
+      videoEl.srcObject = null;
+    }
+  }, []);
 
-  const teardownRoom = useCallback(async (opts: { silent?: boolean } = {}) => {
-    const { silent } = opts;
+  const detachRoom = useCallback(() => {
     const room = roomRef.current;
     if (room) {
-      room.off(RoomEvent.ParticipantConnected);
-      room.off(RoomEvent.ParticipantDisconnected);
+      room.removeAllListeners();
       room.disconnect();
       roomRef.current = null;
     }
     cleanupTracks();
-    if (!silent) {
-      try {
-        await updateCreatorLiveStatus(creatorUsername, false);
-      } catch (error) {
-        if (!isAbortError(error)) {
-          toast({
-            title: 'Unable to update status',
-            description: getUserMessage(error),
-            variant: 'destructive',
-          });
-        }
-      }
-    }
-  }, [cleanupTracks, creatorUsername]);
+  }, [cleanupTracks]);
+
+  const handleLivekitParticipants = useCallback((room: Room) => {
+    const updateCount = () => {
+      const remoteParticipants = room.remoteParticipants.size;
+      useLiveStore.getState().setViewerCount(remoteParticipants + 1);
+    };
+    room.on(RoomEvent.ParticipantConnected, updateCount);
+    room.on(RoomEvent.ParticipantDisconnected, updateCount);
+    updateCount();
+  }, []);
 
   const startLiveStream = useCallback(async () => {
-    if (isConnecting || isLive) return;
-    setIsConnecting(true);
-    const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL as string | undefined;
-    const demoMode = searchParams.get('mode') === 'demo' || !wsUrl;
+    if (isBusy || isLive) return;
+    setIsBusy(true);
     try {
       await requestMediaPermissions();
       setIsVideoReady(false);
@@ -162,13 +145,23 @@ export default function LiveCreator() {
         audioTrackRef.current = audioTrack;
       }
 
+      const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL;
+      const demoMode = searchParams.get('mode') === 'demo' || !wsUrl;
+
       if (demoMode) {
-        attachVideoTrack(videoTrack ?? null);
-        setViewerCount(1);
-        setLive(true);
+        const tracks = await createLocalTracks({ audio: true, video: true });
+        const videoTrack = tracks.find((track): track is LocalVideoTrack => track.kind === Track.Kind.Video) ?? null;
+        const audioTrack = tracks.find((track): track is LocalAudioTrack => track.kind === Track.Kind.Audio) ?? null;
+        audioTrackRef.current = audioTrack ?? null;
+        videoTrackRef.current = videoTrack ?? null;
+        if (videoTrack && videoElementRef.current) {
+          videoTrack.attach(videoElementRef.current);
+          setIsVideoReady(true);
+        }
+        setLive(true, Date.now());
         toast({
-          title: 'Preview started',
-          description: 'LiveKit not configured. Running in local preview mode.',
+          title: 'Demo preview active',
+          description: 'LiveKit is not configured. Running in local preview mode.',
         });
         return;
       }
@@ -176,230 +169,199 @@ export default function LiveCreator() {
       await createLivekitRoom({ name: roomName });
       const token = await requestCreatorToken(roomName, identity);
       const room = new Room();
-      roomRef.current = room;
       await room.connect(wsUrl, token);
+      const localTracks = await createLocalTracks({ audio: true, video: true });
 
       for (const track of localTracks) {
         await room.localParticipant.publishTrack(track);
       }
 
-      attachVideoTrack(videoTrack ?? null);
+      const videoTrack = localTracks.find((track): track is LocalVideoTrack => track.kind === Track.Kind.Video) ?? null;
+      const audioTrack = localTracks.find((track): track is LocalAudioTrack => track.kind === Track.Kind.Audio) ?? null;
+      videoTrackRef.current = videoTrack;
+      audioTrackRef.current = audioTrack;
 
-      const updateParticipants = () => {
-        const remoteCount = room.remoteParticipants.size;
-        setViewerCount(Math.max(1, remoteCount + 1));
-      };
-      room.on(RoomEvent.ParticipantConnected, updateParticipants);
-      room.on(RoomEvent.ParticipantDisconnected, updateParticipants);
-      updateParticipants();
+      if (videoTrack && videoElementRef.current) {
+        videoTrack.attach(videoElementRef.current);
+        setIsVideoReady(true);
+      }
 
-      setLive(true);
+      handleLivekitParticipants(room);
+
+      roomRef.current = room;
+      setLive(true, Date.now());
       await updateCreatorLiveStatus(creatorUsername, true);
       toast({
-        title: 'You are live! 💜',
-        description: 'Fans can now join the room.',
+        title: 'You are live',
+        description: 'Feelynx viewers can now join your stream.',
       });
-    } catch (error) {
-      await teardownRoom({ silent: true });
-      resetLive();
-      const apiError = isApiError(error) ? error : undefined;
-      let description = getUserMessage(error);
-      let action: { label: string; onClick: () => void } | undefined;
-      const message = apiError?.message ?? (error instanceof Error ? error.message : '');
-      if (message) {
-        const normalized = message.toLowerCase();
-        if (normalized.includes('token') || normalized.includes('permission')) {
-          description = 'LiveKit token rejected. Please refresh and try again.';
-        } else if (normalized.includes('cors')) {
-          description = 'WebSocket blocked by CORS. Verify server settings.';
-        } else if (
-          normalized.includes('network') ||
-          normalized.includes('fetch') ||
-          normalized.includes('unreachable') ||
-          normalized.includes('failed to connect')
-        ) {
-          description = 'Network error. Check your connection and retry.';
-          action = {
-            label: 'Retry',
-            onClick: () => {
-              void startLiveStream();
-            },
-          };
-        }
-      }
+    } catch (err) {
+      const message = getUserMessage(err);
       toast({
         title: 'Stream failed to start',
-        description,
-        action,
+        description: message,
         variant: 'destructive',
       });
+      detachRoom();
+      reset();
     } finally {
-      setIsConnecting(false);
+      setIsBusy(false);
     }
   }, [
-    attachVideoTrack,
     creatorUsername,
+    detachRoom,
+    handleLivekitParticipants,
     identity,
-    isConnecting,
+    isBusy,
     isLive,
-    resetLive,
+    reset,
     roomName,
     searchParams,
     setLive,
-    setViewerCount,
-    teardownRoom,
   ]);
 
-  const endStream = useCallback(
-    async ({ silent }: { silent?: boolean } = {}) => {
-      await teardownRoom({ silent });
-      resetLive();
-      setViewerCount(0);
+  const endStream = useCallback(async () => {
+    if (isBusy || !isLive) {
+      if (!isLive) {
+        reset();
+      }
+      return;
+    }
+    setIsBusy(true);
+    try {
+      close();
+      detachRoom();
+      if (isLive) {
+        await updateCreatorLiveStatus(creatorUsername, false);
+      }
+    } catch (err) {
+      toast({
+        title: 'Unable to end stream',
+        description: getUserMessage(err),
+        variant: 'destructive',
+      });
+    } finally {
+      reset();
+      setIsVideoReady(false);
       setMicEnabled(true);
       setCameraEnabled(true);
-      if (!silent) {
-        toast({
-          title: 'Stream ended',
-          description: 'You are now offline.',
-        });
-        navigate('/');
-      }
-    },
-    [navigate, resetLive, setViewerCount, teardownRoom],
-  );
+      setIsBusy(false);
+    }
+  }, [close, creatorUsername, detachRoom, isBusy, isLive, reset]);
 
   useEffect(() => {
     return () => {
-      void endStream({ silent: true });
+      void endStream();
     };
   }, [endStream]);
 
-  const toggleMic = useCallback(async () => {
-    const next = !micEnabled;
-    setMicEnabled(next);
-    const room = roomRef.current;
-    try {
-      if (room) {
-        await room.localParticipant.setMicrophoneEnabled(next);
-      } else if (audioTrackRef.current) {
-        audioTrackRef.current.mediaStreamTrack.enabled = next;
-      }
-    } catch (error) {
-      setMicEnabled(!next);
-      toast({
-        title: 'Microphone toggle failed',
-        description: getUserMessage(error),
-        variant: 'destructive',
-      });
+  const toggleMic = () => {
+    const track = audioTrackRef.current;
+    if (!track) return;
+    if (track.isMuted) {
+      track.unmute().catch(() => undefined);
+      setMicEnabled(true);
+    } else {
+      track.mute().catch(() => undefined);
+      setMicEnabled(false);
     }
-  }, [micEnabled]);
+  };
 
-  const toggleCamera = useCallback(async () => {
-    const next = !cameraEnabled;
-    setCameraEnabled(next);
-    const room = roomRef.current;
-    try {
-      if (room) {
-        await room.localParticipant.setCameraEnabled(next);
-      } else if (videoTrackRef.current) {
-        videoTrackRef.current.mediaStreamTrack.enabled = next;
-      }
-      if (!next) {
-        detachVideoTrack();
-      } else {
-        attachVideoTrack(videoTrackRef.current);
-      }
-    } catch (error) {
-      setCameraEnabled(!next);
-      toast({
-        title: 'Camera toggle failed',
-        description: getUserMessage(error),
-        variant: 'destructive',
-      });
+  const toggleCamera = () => {
+    const track = videoTrackRef.current;
+    if (!track) return;
+    if (track.isMuted) {
+      track.unmute().catch(() => undefined);
+      setCameraEnabled(true);
+    } else {
+      track.mute().catch(() => undefined);
+      setCameraEnabled(false);
     }
-  }, [attachVideoTrack, cameraEnabled, detachVideoTrack]);
+  };
+
+  const handleSendMessage = useCallback(
+    async (input: Parameters<typeof sendChatMessage>[0]) => {
+      await sendChatMessage(input);
+    },
+    [sendChatMessage],
+  );
 
   return (
-    <div className={`min-h-screen ${GRADIENT_CLASSES} bg-[#0b021c] pb-24 pt-16 text-white`}>
-      <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-10 px-4 sm:px-6 lg:px-10">
+    <div className={`min-h-screen ${gradientBackground} text-white`}>
+      <div className="mx-auto flex max-w-7xl flex-col gap-8 px-4 pb-16 pt-12 lg:px-8">
+        <FlowBreadcrumb currentStep="go-live" />
         <header className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" onClick={() => navigate(-1)} className="rounded-full border border-white/10 bg-white/5 px-4 text-white/80 hover:bg-white/10">
-              ← Back
-            </Button>
-            <div>
-              <h1 className="text-3xl font-semibold tracking-tight text-white">Creator Control Room</h1>
-              <p className="text-sm text-white/60">Manage your live session with real-time chat, reactions, and VibeCoins.</p>
-            </div>
+          <Button variant="ghost" onClick={() => navigate('/')}
+            className="w-fit rounded-full border border-white/10 bg-white/5 px-5 py-2 text-sm text-white/80 hover:bg-white/10">
+            ← Back to Home
+          </Button>
+          <div className="space-y-2 text-center lg:text-left">
+            <p className="text-xs uppercase tracking-[0.4em] text-white/60">Feelynx Live Studio</p>
+            <h1 className="text-3xl font-semibold tracking-tight">Creator Live Dashboard</h1>
+            <p className="text-sm text-white/60">Stage-ready controls, non-intrusive chat, and live VibeCoins.</p>
           </div>
-          <div className="flex items-center gap-3 text-sm text-white/70">
-            <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 uppercase tracking-wide">{connectionLabel}</span>
-            <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1 uppercase tracking-wide">Room: {roomName}</span>
+          <div className="flex justify-end">
+            <Button
+              variant="outline"
+              onClick={() => navigate('/settings/live')}
+              className="rounded-full border-white/20 bg-white/10 px-6 py-2 text-sm text-white/80 hover:bg-white/20"
+            >
+              Stream Settings
+            </Button>
           </div>
         </header>
 
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-          <div className="flex flex-col gap-6">
-            <div className="relative overflow-hidden rounded-3xl border border-white/15 bg-black/40 shadow-2xl shadow-black/60">
+        <main className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]">
+          <section className="space-y-5">
+            <div className="relative overflow-hidden rounded-[32px] border border-white/15 bg-black/40 shadow-[0_0_40px_rgba(118,35,250,0.45)] backdrop-blur-2xl">
               <div className="relative aspect-video">
                 <video
-                  ref={localVideoRef}
-                  className="h-full w-full rounded-3xl object-cover"
+                  ref={videoElementRef}
+                  className="h-full w-full rounded-[32px] object-cover"
                   autoPlay
                   muted
                   playsInline
-                  aria-label="Live stream preview"
+                  aria-label="Creator live preview"
                 />
-                <div ref={overlayRef} className="pointer-events-none absolute inset-0" />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/70 to-transparent" />
-                <div className="absolute right-6 top-6 z-20">
-                  <LiveViewerBadge />
-                </div>
-                {!isVideoReady && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                    <div className="flex flex-col items-center gap-3 text-center text-white/80">
-                      <span className="text-5xl">📹</span>
-                      <p className="text-sm uppercase tracking-widest">{isLive ? 'Preparing stream…' : 'Go live to start broadcasting'}</p>
-                    </div>
+                {!isLive && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 text-center">
+                    <span className="text-6xl opacity-40">🎬</span>
+                    <p className="mt-4 max-w-xs text-sm text-white/70">Click “Go Live” to start your show. Chat, tokens, and reactions wake up automatically.</p>
                   </div>
                 )}
+                {isLive && !isVideoReady && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60">
+                    <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/40 border-t-transparent" aria-hidden />
+                    <p className="mt-4 text-sm text-white/70">Connecting your vibe…</p>
+                  </div>
+                )}
+                <div className="pointer-events-none absolute inset-0 rounded-[32px] border border-white/10" aria-hidden />
+                <div className="absolute right-6 top-6 z-20">
+                  <LiveViewerBadge isLive={isLive} viewerCount={viewerCount} />
+                </div>
               </div>
             </div>
-
-            <LiveEarningsTicker />
-            <LiveReactions onReact={sendReaction} container={overlayRef.current} disabled={!isLive} />
+            <LiveEarningsTicker tokenEarnings={tokenEarnings} startTime={startTime} peakViewers={peakViewers} />
+            <LiveReactions onSend={sendReaction} disabled={!isLive || !isConnected} />
             <LiveControls
               isLive={isLive}
-              isConnecting={isConnecting}
-              micEnabled={micEnabled}
-              cameraEnabled={cameraEnabled}
+              isBusy={isBusy}
+              onStart={startLiveStream}
+              onEnd={endStream}
               onToggleMic={toggleMic}
               onToggleCamera={toggleCamera}
-              onGoLive={() => void startLiveStream()}
-              onEndStream={() => void endStream()}
+              micEnabled={micEnabled}
+              cameraEnabled={cameraEnabled}
             />
-          </div>
-
-          <div className="hidden lg:block">
-            <LiveChatDock
-              currentUserId={identity}
-              onSendMessage={sendChatMessage}
-              onTyping={setTyping}
-              isLive={isLive}
-              variant="desktop"
-            />
-          </div>
-        </div>
-
-        <div className="lg:hidden">
+          </section>
           <LiveChatDock
-            currentUserId={identity}
-            onSendMessage={sendChatMessage}
-            onTyping={setTyping}
+            messages={messages}
+            onSend={handleSendMessage}
             isLive={isLive}
-            variant="mobile"
+            connectionState={connectionState}
+            currentUserId={identity}
           />
-        </div>
+        </main>
       </div>
     </div>
   );
