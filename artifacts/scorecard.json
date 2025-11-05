@@ -1,0 +1,11 @@
+{
+  "phase": 8,
+  "kpis": {
+    "enterprisePartners": 12,
+    "predictiveAccuracy": 0.87,
+    "retentionIncrease": 0.31,
+    "activeRegions": 9,
+    "reinvestmentRatio": 0.12
+  },
+  "updatedAt": "2024-08-01T00:00:00.000Z"
+}
