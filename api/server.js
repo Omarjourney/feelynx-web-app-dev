@@ -9,6 +9,9 @@ const { Server } = require('socket.io');
 const PORT = Number(process.env.PORT || 3001);
 const CORS_ORIGIN = process.env.CORS_ORIGIN || 'https://dev.feelynx.live';
 
+const aiRepairRouter = require('./routes/aiRepair');
+const emotionFeedbackRouter = require('./routes/emotionFeedback');
+
 const app = express();
 
 // CORS for API routes
@@ -19,6 +22,9 @@ app.use(cors({
 
 app.set('trust proxy', 1);
 app.use(express.json());
+
+app.use('/api/ai/repair', aiRepairRouter);
+app.use('/api/emotion/feedback', emotionFeedbackRouter);
 
 // Health endpoints
 app.get('/health', (req, res) => res.json({ status: 'ok' }));

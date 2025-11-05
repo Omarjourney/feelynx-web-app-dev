@@ -30,6 +30,8 @@ import ControlRemote from './features/remote/ControlRemote';
 import CompanionsHome from './features/companions/CompanionsHome';
 import ContestsFeed from './features/contests/ContestsFeed';
 import Styleguide from './pages/Styleguide';
+import NeuralDashboard from './pages/NeuralDashboard';
+import AutoRoadmap from './pages/AutoRoadmap';
 import AutoThemeController from '@/components/AutoThemeController';
 import AppShell from '@/components/layout/AppShell';
 import ToastProvider from '@/components/providers/ToastProvider';
@@ -72,6 +74,8 @@ const App = () => (
                   <Route path="/contests" element={<ContestsFeed />} />
                   <Route path="/styleguide" element={<Styleguide />} />
                   <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/neural-dashboard" element={<NeuralDashboard />} />
+                  <Route path="/auto-roadmap" element={<AutoRoadmap />} />
                 </Route>
                 <Route path="/auth" element={<Auth />} />
                 <Route path="*" element={<NotFound />} />

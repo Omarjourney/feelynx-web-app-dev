@@ -1,0 +1,52 @@
+name: Autonomous Auto-Heal Scan
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch: {}
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Evaluate heal metrics
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const metrics = JSON.parse(fs.readFileSync('artifacts/ai-metrics.json', 'utf8'));
+          const status = [];
+          if ((metrics.selfHealingSuccess ?? 0) < 0.95) {
+            status.push('selfHealingSuccess below threshold');
+          }
+          if ((metrics.incidentMTTR ?? Infinity) > 5) {
+            status.push('incidentMTTR above 5 minutes');
+          }
+          if ((metrics.emotionAdaptation ?? 0) < 0.85) {
+            status.push('emotionAdaptation below 85%');
+          }
+          if (!status.length) {
+            console.log('Heal scan passed');
+            process.exit(0);
+          }
+          console.log('Heal scan found issues:', status.join(', '));
+          process.exit(1);
+          NODE
+
+      - name: Open follow-up PR if scan fails
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = `Autonomous repair scan detected degradations at ${new Date().toISOString()}.
+
+            - Metrics file: artifacts/ai-metrics.json
+            - Please review the AI repair service and commit an adjustment.`;
+            await github.rest.issues.create({
+              ...context.repo,
+              title: '[AutoHeal] Repair follow-up required',
+              body,
+              labels: ['automation', 'auto-heal']
+            });
