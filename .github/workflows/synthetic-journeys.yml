@@ -1,0 +1,43 @@
+name: Synthetic Journeys
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 * * * *'
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check health endpoint with retries
+        env:
+          HEALTH_BEARER_TOKEN: ${{ secrets.HEALTH_BEARER_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          AUTH_HEADER="${HEALTH_BEARER_TOKEN:-}"
+          CURL_ARGS=("--fail" "--show-error" "https://dev.feelynx.live/health")
+
+          if [ -n "$AUTH_HEADER" ]; then
+            CURL_ARGS=("-H" "Authorization: Bearer $AUTH_HEADER" "${CURL_ARGS[@]}")
+          fi
+
+          max_attempts=6
+          delay=5
+
+          for attempt in $(seq 1 $max_attempts); do
+            echo "Attempt $attempt of $max_attempts"
+            if curl "${CURL_ARGS[@]}"; then
+              echo "Health check succeeded"
+              exit 0
+            fi
+
+            if [ "$attempt" -eq "$max_attempts" ]; then
+              echo "Health check failed after $max_attempts attempts" >&2
+              exit 1
+            fi
+
+            echo "Health check failed, retrying in ${delay}s" >&2
+            sleep "$delay"
+            delay=$((delay * 2))
+          done
