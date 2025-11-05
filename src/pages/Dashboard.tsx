@@ -11,6 +11,10 @@ import { request } from '@/lib/api';
 import { getUserMessage } from '@/lib/errors';
 import { useWallet, selectWalletBalance, selectWalletLoading } from '@/stores/useWallet';
 import { toast } from '@/hooks/use-toast';
+import CreatorAIHub from '@/components/CreatorAIHub';
+import FanVibeFeed from '@/components/FanVibeFeed';
+import AIHealthMonitor from '@/components/AIHealthMonitor';
+import LocaleSwitcher from '@/components/LocaleSwitcher';
 
 type HighlightsResponse = Record<string, HighlightRecord[]>;
 
