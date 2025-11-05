@@ -1,4 +1,5 @@
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import {
   connectToLivekitRoom,
   disconnectFromRoom,
@@ -72,6 +73,37 @@ const LiveStream = ({ creatorName, viewers, onBack, emotion }: LiveStreamProps) 
   const gridTemplate = showParticipants
     ? 'lg:grid-cols-[minmax(0,2.2fr)_minmax(0,1.3fr)_minmax(0,1fr)]'
     : 'lg:grid-cols-[minmax(0,2.4fr)_minmax(0,1.4fr)]';
+
+  const shareHighlight = useMutation<HighlightRecord, unknown, SharePlatform>({
+    mutationFn: async (platform) => {
+      const response = await request<{ streamId: string; highlights: HighlightRecord[] }>(
+        `/api/highlights?streamId=${encodeURIComponent(roomName)}`,
+      );
+      const highlight = response.highlights?.[0];
+      if (!highlight) {
+        throw new Error('No highlights are available for this stream yet.');
+      }
+      const targetUrl = SHARE_ENDPOINT[platform](highlight);
+      window.open(targetUrl, '_blank', 'noopener');
+      await request(`/api/highlights/${highlight.streamId}/${highlight.id}/share`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ platform }),
+      });
+      return highlight;
+    },
+    onSuccess: (_highlight, platform) => {
+      const label = SHARE_OPTIONS.find((option) => option.key === platform)?.label ?? 'network';
+      toast({ title: `Shared to ${label}`, description: 'Thanks for amplifying the vibe.' });
+    },
+    onError: (error) => {
+      toast({
+        title: 'Unable to share highlight',
+        description: error instanceof Error ? error.message : 'Please try again in a moment.',
+        variant: 'destructive',
+      });
+    },
+  });
 
   const topFans = useMemo(
     () => [
@@ -161,6 +193,10 @@ const LiveStream = ({ creatorName, viewers, onBack, emotion }: LiveStreamProps) 
     setMascotMood('guest');
     registerEngagement();
     setTimeout(() => setMascotMood('idle'), 4000);
+  };
+
+  const handleShare = (platform: SharePlatform) => {
+    shareHighlight.mutate(platform);
   };
 
   return (

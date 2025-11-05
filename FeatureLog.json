@@ -14,5 +14,37 @@
     "description": "Zustand + React Query pipeline simulating real-time viewers, tokens, and AI cue generation.",
     "kpiAlignment": ["Performance", "Monetization", "Emotion"],
     "status": "shipped"
+  },
+  {
+    "phase": 3,
+    "module": "highlights",
+    "title": "AI Highlight Generator",
+    "description": "Express service derives viral 10–20s clips from engagement spikes and exposes them in the creator dashboard.",
+    "kpiAlignment": ["Shares", "Engagement"],
+    "status": "shipped"
+  },
+  {
+    "phase": 3,
+    "module": "leaderboard",
+    "title": "Token Leaderboard & Streak Badges",
+    "description": "Framer Motion leaderboard surfaces weekly 💎 ranks with streak glow tiers for 3/7/14 day consistency.",
+    "kpiAlignment": ["Retention", "Engagement"],
+    "status": "shipped"
+  },
+  {
+    "phase": 3,
+    "module": "referrals",
+    "title": "Referral Growth Orbit",
+    "description": "Creator-side dashboard tracks invites, auto-expiring rewards, and tiered 5%+5% bonuses tied to wallet data.",
+    "kpiAlignment": ["Referrals", "Retention"],
+    "status": "shipped"
+  },
+  {
+    "phase": 3,
+    "module": "moderation",
+    "title": "Smart Mod Sentiment Filter",
+    "description": "Optional AI guard rails rewrite toxic chat replies with positive cues via the /api/emotion sentiment endpoint.",
+    "kpiAlignment": ["Safety", "Retention"],
+    "status": "shipped"
   }
 ]
