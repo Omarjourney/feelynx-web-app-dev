@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import type { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useTheme } from 'next-themes';
+import { useSessionSyncStore } from '@/stores/useSessionSyncStore';
 
 interface AuthContextType {
   user: User | null;
@@ -39,6 +40,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const { setTheme } = useTheme();
+  const setSessionToken = useSessionSyncStore((state) => state.setSessionToken);
+  const markSynced = useSessionSyncStore((state) => state.markSynced);
 
   useEffect(() => {
     // Set up auth state listener FIRST
@@ -48,6 +51,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+      setSessionToken(session?.access_token ?? null);
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        markSynced();
+      }
     });
 
     // THEN check for existing session
@@ -55,10 +62,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+      setSessionToken(session?.access_token ?? null);
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [markSynced, setSessionToken]);
 
   // Apply per-user theme preference on login if present
   useEffect(() => {

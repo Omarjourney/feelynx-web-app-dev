@@ -31,9 +31,18 @@ export const isApiError = (error: unknown): error is ApiError => {
 };
 
 export async function request<T>(input: RequestInfo | URL, init?: RequestInit): Promise<T> {
+  const headers = new Headers(init?.headers);
+  if (!headers.has('Accept')) {
+    headers.set('Accept', 'application/json');
+  }
+  if (!headers.has('Accept-Language') && typeof navigator !== 'undefined') {
+    headers.set('Accept-Language', navigator.languages?.join(',') ?? navigator.language ?? 'en');
+  }
+  const finalInit: RequestInit = { ...init, headers };
+
   let response: Response;
   try {
-    response = await fetch(input, init);
+    response = await fetch(input, finalInit);
   } catch (error) {
     throw createApiError('Network request failed', {
       code: 'network_error',

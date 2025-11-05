@@ -8,6 +8,10 @@ import { request } from '@/lib/api';
 import { getUserMessage } from '@/lib/errors';
 import { useWallet, selectWalletBalance, selectWalletLoading } from '@/stores/useWallet';
 import { toast } from '@/hooks/use-toast';
+import CreatorAIHub from '@/components/CreatorAIHub';
+import FanVibeFeed from '@/components/FanVibeFeed';
+import AIHealthMonitor from '@/components/AIHealthMonitor';
+import LocaleSwitcher from '@/components/LocaleSwitcher';
 
 interface ProfileResponse {
   name?: string;
@@ -113,6 +117,16 @@ const Dashboard = () => {
           </div>
         </CardHeader>
       </Card>
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
+        <CreatorAIHub />
+        <FanVibeFeed />
+        <AIHealthMonitor />
+      </div>
+
+      <div className="flex justify-end">
+        <LocaleSwitcher />
+      </div>
 
       <Card>
         <CardHeader>

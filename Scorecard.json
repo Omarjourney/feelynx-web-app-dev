@@ -1,24 +1,29 @@
 {
-  "phase": 1,
+  "phase": 5,
   "metrics": {
-    "latencyMs": {
-      "target": 300,
-      "simulated": 210,
-      "status": "on-track"
-    },
-    "engagementRate": {
-      "target": 0.7,
-      "simulated": 0.78,
-      "status": "on-track"
-    },
-    "tokensPerSession": {
-      "target": 500,
-      "simulated": 640,
+    "engagement": {
+      "targetPercent": 25,
+      "simulatedPercent": 27,
       "status": "exceeding"
     },
-    "accessibility": {
-      "target": 0.95,
-      "simulated": 0.95,
+    "aiTips": {
+      "targetPercent": 20,
+      "simulatedPercent": 23,
+      "status": "exceeding"
+    },
+    "mobileInstalls": {
+      "targetPercent": 40,
+      "simulatedPercent": 44,
+      "status": "on-track"
+    },
+    "optimizationAccuracy": {
+      "targetPercent": 90,
+      "simulatedPercent": 92,
+      "status": "exceeding"
+    },
+    "multilingualSessions": {
+      "targetPercent": 30,
+      "simulatedPercent": 33,
       "status": "on-track"
     }
   }

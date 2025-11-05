@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './globals.css';
 import { AuthProvider } from './contexts/AuthContext';
+import { I18nProvider } from './contexts/I18nContext';
+import { initializePlatformBridge } from './lib/platform/bridge';
 import { enableDemoMocks } from './lib/demo/mockFetch';
 
 // Optional audit shim: expose React on window for headless audit tools
@@ -58,14 +60,18 @@ console.error = (...args: unknown[]) => {
   }
 };
 
+initializePlatformBridge();
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AuthProvider>
-      {/* main landmark for accessibility and skip link target */}
-      <main id="main" role="main">
-        <App />
-      </main>
-    </AuthProvider>
+    <I18nProvider>
+      <AuthProvider>
+        {/* main landmark for accessibility and skip link target */}
+        <main id="main" role="main">
+          <App />
+        </main>
+      </AuthProvider>
+    </I18nProvider>
   </StrictMode>,
 );
 
