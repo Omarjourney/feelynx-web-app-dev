@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import type { LiveMessage, LiveMessageInput } from '@/state/liveStore';
 import type { LiveRoomConnectionState } from '@/hooks/useLiveRoom';
+import { toast } from '@/hooks/use-toast';
 
 const VIRTUALIZED_WINDOW = 160;
 
@@ -133,10 +134,11 @@ export function LiveChatDock({ messages, onSend, isLive, connectionState, curren
       attachments.forEach((item) => URL.revokeObjectURL(item.preview));
       setAttachments([]);
     } catch (error) {
-      // The hook surfaces errors to the store; keep the UI responsive.
-      if (import.meta.env.DEV) {
-        console.error(error);
-      }
+      toast({
+        title: 'Message failed to send',
+        description: 'We could not deliver that vibe. Try again in a moment.',
+        variant: 'destructive',
+      });
     }
   };
 

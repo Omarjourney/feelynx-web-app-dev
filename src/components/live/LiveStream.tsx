@@ -5,6 +5,7 @@ import {
   notifyRoomLeave,
   type Room,
 } from '@/lib/livekit/client';
+import { cn } from '@/lib/utils';
 import LiveStreamHeader from './LiveStreamHeader';
 import LiveVideoPanel from './LiveVideoPanel';
 import LiveChatPanel, { ChatMessage } from './LiveChatPanel';
@@ -12,11 +13,14 @@ import LiveInteractiveControls from './LiveInteractiveControls';
 import ParticipantsPanel from './ParticipantsPanel';
 import TipModal from './TipModal';
 import ReactiveMascot, { MascotMood } from '@/components/ReactiveMascot';
+import { toast } from '@/hooks/use-toast';
+import type { EmotionUIController } from '@/hooks/useEmotionUI';
 
 interface LiveStreamProps {
   creatorName: string;
   viewers: number;
   onBack: () => void;
+  emotion: EmotionUIController;
 }
 
 const initialMessages: ChatMessage[] = [
@@ -41,7 +45,7 @@ const initialMessages: ChatMessage[] = [
   },
 ];
 
-const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) => {
+const LiveStream = ({ creatorName, viewers, onBack, emotion }: LiveStreamProps) => {
   const [isConnected, setIsConnected] = useState(false);
   const [chatMessage, setChatMessage] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
@@ -53,9 +57,7 @@ const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) => {
   const [xpProgress, setXpProgress] = useState(0.68);
   const [dailyStreak] = useState(6);
   const [mascotMood, setMascotMood] = useState<MascotMood>('idle');
-  const [reactions, setReactions] = useState<Array<{ id: number; icon: string; color: string }>>(
-    [],
-  );
+  const [reactions, setReactions] = useState<Array<{ id: number; icon: string; color: string }>>([]);
   const [thanksMessage, setThanksMessage] = useState<string | null>(null);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -63,6 +65,13 @@ const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) => {
   const participantIdRef = useRef<string>(`viewer_${Date.now()}`);
 
   const roomName = `live_${creatorName.toLowerCase().replace(/\s+/g, '_')}`;
+  const { emojiBursts, layout, removeBurst, glassSurfaceStyle, registerChatMessage, registerTip, registerEngagement, tone } =
+    emotion;
+  const { chatExpanded, showParticipants, quietMode } = layout;
+
+  const gridTemplate = showParticipants
+    ? 'lg:grid-cols-[minmax(0,2.2fr)_minmax(0,1.3fr)_minmax(0,1fr)]'
+    : 'lg:grid-cols-[minmax(0,2.4fr)_minmax(0,1.4fr)]';
 
   const topFans = useMemo(
     () => [
@@ -85,9 +94,14 @@ const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) => {
       roomRef.current = room;
       setIsConnected(true);
       setMascotMood('joined');
+      registerEngagement();
       setTimeout(() => setMascotMood('idle'), 4000);
     } catch (error) {
-      console.error('Connection failed:', error);
+      toast({
+        title: 'Could not join the live room',
+        description: 'Connection failed. Please retry in a moment.',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -115,6 +129,7 @@ const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) => {
     setMessages((prev) => [...prev, newMessage]);
     setChatMessage('');
     setXpProgress((prev) => Math.min(0.99, prev + 0.02));
+    registerChatMessage(newMessage.message);
   };
 
   const handleMessageChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -126,6 +141,7 @@ const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) => {
     setMilestoneProgress((prev) => Math.min(milestoneGoal, prev + amount));
     setThanksMessage(`Thank you for the ${amount}💎 tip!`);
     setMascotMood('tipped');
+    registerTip(amount);
     setTimeout(() => setThanksMessage(null), 3000);
     setTimeout(() => setMascotMood('idle'), 4000);
   };
@@ -137,19 +153,21 @@ const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) => {
       setReactions((prev) => prev.filter((reaction) => reaction.id !== id));
     }, 2400);
     setMascotMood('hype');
+    registerEngagement();
     setTimeout(() => setMascotMood('idle'), 4000);
   };
 
   const handleInviteGuest = () => {
     setMascotMood('guest');
+    registerEngagement();
     setTimeout(() => setMascotMood('idle'), 4000);
   };
 
   return (
-    <div className="container mx-auto p-4 space-y-4">
+    <div className="container mx-auto space-y-4 p-4">
       <LiveStreamHeader creatorName={creatorName} viewers={viewers} onBack={onBack} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+      <div className={cn('grid grid-cols-1 gap-4 transition-all duration-500', gridTemplate)}>
         <LiveVideoPanel
           isConnected={isConnected}
           onConnect={handleConnect}
@@ -162,6 +180,11 @@ const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) => {
           topFans={topFans}
           thanksMessage={thanksMessage}
           toyConnected={true}
+          tone={tone}
+          glassStyles={glassSurfaceStyle}
+          quietMode={quietMode}
+          emotionBursts={emojiBursts}
+          onBurstComplete={removeBurst}
         />
         <LiveChatPanel
           messages={messages}
@@ -170,8 +193,14 @@ const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) => {
           onSend={sendMessage}
           onQuickTip={handleQuickTip}
           coinBalance={coinBalance}
+          tone={tone}
+          glassStyles={glassSurfaceStyle}
+          compact={!chatExpanded}
+          quietMode={quietMode}
         />
-        <ParticipantsPanel room={roomName} />
+        {showParticipants ? (
+          <ParticipantsPanel room={roomName} tone={tone} glassStyles={glassSurfaceStyle} quietMode={quietMode} />
+        ) : null}
       </div>
 
       <div className="flex justify-center">

@@ -4,6 +4,7 @@ import { useCreatorLive } from '@/hooks/useCreatorLive';
 import { LiveStream, LiveExperienceHUD } from '@/components/live';
 import LiveEarningsTicker from '@/components/live/LiveEarningsTicker';
 import useLiveExperienceTelemetry from '@/features/live/useLiveExperienceTelemetry';
+import { useEmotionUI } from '@/hooks/useEmotionUI';
 
 const Live = () => {
   const { username } = useParams();
@@ -18,6 +19,12 @@ const Live = () => {
   });
   const { metrics, suggestions, isLive, cameraOn, goLive, endSession, toggleCamera } = telemetry;
   const viewerCount = useMemo(() => Math.max(0, Math.round(metrics.viewerCount)), [metrics.viewerCount]);
+  const emotion = useEmotionUI({
+    sentimentScore: metrics.sentimentScore,
+    engagementRate: metrics.engagementRate,
+    tokensPerMinute: metrics.tokensPerMinute,
+    viewerCount,
+  });
 
   if (!creator) {
     return (
@@ -30,7 +37,7 @@ const Live = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen transition-[background-image,filter] duration-700" style={emotion.cssVariables}>
       <main className="flex-1 overflow-x-hidden pb-24 md:pb-12">
         <div className="mx-auto w-full max-w-5xl px-4 pt-10">
           <LiveExperienceHUD
@@ -55,12 +62,15 @@ const Live = () => {
             tokenEarnings={metrics.tokenTotal}
             startTime={metrics.sessionStart}
             peakViewers={metrics.peakViewers}
+            tone={emotion.tone}
+            glassStyles={emotion.glassSurfaceStyle}
           />
         </div>
         <LiveStream
           creatorName={creator.name}
           viewers={viewerCount}
           onBack={() => navigate(-1)}
+          emotion={emotion}
         />
       </main>
     </div>
