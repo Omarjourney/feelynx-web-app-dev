@@ -17,10 +17,20 @@ This update activates the **“Flow That Feels Alive”** experience for the vie
 | Engagement | ≥ 70 % | 72–81 % oscillation | Engagement cues + AI prompts sustain pace. |
 | Avg Tokens | ≥ 500💎/session | 600–720💎 simulated | Token bursts animate in ticker + HUD. |
 
+## Phase 2 — Emotional Intelligence Layer (Completed)
+
+**Status:** ✅ Completed — Feelynx now reacts in real time to mood, engagement, and monetization pulses.
+
+### Highlights
+- **Sentiment API Bridge** – `/api/emotion` scores chat tone with lightweight heuristics so the UI can shift instantly.
+- **Emotion UI Engine** – `useEmotionUI` orchestrates lighting, transparency, and predictive layout to amplify or soften focus moments.
+- **Adaptive Lighting + Transparency** – Glass surfaces now obey `--glass-opacity` and `--glow-intensity` to deliver 35–50% opacity bands per mood.
+- **Live Earnings Arc** – Animated 💎 arc visualizes momentum alongside the KPI ticker for dopamine-aligned feedback loops.
+- **Cognitive Silence Mode** – When the room is quiet, chat glass dims and the participants rail hides itself to protect focus.
+
 ## Next Steps
 1. Attach telemetry store to real LiveKit analytics endpoints.
-2. Extend emotional intelligence layer (Phase 2) with dynamic theming + sentiment analytics.
-3. Capture LiveKit session highlights for Phase 3 viral workflows.
+2. Capture LiveKit session highlights for Phase 3 viral workflows.
 
 ---
 

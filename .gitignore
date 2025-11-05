@@ -28,3 +28,7 @@ dist-ssr
 
 # Generated brand icons
 public/brand/generated/
+
+# Phase reporting artifacts
+!artifacts/
+!artifacts/*.log
