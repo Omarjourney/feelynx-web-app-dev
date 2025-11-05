@@ -1,29 +1,29 @@
 {
-  "phase": 5,
+  "phase": 3,
   "metrics": {
-    "engagement": {
-      "targetPercent": 25,
-      "simulatedPercent": 27,
+    "shareRate": {
+      "target": 0.3,
+      "simulated": 0.42,
       "status": "exceeding"
     },
-    "aiTips": {
-      "targetPercent": 20,
-      "simulatedPercent": 23,
+    "referralGrowth": {
+      "target": 0.15,
+      "simulated": 0.19,
       "status": "exceeding"
     },
-    "mobileInstalls": {
-      "targetPercent": 40,
-      "simulatedPercent": 44,
+    "creatorRetentionTop20": {
+      "target": 0.99,
+      "simulated": 0.992,
       "status": "on-track"
     },
-    "optimizationAccuracy": {
-      "targetPercent": 90,
-      "simulatedPercent": 92,
+    "weeklyActiveCreators": {
+      "target": 0.05,
+      "simulated": 0.068,
       "status": "exceeding"
     },
-    "multilingualSessions": {
-      "targetPercent": 30,
-      "simulatedPercent": 33,
+    "viewerToTipper": {
+      "target": 0.25,
+      "simulated": 0.27,
       "status": "on-track"
     }
   }
