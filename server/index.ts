@@ -95,6 +95,27 @@ app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/referrals', referralsRoutes);
 app.use('/api/emotion', emotionRoutes);
 
+app.get('/api/ai/engagement', (req: Request, res: Response) => {
+  const creatorId = typeof req.query.creatorId === 'string' ? req.query.creatorId : 'demo-creator';
+  const snapshot = buildMockEngagement({
+    creatorId,
+    lastScore: engagementSnapshots[creatorId],
+  });
+  engagementSnapshots[creatorId] = snapshot.engagementScore;
+  res.json(snapshot);
+});
+
+app.get('/api/monetization', (req: Request, res: Response) => {
+  const creatorId = typeof req.query.creatorId === 'string' ? req.query.creatorId : 'demo-creator';
+  const snapshot = buildMockMonetization({
+    creatorId,
+    lastEarnings: earningSnapshots[creatorId],
+  });
+  earningSnapshots[creatorId] = snapshot.sessionEarnings;
+  console.info('[monetization]', creatorId, snapshot);
+  res.json(snapshot);
+});
+
 const port = process.env.PORT || 3001;
 
 const server = createServer(app);
@@ -107,6 +128,8 @@ interface StatusMessage {
 
 const creatorStatus: Record<string, boolean> = {};
 const callPresence: Record<string, 'available' | 'busy' | 'offline'> = {};
+const engagementSnapshots: Record<string, number> = {};
+const earningSnapshots: Record<string, number> = {};
 
 function broadcastStatus(data: StatusMessage) {
   const payload = JSON.stringify({ type: 'creatorStatus', ...data });

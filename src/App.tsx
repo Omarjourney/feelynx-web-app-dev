@@ -34,6 +34,7 @@ import ClipsPage from './pages/Clips';
 import AutoThemeController from '@/components/AutoThemeController';
 import AppShell from '@/components/layout/AppShell';
 import ToastProvider from '@/components/providers/ToastProvider';
+import CreatorInsights from './pages/CreatorInsights';
 
 const queryClient = new QueryClient();
 
