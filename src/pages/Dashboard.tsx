@@ -1,13 +1,32 @@
-import { useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useEffect, useMemo } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Share2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import Leaderboard from '@/components/Leaderboard';
+import ReferralCenter from '@/components/ReferralCenter';
 import { fetchCreators } from '@/data/creators';
 import { request } from '@/lib/api';
 import { getUserMessage } from '@/lib/errors';
 import { useWallet, selectWalletBalance, selectWalletLoading } from '@/stores/useWallet';
 import { toast } from '@/hooks/use-toast';
+
+type HighlightsResponse = Record<string, HighlightRecord[]>;
+
+interface HighlightRecord {
+  id: string;
+  streamId: string;
+  title: string;
+  start: number;
+  end: number;
+  duration: number;
+  clipUrl: string;
+  previewImage: string;
+  generatedAt: string;
+  shareCounts: Record<string, number>;
+  engagementPeak: number;
+}
 
 interface ProfileResponse {
   name?: string;
@@ -16,7 +35,23 @@ interface ProfileResponse {
   tier?: string;
 }
 
+type SharePlatform = 'tiktok' | 'instagram' | 'x';
+
+const SHARE_ENDPOINT: Record<SharePlatform, (clip: HighlightRecord) => string> = {
+  tiktok: (clip) => `https://www.tiktok.com/upload?video=${encodeURIComponent(clip.clipUrl)}`,
+  instagram: (clip) => `intent://share?video=${encodeURIComponent(clip.clipUrl)}`,
+  x: (clip) =>
+    `https://twitter.com/intent/tweet?text=${encodeURIComponent(clip.title)}&url=${encodeURIComponent(clip.clipUrl)}`,
+};
+
+const PLATFORM_LABELS: Record<SharePlatform, string> = {
+  tiktok: 'TikTok',
+  instagram: 'Instagram',
+  x: 'X',
+};
+
 const Dashboard = () => {
+  const queryClient = useQueryClient();
   const walletBalance = useWallet(selectWalletBalance);
   const walletLoading = useWallet(selectWalletLoading);
   const fetchWallet = useWallet((state) => state.fetch);
@@ -52,6 +87,58 @@ const Dashboard = () => {
     queryFn: ({ signal }) => fetchCreators({ sort: 'trending' }, signal).then((list) => list.slice(0, 3)),
     staleTime: 30_000,
   });
+
+  const { data: highlightsData } = useQuery<HighlightsResponse>({
+    queryKey: ['highlights', 'dashboard'],
+    queryFn: () => request<HighlightsResponse>('/api/highlights'),
+    staleTime: 30_000,
+  });
+
+  const highlightList = useMemo(() => {
+    if (!highlightsData) return [] as HighlightRecord[];
+    return Object.values(highlightsData).flat();
+  }, [highlightsData]);
+
+  const heroHighlight = highlightList[0];
+
+  const shareHighlight = useMutation({
+    mutationFn: async ({ highlight, platform }: { highlight: HighlightRecord; platform: SharePlatform }) => {
+      return request<{ shareCounts: Record<string, number> }>(
+        `/api/highlights/${highlight.streamId}/${highlight.id}/share`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ platform }),
+        },
+      );
+    },
+    onSuccess: (payload, { highlight }) => {
+      queryClient.setQueryData<HighlightsResponse>(['highlights', 'dashboard'], (prev) => {
+        if (!prev) return prev;
+        const next: HighlightsResponse = { ...prev };
+        const list = next[highlight.streamId]?.map((item) =>
+          item.id === highlight.id ? { ...item, shareCounts: payload.shareCounts } : item,
+        );
+        if (list) {
+          next[highlight.streamId] = list;
+        }
+        return next;
+      });
+    },
+  });
+
+  const handleShare = (platform: SharePlatform) => {
+    if (!heroHighlight) {
+      toast({
+        title: 'No highlight available',
+        description: 'Go live to generate your first viral clip.',
+      });
+      return;
+    }
+    const url = SHARE_ENDPOINT[platform](heroHighlight);
+    window.open(url, '_blank', 'noopener');
+    shareHighlight.mutate({ highlight: heroHighlight, platform });
+  };
 
   useEffect(() => {
     if (profileError) {
@@ -112,6 +199,54 @@ const Dashboard = () => {
             </Button>
           </div>
         </CardHeader>
+      </Card>
+
+      <Card className="border-primary/20 bg-background/80 backdrop-blur">
+        <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              Viral Clip Launcher
+              <span className="text-sm font-normal text-muted-foreground">
+                {heroHighlight ? 'Your top moment is ready to share.' : 'Go live to auto-generate highlights.'}
+              </span>
+            </CardTitle>
+          </div>
+          {heroHighlight && (
+            <div className="flex items-center gap-3 text-sm text-muted-foreground">
+              <span>
+                {Object.values(heroHighlight.shareCounts).reduce((acc, value) => acc + value, 0)} total shares ·{' '}
+                {heroHighlight.duration}s window
+              </span>
+            </div>
+          )}
+        </CardHeader>
+        <CardContent className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-1">
+            <p className="text-sm text-muted-foreground">
+              Spark a growth ripple by pushing your hottest 20s clip to every network. Each share fuels the leaderboard.
+            </p>
+            {heroHighlight && (
+              <p className="text-xs text-muted-foreground">
+                Generated {new Date(heroHighlight.generatedAt).toLocaleString()} · Engagement score{' '}
+                {Math.round(heroHighlight.engagementPeak)}
+              </p>
+            )}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {(Object.keys(SHARE_ENDPOINT) as SharePlatform[]).map((platform) => (
+              <Button
+                key={platform}
+                variant="secondary"
+                size="sm"
+                className="rounded-full"
+                onClick={() => handleShare(platform)}
+              >
+                <Share2 className="mr-2 h-4 w-4" />
+                {PLATFORM_LABELS[platform]}
+              </Button>
+            ))}
+          </div>
+        </CardContent>
       </Card>
 
       <Card>
@@ -196,6 +331,11 @@ const Dashboard = () => {
           </div>
         </CardContent>
       </Card>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Leaderboard />
+        <ReferralCenter />
+      </div>
 
       <Card>
         <CardHeader>

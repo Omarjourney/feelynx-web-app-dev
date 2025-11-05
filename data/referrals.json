@@ -1,0 +1,35 @@
+[
+  {
+    "id": "aurora-fan991",
+    "referrerId": "aurora",
+    "referredId": "fan991",
+    "referredType": "fan",
+    "createdAt": "2024-10-01T00:00:00.000Z",
+    "expiresAt": "2025-10-01T00:00:00.000Z",
+    "bonusTier": "Pro",
+    "status": "active",
+    "earnings": 240
+  },
+  {
+    "id": "aurora-creator337",
+    "referrerId": "aurora",
+    "referredId": "creator337",
+    "referredType": "creator",
+    "createdAt": "2024-09-12T00:00:00.000Z",
+    "expiresAt": "2025-09-12T00:00:00.000Z",
+    "bonusTier": "Elite",
+    "status": "active",
+    "earnings": 360
+  },
+  {
+    "id": "mira-fan671",
+    "referrerId": "mira",
+    "referredId": "fan671",
+    "referredType": "fan",
+    "createdAt": "2023-04-04T00:00:00.000Z",
+    "expiresAt": "2024-04-04T00:00:00.000Z",
+    "bonusTier": "Growth",
+    "status": "expired",
+    "earnings": 90
+  }
+]
