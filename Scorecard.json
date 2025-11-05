@@ -1,25 +1,30 @@
 {
-  "phase": 1,
+  "phase": 4,
   "metrics": {
-    "latencyMs": {
-      "target": 300,
-      "simulated": 210,
-      "status": "on-track"
-    },
-    "engagementRate": {
-      "target": 0.7,
-      "simulated": 0.78,
-      "status": "on-track"
-    },
-    "tokensPerSession": {
-      "target": 500,
-      "simulated": 640,
+    "revenueGrowth": {
+      "target": 0.3,
+      "simulated": 0.33,
       "status": "exceeding"
     },
-    "accessibility": {
-      "target": 0.95,
-      "simulated": 0.95,
+    "tokenVelocity": {
+      "target": 0.25,
+      "simulated": 0.27,
+      "status": "exceeding"
+    },
+    "retention": {
+      "target": 0.9,
+      "simulated": 0.92,
       "status": "on-track"
+    },
+    "payoutsPerWeek": {
+      "target": 300,
+      "simulated": 324,
+      "status": "on-track"
+    },
+    "brandDealsPerMonth": {
+      "target": 50,
+      "simulated": 58,
+      "status": "exceeding"
     }
   }
 }

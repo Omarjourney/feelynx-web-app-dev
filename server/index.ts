@@ -22,6 +22,10 @@ import patternsRoutes from './routes/patterns';
 import groupsApiRoutes from './routes/groupsApi';
 import walletRoutes from './routes/wallet';
 import creatorEarningsRoutes from './routes/creatorEarnings';
+import pricingRoutes from './routes/pricing';
+import coachRoutes from './routes/coach';
+import payoutsApiRoutes from './routes/payoutsApi';
+import brandsRoutes from './routes/brands';
 import subscriptionsRoutes from './routes/subscriptions';
 import { webhookHandler as subscriptionsWebhookHandler } from './routes/subscriptions';
 import payoutsRoutes from './routes/payouts';
@@ -82,6 +86,10 @@ app.use('/patterns', patternsRoutes);
 app.use('/api/groups', groupsApiRoutes);
 app.use('/api/wallet', walletRoutes);
 app.use('/api/creator/earnings', creatorEarningsRoutes);
+app.use('/api/pricing', pricingRoutes);
+app.use('/api/coach', coachRoutes);
+app.use('/api/payouts', payoutsApiRoutes);
+app.use('/api/brands', brandsRoutes);
 
 const port = process.env.PORT || 3001;
 

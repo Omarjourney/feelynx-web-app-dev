@@ -14,5 +14,29 @@
     "description": "Zustand + React Query pipeline simulating real-time viewers, tokens, and AI cue generation.",
     "kpiAlignment": ["Performance", "Monetization", "Emotion"],
     "status": "shipped"
+  },
+  {
+    "phase": 4,
+    "module": "monetization",
+    "title": "Unified Wallet & Ledger",
+    "description": "Wallet API + dashboard visualize 💎 + fiat balances, conversion tools, and payout journeys.",
+    "kpiAlignment": ["Revenue", "Trust", "Compliance"],
+    "status": "shipped"
+  },
+  {
+    "phase": 4,
+    "module": "pricing-intel",
+    "title": "Smart Packs & Forecasting",
+    "description": "Dynamic pricing engine recommends token bundles and projects demand variance for creators.",
+    "kpiAlignment": ["Revenue", "Retention", "Velocity"],
+    "status": "shipped"
+  },
+  {
+    "phase": 4,
+    "module": "brand-growth",
+    "title": "Creator Business Suite",
+    "description": "Brands page unifies AI coach, smart pricing, and sponsorship applications to accelerate deals.",
+    "kpiAlignment": ["BrandExpansion", "Revenue", "Growth"],
+    "status": "shipped"
   }
 ]
