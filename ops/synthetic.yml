@@ -1,0 +1,54 @@
+name: Feelynx Synthetic Checks
+
+schedule: "*/5 * * * *"
+description: >-
+  Executes end-to-end journeys from multiple regions to verify login, go-live, tipping,
+  and ledger reconciliation paths. Emits metrics to Grafana and opens incidents when
+  SLO thresholds breached.
+
+journeys:
+  - name: login
+    request:
+      method: POST
+      url: https://app.feelynx.com/api/auth/login
+      bodyFromSecret: synthetic_login_payload
+    assertions:
+      - status: 200
+      - jsonPath: "$.sessionToken"
+  - name: go-live
+    request:
+      method: POST
+      url: https://app.feelynx.com/api/live/start
+      headers:
+        Authorization: Bearer {{ secrets.synthetic_session }}
+    assertions:
+      - status: 200
+      - jsonPath: "$.roomId"
+  - name: tip
+    request:
+      method: POST
+      url: https://app.feelynx.com/api/tip
+      headers:
+        Authorization: Bearer {{ secrets.synthetic_session }}
+      body:
+        amount: 1
+        currency: GEM
+        recipientId: synthetic_creator
+    assertions:
+      - status: 200
+      - jsonPath: "$.ledgerId"
+  - name: ledger-verify
+    request:
+      method: GET
+      url: https://app.feelynx.com/api/ledger/last
+      headers:
+        Authorization: Bearer {{ secrets.synthetic_session }}
+    assertions:
+      - status: 200
+      - jsonPath: "$.amount == 1"
+
+notifications:
+  - channel: github-issues
+    repo: Omarjourney/feelynx-web-app-dev
+  - channel: slack
+    webhookSecret: synthetic_slack_webhook

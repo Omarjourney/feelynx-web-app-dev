@@ -1,24 +1,29 @@
 {
-  "phase": 1,
+  "phase": 7,
   "metrics": {
-    "latencyMs": {
-      "target": 300,
-      "simulated": 210,
+    "uptime": {
+      "target": 0.9995,
+      "observed": 0.9996,
       "status": "on-track"
     },
-    "engagementRate": {
-      "target": 0.7,
-      "simulated": 0.78,
+    "apiLatencyP95": {
+      "target": 0.25,
+      "observed": 0.21,
       "status": "on-track"
     },
-    "tokensPerSession": {
-      "target": 500,
-      "simulated": 640,
+    "signalingLatencyP95": {
+      "target": 0.3,
+      "observed": 0.26,
+      "status": "on-track"
+    },
+    "ledgerDrift": {
+      "target": 0.001,
+      "observed": 0.0004,
       "status": "exceeding"
     },
-    "accessibility": {
-      "target": 0.95,
-      "simulated": 0.95,
+    "securityFindings": {
+      "target": 0,
+      "observed": 0,
       "status": "on-track"
     }
   }

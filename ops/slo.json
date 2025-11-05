@@ -1,0 +1,65 @@
+{
+  "service": "Feelynx Platform",
+  "version": "2024-Phase7",
+  "slos": [
+    {
+      "name": "Availability",
+      "target": 0.9995,
+      "window": "30d",
+      "measurement": {
+        "metric": "http.availability",
+        "source": "synthetic-monitoring"
+      },
+      "dependencies": ["web", "api", "signaling"],
+      "alertPolicies": [
+        {
+          "name": "fast-burn",
+          "burnRate": 14,
+          "window": "1h",
+          "notificationChannels": ["pagerduty", "slack-sre"]
+        },
+        {
+          "name": "slow-burn",
+          "burnRate": 4,
+          "window": "6h",
+          "notificationChannels": ["email-oncall", "jira-ops"]
+        }
+      ]
+    },
+    {
+      "name": "API Latency",
+      "target": 0.95,
+      "window": "1d",
+      "measurement": {
+        "metric": "http.server.duration",
+        "statistic": "p95",
+        "threshold": 0.25,
+        "unit": "seconds",
+        "source": "otel-traces"
+      }
+    },
+    {
+      "name": "Live Signaling Latency",
+      "target": 0.95,
+      "window": "1d",
+      "measurement": {
+        "metric": "livekit.signaling.duration",
+        "statistic": "p95",
+        "threshold": 0.3,
+        "unit": "seconds",
+        "source": "livekit-metrics"
+      }
+    },
+    {
+      "name": "Error Rate",
+      "target": 0.995,
+      "window": "5m",
+      "measurement": {
+        "metric": "http.server.errors.5xx",
+        "threshold": 0.005,
+        "unit": "fraction",
+        "source": "otel-metrics"
+      }
+    }
+  ]
+}

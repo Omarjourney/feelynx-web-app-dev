@@ -14,5 +14,13 @@
     "description": "Zustand + React Query pipeline simulating real-time viewers, tokens, and AI cue generation.",
     "kpiAlignment": ["Performance", "Monetization", "Emotion"],
     "status": "shipped"
+  },
+  {
+    "phase": 7,
+    "module": "trust",
+    "title": "Trust, Compliance & Reliability Stack",
+    "description": "SLO catalog, synthetic monitoring, security CI gates, and privacy tooling for enterprise readiness.",
+    "kpiAlignment": ["Uptime", "Security", "Compliance"],
+    "status": "shipped"
   }
 ]
