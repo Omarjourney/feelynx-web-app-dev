@@ -74,6 +74,8 @@ const App = () => (
                   <Route path="/contests" element={<ContestsFeed />} />
                   <Route path="/styleguide" element={<Styleguide />} />
                   <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/neural-dashboard" element={<NeuralDashboard />} />
+                  <Route path="/auto-roadmap" element={<AutoRoadmap />} />
                 </Route>
                 <Route path="/auth" element={<Auth />} />
                 <Route path="*" element={<NotFound />} />
