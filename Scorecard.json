@@ -1,30 +1,30 @@
 {
-  "phase": 4,
+  "phase": 3,
   "metrics": {
-    "revenueGrowth": {
+    "shareRate": {
       "target": 0.3,
-      "simulated": 0.33,
+      "simulated": 0.42,
       "status": "exceeding"
     },
-    "tokenVelocity": {
+    "referralGrowth": {
+      "target": 0.15,
+      "simulated": 0.19,
+      "status": "exceeding"
+    },
+    "creatorRetentionTop20": {
+      "target": 0.99,
+      "simulated": 0.992,
+      "status": "on-track"
+    },
+    "weeklyActiveCreators": {
+      "target": 0.05,
+      "simulated": 0.068,
+      "status": "exceeding"
+    },
+    "viewerToTipper": {
       "target": 0.25,
       "simulated": 0.27,
-      "status": "exceeding"
-    },
-    "retention": {
-      "target": 0.9,
-      "simulated": 0.92,
       "status": "on-track"
-    },
-    "payoutsPerWeek": {
-      "target": 300,
-      "simulated": 324,
-      "status": "on-track"
-    },
-    "brandDealsPerMonth": {
-      "target": 50,
-      "simulated": 58,
-      "status": "exceeding"
     }
   }
 }

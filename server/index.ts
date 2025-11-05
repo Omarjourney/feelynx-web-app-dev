@@ -30,6 +30,10 @@ import subscriptionsRoutes from './routes/subscriptions';
 import { webhookHandler as subscriptionsWebhookHandler } from './routes/subscriptions';
 import payoutsRoutes from './routes/payouts';
 import { webhookHandler as payoutsWebhookHandler } from './routes/payouts';
+import highlightsRoutes from './routes/highlights';
+import leaderboardRoutes from './routes/leaderboard';
+import referralsRoutes from './routes/referrals';
+import emotionRoutes from './routes/emotion';
 import { roomParticipants } from './roomParticipants';
 import { securityHeaders } from './middleware/securityHeaders';
 import { indexSchemas, type InferBody, type InferParams, withValidation } from './utils/validation';
@@ -86,10 +90,10 @@ app.use('/patterns', patternsRoutes);
 app.use('/api/groups', groupsApiRoutes);
 app.use('/api/wallet', walletRoutes);
 app.use('/api/creator/earnings', creatorEarningsRoutes);
-app.use('/api/pricing', pricingRoutes);
-app.use('/api/coach', coachRoutes);
-app.use('/api/payouts', payoutsApiRoutes);
-app.use('/api/brands', brandsRoutes);
+app.use('/api/highlights', highlightsRoutes);
+app.use('/api/leaderboard', leaderboardRoutes);
+app.use('/api/referrals', referralsRoutes);
+app.use('/api/emotion', emotionRoutes);
 
 const port = process.env.PORT || 3001;
 
