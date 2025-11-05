@@ -128,6 +128,22 @@ const LiveCreator = () => {
     try {
       await requestMediaPermissions();
       setIsVideoReady(false);
+      setMicEnabled(true);
+      setCameraEnabled(true);
+
+      const localTracks = await createLocalTracks({ audio: true, video: true });
+      const videoTrack = localTracks.find((track) => track.kind === Track.Kind.Video) as
+        | LocalVideoTrack
+        | undefined;
+      const audioTrack = localTracks.find((track) => track.kind === Track.Kind.Audio) as
+        | LocalAudioTrack
+        | undefined;
+      if (videoTrack) {
+        videoTrackRef.current = videoTrack;
+      }
+      if (audioTrack) {
+        audioTrackRef.current = audioTrack;
+      }
 
       const wsUrl = import.meta.env.VITE_LIVEKIT_WS_URL;
       const demoMode = searchParams.get('mode') === 'demo' || !wsUrl;
@@ -349,6 +365,4 @@ const LiveCreator = () => {
       </div>
     </div>
   );
-};
-
-export default LiveCreator;
+}
