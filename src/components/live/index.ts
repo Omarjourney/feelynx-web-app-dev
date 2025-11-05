@@ -7,3 +7,4 @@ export { default as LiveChatPanel } from './LiveChatPanel';
 export { default as ParticipantsPanel } from './ParticipantsPanel';
 export { default as ParticipantsList } from './ParticipantsList';
 export { default as TipModal } from './TipModal';
+export { default as LiveExperienceHUD } from './LiveExperienceHUD';

@@ -1,0 +1,18 @@
+[
+  {
+    "phase": 1,
+    "module": "live-experience",
+    "title": "Creator Control Orbit HUD",
+    "description": "Glassmorphic overlay exposing live KPIs, sentiment labels, and monetization ticker.",
+    "kpiAlignment": ["Emotion", "Engagement", "Monetization"],
+    "status": "shipped"
+  },
+  {
+    "phase": 1,
+    "module": "telemetry",
+    "title": "Live Blueprint Store & Telemetry Hook",
+    "description": "Zustand + React Query pipeline simulating real-time viewers, tokens, and AI cue generation.",
+    "kpiAlignment": ["Performance", "Monetization", "Emotion"],
+    "status": "shipped"
+  }
+]
