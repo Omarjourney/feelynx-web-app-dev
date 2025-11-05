@@ -1,4 +1,5 @@
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import {
   connectToLivekitRoom,
   disconnectFromRoom,
@@ -12,6 +13,37 @@ import LiveInteractiveControls from './LiveInteractiveControls';
 import ParticipantsPanel from './ParticipantsPanel';
 import TipModal from './TipModal';
 import ReactiveMascot, { MascotMood } from '@/components/ReactiveMascot';
+import { toast } from '@/hooks/use-toast';
+import { request } from '@/lib/api';
+
+type SharePlatform = 'tiktok' | 'instagram' | 'x';
+
+interface HighlightRecord {
+  id: string;
+  streamId: string;
+  title: string;
+  start: number;
+  end: number;
+  duration: number;
+  clipUrl: string;
+  previewImage: string;
+  generatedAt: string;
+  shareCounts: Record<string, number>;
+  engagementPeak: number;
+}
+
+const SHARE_OPTIONS: { key: SharePlatform; label: string }[] = [
+  { key: 'tiktok', label: 'TikTok' },
+  { key: 'instagram', label: 'Instagram' },
+  { key: 'x', label: 'X' },
+];
+
+const SHARE_ENDPOINT: Record<SharePlatform, (clip: HighlightRecord) => string> = {
+  tiktok: (clip) => `https://www.tiktok.com/upload?video=${encodeURIComponent(clip.clipUrl)}`,
+  instagram: (clip) => `intent://share?video=${encodeURIComponent(clip.clipUrl)}`,
+  x: (clip) =>
+    `https://twitter.com/intent/tweet?text=${encodeURIComponent(clip.title)}&url=${encodeURIComponent(clip.clipUrl)}`,
+};
 
 interface LiveStreamProps {
   creatorName: string;
@@ -63,6 +95,37 @@ const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) => {
   const participantIdRef = useRef<string>(`viewer_${Date.now()}`);
 
   const roomName = `live_${creatorName.toLowerCase().replace(/\s+/g, '_')}`;
+
+  const shareHighlight = useMutation<HighlightRecord, unknown, SharePlatform>({
+    mutationFn: async (platform) => {
+      const response = await request<{ streamId: string; highlights: HighlightRecord[] }>(
+        `/api/highlights?streamId=${encodeURIComponent(roomName)}`,
+      );
+      const highlight = response.highlights?.[0];
+      if (!highlight) {
+        throw new Error('No highlights are available for this stream yet.');
+      }
+      const targetUrl = SHARE_ENDPOINT[platform](highlight);
+      window.open(targetUrl, '_blank', 'noopener');
+      await request(`/api/highlights/${highlight.streamId}/${highlight.id}/share`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ platform }),
+      });
+      return highlight;
+    },
+    onSuccess: (_highlight, platform) => {
+      const label = SHARE_OPTIONS.find((option) => option.key === platform)?.label ?? 'network';
+      toast({ title: `Shared to ${label}`, description: 'Thanks for amplifying the vibe.' });
+    },
+    onError: (error) => {
+      toast({
+        title: 'Unable to share highlight',
+        description: error instanceof Error ? error.message : 'Please try again in a moment.',
+        variant: 'destructive',
+      });
+    },
+  });
 
   const topFans = useMemo(
     () => [
@@ -145,9 +208,20 @@ const LiveStream = ({ creatorName, viewers, onBack }: LiveStreamProps) => {
     setTimeout(() => setMascotMood('idle'), 4000);
   };
 
+  const handleShare = (platform: SharePlatform) => {
+    shareHighlight.mutate(platform);
+  };
+
   return (
     <div className="container mx-auto p-4 space-y-4">
-      <LiveStreamHeader creatorName={creatorName} viewers={viewers} onBack={onBack} />
+      <LiveStreamHeader
+        creatorName={creatorName}
+        viewers={viewers}
+        onBack={onBack}
+        shareOptions={SHARE_OPTIONS}
+        onShare={(platform) => handleShare(platform as SharePlatform)}
+        shareDisabled={shareHighlight.isPending}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         <LiveVideoPanel
