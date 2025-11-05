@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 import { useTheme } from 'next-themes';
+import { applyMoodToDocument } from '../../ai/emotion/uiMoodAdapter';
+import { useLiveBlueprintStore } from '@/stores/useLiveBlueprintStore';
 
 /**
  * AutoThemeController applies a time-of-day theme when the user
@@ -8,6 +10,7 @@ import { useTheme } from 'next-themes';
  */
 const AutoThemeController = () => {
   const { setTheme } = useTheme();
+  const emotionState = useLiveBlueprintStore((state) => state.emotionState);
 
   useEffect(() => {
     let timer: number | undefined;
@@ -46,6 +49,10 @@ const AutoThemeController = () => {
       window.removeEventListener('storage', onStorage);
     };
   }, [setTheme]);
+
+  useEffect(() => {
+    applyMoodToDocument(emotionState);
+  }, [emotionState]);
 
   return null;
 };

@@ -1,0 +1,26 @@
+{
+  "generatedAt": "2024-08-01T00:00:00.000Z",
+  "initiatives": [
+    {
+      "id": "roadmap-01",
+      "focus": "Creator Success",
+      "impact": "high",
+      "description": "Launch concierge onboarding squads for enterprise partner creators to accelerate monetization.",
+      "etaDays": 60
+    },
+    {
+      "id": "roadmap-02",
+      "focus": "AI Analytics",
+      "impact": "high",
+      "description": "Deploy predictive churn interventions into marketing loops with autonomous experimentation.",
+      "etaDays": 45
+    },
+    {
+      "id": "roadmap-03",
+      "focus": "Infrastructure",
+      "impact": "medium",
+      "description": "Expand multi-region Supabase replicas to cover LATAM and MENA markets with automated compliance.",
+      "etaDays": 90
+    }
+  ]
+}

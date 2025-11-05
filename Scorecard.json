@@ -1,24 +1,29 @@
 {
-  "phase": 1,
+  "phase": 3,
   "metrics": {
-    "latencyMs": {
-      "target": 300,
-      "simulated": 210,
-      "status": "on-track"
-    },
-    "engagementRate": {
-      "target": 0.7,
-      "simulated": 0.78,
-      "status": "on-track"
-    },
-    "tokensPerSession": {
-      "target": 500,
-      "simulated": 640,
+    "shareRate": {
+      "target": 0.3,
+      "simulated": 0.42,
       "status": "exceeding"
     },
-    "accessibility": {
-      "target": 0.95,
-      "simulated": 0.95,
+    "referralGrowth": {
+      "target": 0.15,
+      "simulated": 0.19,
+      "status": "exceeding"
+    },
+    "creatorRetentionTop20": {
+      "target": 0.99,
+      "simulated": 0.992,
+      "status": "on-track"
+    },
+    "weeklyActiveCreators": {
+      "target": 0.05,
+      "simulated": 0.068,
+      "status": "exceeding"
+    },
+    "viewerToTipper": {
+      "target": 0.25,
+      "simulated": 0.27,
       "status": "on-track"
     }
   }

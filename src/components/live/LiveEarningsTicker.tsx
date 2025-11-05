@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { motion } from 'framer-motion';
 
 import { cn } from '@/lib/utils';
+import { EarningsArc } from './EarningsArc';
+import type { EmotionTone } from '@/hooks/useEmotionUI';
 
 function formatDuration(seconds: number) {
   const hrs = Math.floor(seconds / 3600)
@@ -20,12 +22,12 @@ type LiveEarningsTickerProps = {
   tokenEarnings: number;
   startTime: number | null;
   peakViewers: number;
+  tone?: EmotionTone;
+  glassStyles?: CSSProperties;
 };
 
-export function LiveEarningsTicker({ tokenEarnings, startTime, peakViewers }: LiveEarningsTickerProps) {
-  const [elapsed, setElapsed] = useState(() =>
-    startTime ? Math.floor((Date.now() - startTime) / 1000) : 0,
-  );
+export function LiveEarningsTicker({ tokenEarnings, startTime, peakViewers, tone = 'violet', glassStyles }: LiveEarningsTickerProps) {
+  const [elapsed, setElapsed] = useState(() => (startTime ? Math.floor((Date.now() - startTime) / 1000) : 0));
 
   useEffect(() => {
     if (!startTime) {
@@ -45,27 +47,36 @@ export function LiveEarningsTicker({ tokenEarnings, startTime, peakViewers }: Li
   const formatted = useMemo(() => tokenEarnings.toLocaleString(), [tokenEarnings]);
   const duration = useMemo(() => formatDuration(elapsed), [elapsed]);
 
+  const toneClass =
+    tone === 'warm'
+      ? 'ring-pink-400/40'
+      : tone === 'cool'
+        ? 'ring-sky-400/30'
+        : 'ring-violet-400/35';
+
   return (
     <motion.section
       layout
       className={cn(
-        'flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-white/10 bg-white/10 p-5 text-sm text-white shadow-lg backdrop-blur-2xl',
-        'ring-1 ring-white/20 hover:ring-fuchsia-400/40 transition-colors duration-300',
+        'flex flex-wrap items-center justify-between gap-6 rounded-3xl border p-5 text-sm text-white shadow-lg backdrop-blur-2xl',
+        'transition-colors duration-500',
+        toneClass,
       )}
       aria-live="polite"
+      style={glassStyles}
     >
-      <div className="flex items-center gap-3 text-base font-semibold">
-        <span className="text-lg">💎</span>
-        <span>
-          <span className="text-white/80">{formatted}</span>
-          <span className="ml-1 text-white/50">tokens earned</span>
-        </span>
-      </div>
       <div className="flex flex-wrap items-center gap-4 text-xs uppercase tracking-[0.2em] text-white/60">
-        <span className="rounded-full bg-white/10 px-3 py-1 shadow-inner shadow-white/10">⏱ {duration}</span>
-        <span className="rounded-full bg-white/10 px-3 py-1 shadow-inner shadow-white/10">
+        <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/70">⏱ {duration}</span>
+        <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/70">
           👀 Peak {peakViewers.toLocaleString()}
         </span>
+      </div>
+      <div className="flex flex-1 items-center justify-end gap-6">
+        <div className="text-right text-base font-semibold">
+          <div className="text-lg text-white/80">💎 {formatted}</div>
+          <p className="text-xs uppercase tracking-[0.3em] text-white/60">live session earnings</p>
+        </div>
+        <EarningsArc value={tokenEarnings} />
       </div>
     </motion.section>
   );

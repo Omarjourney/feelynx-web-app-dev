@@ -1,0 +1,53 @@
+{
+  "brand": {
+    "name": "Feelynx Enterprise",
+    "logo": "https://cdn.feelynx.live/brand/enterprise/logo.svg",
+    "theme": "feelynx-default"
+  },
+  "domains": [
+    {
+      "partner": "Aurora Studios",
+      "domain": "aurora.feelynx.live"
+    },
+    {
+      "partner": "Nebula Creative",
+      "domain": "nebula.feelynx.live"
+    }
+  ],
+  "partners": [
+    {
+      "id": "aurora-studios",
+      "displayName": "Aurora Studios",
+      "contactEmail": "enterprise@aurorastudios.co",
+      "customDomain": "aurora.feelynx.live",
+      "payoutPercentage": 0.32,
+      "activeUsers": 1845,
+      "mrr": 86000,
+      "branding": {
+        "logoUrl": "https://cdn.feelynx.live/partners/aurora/logo.png",
+        "primaryColor": "#7c3aed",
+        "secondaryColor": "#ec4899",
+        "accentColor": "#fbbf24"
+      }
+    },
+    {
+      "id": "nebula-creative",
+      "displayName": "Nebula Creative",
+      "contactEmail": "enterprise@nebulacreative.io",
+      "customDomain": "nebula.feelynx.live",
+      "payoutPercentage": 0.28,
+      "activeUsers": 1390,
+      "mrr": 67000,
+      "branding": {
+        "logoUrl": "https://cdn.feelynx.live/partners/nebula/logo.png",
+        "primaryColor": "#14b8a6",
+        "secondaryColor": "#6366f1",
+        "accentColor": "#22d3ee"
+      }
+    }
+  ],
+  "payout": {
+    "defaultPercentage": 0.3,
+    "minimumGuarantee": 5000
+  }
+}

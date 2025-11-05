@@ -30,6 +30,7 @@ import ControlRemote from './features/remote/ControlRemote';
 import CompanionsHome from './features/companions/CompanionsHome';
 import ContestsFeed from './features/contests/ContestsFeed';
 import Styleguide from './pages/Styleguide';
+import ClipsPage from './pages/Clips';
 import AutoThemeController from '@/components/AutoThemeController';
 import AppShell from '@/components/layout/AppShell';
 import ToastProvider from '@/components/providers/ToastProvider';
@@ -63,6 +64,7 @@ const App = () => (
                   <Route path="/live/:username" element={<Live />} />
                   <Route path="/live-creator" element={<LiveCreator />} />
                   <Route path="/stories" element={<Stories />} />
+                  <Route path="/clips" element={<ClipsPage />} />
                   <Route path="/token-shop" element={<TokenShop />} />
                   <Route path="/coins" element={<TokenShop />} />
                   <Route path="/settings" element={<SettingsPrivacy />} />
@@ -73,7 +75,8 @@ const App = () => (
                   <Route path="/contests" element={<ContestsFeed />} />
                   <Route path="/styleguide" element={<Styleguide />} />
                   <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/creator-insights" element={<CreatorInsights />} />
+                  <Route path="/neural-dashboard" element={<NeuralDashboard />} />
+                  <Route path="/auto-roadmap" element={<AutoRoadmap />} />
                 </Route>
                 <Route path="/auth" element={<Auth />} />
                 <Route path="*" element={<NotFound />} />

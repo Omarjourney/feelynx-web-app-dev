@@ -16,6 +16,8 @@ import LiveEarningsTicker from '@/components/live/LiveEarningsTicker';
 import LiveReactions from '@/components/live/LiveReactions';
 import LiveViewerBadge from '@/components/live/LiveViewerBadge';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLiveRoom } from '@/hooks/useLiveRoom';
 import { toast } from '@/hooks/use-toast';
@@ -24,6 +26,7 @@ import {
   requestCreatorToken,
   updateCreatorLiveStatus,
 } from '@/lib/livekit/host';
+import { request } from '@/lib/api';
 import { getUserMessage } from '@/lib/errors';
 import { requestMediaPermissions } from '@/lib/mediaPermissions';
 import { useLiveStore } from '@/state/liveStore';
@@ -41,6 +44,7 @@ const LiveCreator = () => {
   const [isVideoReady, setIsVideoReady] = useState(false);
   const [micEnabled, setMicEnabled] = useState(true);
   const [cameraEnabled, setCameraEnabled] = useState(true);
+  const [smartModEnabled, setSmartModEnabled] = useState(true);
 
   const {
     isLive,
@@ -78,6 +82,19 @@ const LiveCreator = () => {
     const meta = user?.user_metadata as { username?: string } | undefined;
     return meta?.username ?? user?.email ?? 'Creator';
   }, [user?.email, user?.user_metadata]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const stored = window.localStorage.getItem('feelynx-smart-mod');
+    if (stored !== null) {
+      setSmartModEnabled(stored === 'true');
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem('feelynx-smart-mod', smartModEnabled ? 'true' : 'false');
+  }, [smartModEnabled]);
 
   useEffect(() => {
     if (error) {
@@ -281,9 +298,34 @@ const LiveCreator = () => {
 
   const handleSendMessage = useCallback(
     async (input: Parameters<typeof sendChatMessage>[0]) => {
-      await sendChatMessage(input);
+      let outgoing = input;
+      if (smartModEnabled && input.text) {
+        try {
+          const response = await request<{ sentiment: string; flagged: boolean; replacement?: string }>(
+            '/api/emotion',
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ text: input.text }),
+            },
+          );
+          if (response.flagged) {
+            const replacement = response.replacement ?? '✨ Sending love and light to everyone in chat!';
+            outgoing = { ...input, text: replacement };
+            toast({
+              title: 'Smart Mod rewrote a spicy message',
+              description: 'We swapped in a positive coaching cue for your fans.',
+            });
+          }
+        } catch (error) {
+          if (import.meta.env.DEV) {
+            console.warn('Smart Mod failed', error);
+          }
+        }
+      }
+      await sendChatMessage(outgoing);
     },
-    [sendChatMessage],
+    [sendChatMessage, smartModEnabled],
   );
 
   return (
@@ -300,7 +342,17 @@ const LiveCreator = () => {
             <h1 className="text-3xl font-semibold tracking-tight">Creator Live Dashboard</h1>
             <p className="text-sm text-white/60">Stage-ready controls, non-intrusive chat, and live VibeCoins.</p>
           </div>
-          <div className="flex justify-end">
+          <div className="flex flex-col items-end gap-3">
+            <div className="flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs text-white/80">
+              <Label htmlFor="smart-mod-toggle" className="cursor-pointer text-[11px] uppercase tracking-[0.3em]">
+                Smart Mod
+              </Label>
+              <Switch
+                id="smart-mod-toggle"
+                checked={smartModEnabled}
+                onCheckedChange={(value) => setSmartModEnabled(value)}
+              />
+            </div>
             <Button
               variant="outline"
               onClick={() => navigate('/settings/live')}

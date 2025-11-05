@@ -1,0 +1,17 @@
+{
+  "lastUpdated": "2024-08-01T00:00:00.000Z",
+  "experiments": [
+    {
+      "id": "loop-dormant-01",
+      "segment": "dormantFans",
+      "variantA": {
+        "copy": "We miss you on Feelynx",
+        "uplift": 0.18
+      },
+      "variantB": {
+        "copy": "Unlock exclusive creator drops",
+        "uplift": 0.24
+      }
+    }
+  ]
+}
