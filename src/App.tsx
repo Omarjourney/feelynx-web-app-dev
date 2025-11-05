@@ -33,6 +33,7 @@ import Styleguide from './pages/Styleguide';
 import AutoThemeController from '@/components/AutoThemeController';
 import AppShell from '@/components/layout/AppShell';
 import ToastProvider from '@/components/providers/ToastProvider';
+import CreatorInsights from './pages/CreatorInsights';
 
 const queryClient = new QueryClient();
 
@@ -72,6 +73,7 @@ const App = () => (
                   <Route path="/contests" element={<ContestsFeed />} />
                   <Route path="/styleguide" element={<Styleguide />} />
                   <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/creator-insights" element={<CreatorInsights />} />
                 </Route>
                 <Route path="/auth" element={<Auth />} />
                 <Route path="*" element={<NotFound />} />

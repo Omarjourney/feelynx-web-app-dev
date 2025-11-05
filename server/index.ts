@@ -26,6 +26,8 @@ import subscriptionsRoutes from './routes/subscriptions';
 import { webhookHandler as subscriptionsWebhookHandler } from './routes/subscriptions';
 import payoutsRoutes from './routes/payouts';
 import { webhookHandler as payoutsWebhookHandler } from './routes/payouts';
+import { buildMockEngagement } from '../api/ai/engagement';
+import { buildMockMonetization } from '../api/monetization';
 import { roomParticipants } from './roomParticipants';
 import { securityHeaders } from './middleware/securityHeaders';
 import { indexSchemas, type InferBody, type InferParams, withValidation } from './utils/validation';
@@ -83,6 +85,27 @@ app.use('/api/groups', groupsApiRoutes);
 app.use('/api/wallet', walletRoutes);
 app.use('/api/creator/earnings', creatorEarningsRoutes);
 
+app.get('/api/ai/engagement', (req: Request, res: Response) => {
+  const creatorId = typeof req.query.creatorId === 'string' ? req.query.creatorId : 'demo-creator';
+  const snapshot = buildMockEngagement({
+    creatorId,
+    lastScore: engagementSnapshots[creatorId],
+  });
+  engagementSnapshots[creatorId] = snapshot.engagementScore;
+  res.json(snapshot);
+});
+
+app.get('/api/monetization', (req: Request, res: Response) => {
+  const creatorId = typeof req.query.creatorId === 'string' ? req.query.creatorId : 'demo-creator';
+  const snapshot = buildMockMonetization({
+    creatorId,
+    lastEarnings: earningSnapshots[creatorId],
+  });
+  earningSnapshots[creatorId] = snapshot.sessionEarnings;
+  console.info('[monetization]', creatorId, snapshot);
+  res.json(snapshot);
+});
+
 const port = process.env.PORT || 3001;
 
 const server = createServer(app);
@@ -95,6 +118,8 @@ interface StatusMessage {
 
 const creatorStatus: Record<string, boolean> = {};
 const callPresence: Record<string, 'available' | 'busy' | 'offline'> = {};
+const engagementSnapshots: Record<string, number> = {};
+const earningSnapshots: Record<string, number> = {};
 
 function broadcastStatus(data: StatusMessage) {
   const payload = JSON.stringify({ type: 'creatorStatus', ...data });
