@@ -1,7 +1,11 @@
-import { MutableRefObject } from 'react';
+import { MutableRefObject, type CSSProperties } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { cn } from '@/lib/utils';
+import type { EmotionTone, EmotionBurst } from '@/hooks/useEmotionUI';
 
 interface LiveVideoPanelProps {
   isConnected: boolean;
@@ -15,6 +19,11 @@ interface LiveVideoPanelProps {
   topFans: Array<{ name: string; amount: number }>;
   thanksMessage: string | null;
   toyConnected: boolean;
+  tone?: EmotionTone;
+  glassStyles?: CSSProperties;
+  quietMode?: boolean;
+  emotionBursts?: EmotionBurst[];
+  onBurstComplete?: (id: number) => void;
 }
 
 const LiveVideoPanel = ({
@@ -29,12 +38,30 @@ const LiveVideoPanel = ({
   topFans,
   thanksMessage,
   toyConnected,
+  tone = 'violet',
+  glassStyles,
+  quietMode,
+  emotionBursts = [],
+  onBurstComplete,
 }: LiveVideoPanelProps) => {
   const progressPercent = Math.min(100, Math.round((milestoneProgress / milestoneGoal) * 100));
+  const toneRing =
+    tone === 'warm'
+      ? 'border-pink-400/30 shadow-[0_0_80px_rgba(255,120,190,0.28)]'
+      : tone === 'cool'
+        ? 'border-sky-400/25 shadow-[0_0_80px_rgba(82,145,255,0.24)]'
+        : 'border-violet-400/25 shadow-[0_0_80px_rgba(168,132,255,0.28)]';
+
   return (
-    <Card className="lg:col-span-3 border border-white/10 rounded-card shadow-base hover:shadow-elevated transition-shadow duration-300 bg-neutral-900/60 backdrop-blur-md">
+    <Card
+      className={cn(
+        'rounded-card border bg-neutral-900/60 shadow-base transition-shadow duration-500 backdrop-blur-md',
+        toneRing,
+      )}
+      style={glassStyles}
+    >
       <CardContent className="p-0">
-        <div className="relative aspect-video md:h-[75vh] overflow-hidden rounded-card bg-black">
+        <div className="relative aspect-video overflow-hidden rounded-card bg-black md:h-[75vh]">
           <video ref={videoRef} className="h-full w-full object-cover rounded-card" autoPlay playsInline>
             <track kind="captions" srcLang="en" label="auto" />
           </video>
@@ -52,9 +79,13 @@ const LiveVideoPanel = ({
             </div>
           )}
 
+          {quietMode ? (
+            <div className="pointer-events-none absolute inset-0 bg-slate-900/35 backdrop-blur-sm transition-all duration-500" aria-hidden />
+          ) : null}
+
           <div className="absolute left-4 top-4 flex flex-wrap gap-3 text-xs text-muted-foreground">
             <div className="rounded-full bg-background/70 px-3 py-1 text-foreground shadow-base">
-              Balance:{' '}
+              Balance{' '}
               <span className="font-semibold text-primary-foreground">
                 💎 {coinBalance.toLocaleString()}
               </span>
@@ -89,10 +120,7 @@ const LiveVideoPanel = ({
                 </span>
               </div>
               <Progress value={progressPercent} className="mt-2 h-2 bg-background/60">
-                <div
-                  className="infinite-progress absolute inset-y-0 left-0 w-16 bg-primary/40"
-                  aria-hidden
-                />
+                <div className="infinite-progress absolute inset-y-0 left-0 w-16 bg-primary/40" aria-hidden />
               </Progress>
             </div>
 
@@ -134,6 +162,23 @@ const LiveVideoPanel = ({
               {reaction.icon}
             </div>
           ))}
+          <AnimatePresence>
+            {emotionBursts.map((burst) => (
+              <motion.span
+                key={burst.id}
+                initial={{ opacity: 0, y: 40, scale: 0.8 }}
+                animate={{ opacity: 1, y: -80, scale: 1.2 }}
+                exit={{ opacity: 0, y: -120 }}
+                transition={{ duration: 1.6, ease: 'easeOut' }}
+                className="pointer-events-none absolute bottom-20 text-4xl drop-shadow-[0_6px_18px_rgba(255,255,255,0.35)]"
+                style={{ left: `${10 + burst.left * 80}%`, rotate: `${burst.rotation}deg` }}
+                onAnimationComplete={() => onBurstComplete?.(burst.id)}
+                aria-hidden
+              >
+                {burst.emoji}
+              </motion.span>
+            ))}
+          </AnimatePresence>
         </div>
       </CardContent>
     </Card>
