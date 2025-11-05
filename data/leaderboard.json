@@ -1,0 +1,29 @@
+[
+  {
+    "creatorId": "aurora",
+    "creatorName": "Aurora Skye",
+    "avatar": "https://cdn.feelynx.tv/avatars/aurora.png",
+    "weeklyTokens": 5400,
+    "streakDays": 15,
+    "tier": "Elite",
+    "lastShareRate": 0.62
+  },
+  {
+    "creatorId": "vyn",
+    "creatorName": "Vyn Blaze",
+    "avatar": "https://cdn.feelynx.tv/avatars/vyn.png",
+    "weeklyTokens": 3200,
+    "streakDays": 8,
+    "tier": "Pro",
+    "lastShareRate": 0.48
+  },
+  {
+    "creatorId": "mira",
+    "creatorName": "Mira Lune",
+    "avatar": "https://cdn.feelynx.tv/avatars/mira.png",
+    "weeklyTokens": 2100,
+    "streakDays": 5,
+    "tier": "Pro",
+    "lastShareRate": 0.41
+  }
+]

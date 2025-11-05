@@ -1,0 +1,19 @@
+{
+  "generatedAt": "2025-11-05T00:00:00.000Z",
+  "items": [
+    {
+      "id": "stabilize-sample",
+      "title": "Stabilize self-healing feedback loop",
+      "priority": "Now",
+      "rationale": "Maintain uptime at 99.6% while expanding repair coverage.",
+      "confidence": 0.82
+    },
+    {
+      "id": "emotion-sample",
+      "title": "Deepen emotional AI personalization arcs",
+      "priority": "Next",
+      "rationale": "Sentiment score 88% indicates opportunity to dial up resonance.",
+      "confidence": 0.78
+    }
+  ]
+}

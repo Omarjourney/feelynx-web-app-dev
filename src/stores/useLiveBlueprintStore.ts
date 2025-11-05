@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 
+export type EmotionState = 'Calm' | 'Hype' | 'Flirty' | 'Supportive' | 'Playful';
+
 export type LiveSessionKPI = {
   viewerCount: number;
   peakViewers: number;
@@ -24,6 +26,8 @@ type LiveBlueprintStore = {
   cameraOn: boolean;
   kpi: LiveSessionKPI;
   tokenEvents: TokenEvent[];
+  emotionState: EmotionState;
+  lastEmotionShift: number | null;
   startSession: (initialViewers?: number) => void;
   endSession: () => void;
   toggleCamera: () => void;
@@ -33,6 +37,7 @@ type LiveBlueprintStore = {
   pushEngagement: (engagement: number) => void;
   updateSentiment: (sentiment: number) => void;
   setReactionSuggestions: (suggestions: string[]) => void;
+  setEmotionState: (state: EmotionState) => void;
   reset: () => void;
 };
 
@@ -56,6 +61,8 @@ export const useLiveBlueprintStore = create<LiveBlueprintStore>((set, _get) => (
   cameraOn: true,
   kpi: initialKpi,
   tokenEvents: [],
+  emotionState: 'Calm',
+  lastEmotionShift: null,
   startSession: (initialViewers = 0) => {
     const now = Date.now();
     set((state) => ({
@@ -159,12 +166,20 @@ export const useLiveBlueprintStore = create<LiveBlueprintStore>((set, _get) => (
       },
     }));
   },
+  setEmotionState: (state) => {
+    set((current) => ({
+      emotionState: state,
+      lastEmotionShift: Date.now(),
+    }));
+  },
   reset: () => {
     set({
       isLive: false,
       cameraOn: true,
       kpi: { ...initialKpi, lastUpdated: Date.now() },
       tokenEvents: [],
+      emotionState: 'Calm',
+      lastEmotionShift: null,
     });
   },
 }));

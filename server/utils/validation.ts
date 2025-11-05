@@ -96,6 +96,7 @@ const isoDateString = z.string().refine((value) => !Number.isNaN(Date.parse(valu
   message: 'Invalid date',
 });
 const emptyObject = z.object({}).strict();
+const nonNegativeNumber = z.coerce.number().min(0);
 
 // Auth
 const authRegisterBody = z.object({
@@ -428,6 +429,81 @@ export const groupSchemas = {
   },
   membership: { params: groupIdParams },
   inviteRequests: { params: groupIdParams },
+} satisfies Record<string, ValidationSchema>;
+
+// Highlights
+const highlightEngagementPoint = z.object({
+  timestamp: nonNegativeNumber,
+  viewers: z.coerce.number().int().min(0),
+  tokens: z.coerce.number().int().min(0),
+  reactions: z.coerce.number().int().min(0),
+});
+const highlightListQuery = z.object({
+  streamId: safeIdentifier.optional(),
+});
+const highlightGenerateBody = z.object({
+  streamId: safeIdentifier,
+  clipLength: z.coerce.number().int().min(10).max(20).optional(),
+  engagement: z.array(highlightEngagementPoint).min(1),
+});
+const highlightParams = z.object({
+  streamId: safeIdentifier,
+  highlightId: safeIdentifier,
+});
+const highlightUpdateBody = z
+  .object({
+    start: nonNegativeNumber.optional(),
+    end: z.coerce.number().min(1).optional(),
+    title: nonEmptyString.max(120).optional(),
+  })
+  .refine((data) => {
+    if (data.start === undefined || data.end === undefined) return true;
+    return data.start < data.end;
+  }, { message: 'start must be less than end' });
+const highlightShareBody = z.object({
+  platform: z
+    .string()
+    .min(2)
+    .max(32)
+    .transform((value) => value.toLowerCase()),
+});
+export const highlightsSchemas = {
+  list: { query: highlightListQuery },
+  generate: { body: highlightGenerateBody },
+  update: { params: highlightParams, body: highlightUpdateBody },
+  share: { params: highlightParams, body: highlightShareBody },
+} satisfies Record<string, ValidationSchema>;
+
+// Leaderboard
+const leaderboardRecordBody = z.object({
+  creatorId: safeIdentifier,
+  creatorName: nonEmptyString.max(120),
+  avatar: urlString.optional(),
+  weeklyTokens: z.coerce.number().int().min(0),
+  streakDays: z.coerce.number().int().min(0),
+  lastShareRate: z.coerce.number().min(0).max(1).optional(),
+});
+export const leaderboardSchemas = {
+  record: { body: leaderboardRecordBody },
+} satisfies Record<string, ValidationSchema>;
+
+// Referrals
+const referralRecordBody = z.object({
+  referrerId: safeIdentifier,
+  referredId: safeIdentifier,
+  referredType: z.enum(['creator', 'fan']),
+  volume: z.coerce.number().min(0),
+});
+export const referralsSchemas = {
+  record: { body: referralRecordBody },
+} satisfies Record<string, ValidationSchema>;
+
+// Emotion moderation
+const emotionAnalyzeBody = z.object({
+  text: z.string().min(1).max(1000),
+});
+export const emotionSchemas = {
+  analyze: { body: emotionAnalyzeBody },
 } satisfies Record<string, ValidationSchema>;
 
 // Index routes

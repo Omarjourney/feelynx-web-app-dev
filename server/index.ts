@@ -22,10 +22,18 @@ import patternsRoutes from './routes/patterns';
 import groupsApiRoutes from './routes/groupsApi';
 import walletRoutes from './routes/wallet';
 import creatorEarningsRoutes from './routes/creatorEarnings';
+import pricingRoutes from './routes/pricing';
+import coachRoutes from './routes/coach';
+import payoutsApiRoutes from './routes/payoutsApi';
+import brandsRoutes from './routes/brands';
 import subscriptionsRoutes from './routes/subscriptions';
 import { webhookHandler as subscriptionsWebhookHandler } from './routes/subscriptions';
 import payoutsRoutes from './routes/payouts';
 import { webhookHandler as payoutsWebhookHandler } from './routes/payouts';
+import highlightsRoutes from './routes/highlights';
+import leaderboardRoutes from './routes/leaderboard';
+import referralsRoutes from './routes/referrals';
+import emotionRoutes from './routes/emotion';
 import { roomParticipants } from './roomParticipants';
 import { securityHeaders } from './middleware/securityHeaders';
 import { indexSchemas, type InferBody, type InferParams, withValidation } from './utils/validation';
@@ -82,6 +90,31 @@ app.use('/patterns', patternsRoutes);
 app.use('/api/groups', groupsApiRoutes);
 app.use('/api/wallet', walletRoutes);
 app.use('/api/creator/earnings', creatorEarningsRoutes);
+app.use('/api/highlights', highlightsRoutes);
+app.use('/api/leaderboard', leaderboardRoutes);
+app.use('/api/referrals', referralsRoutes);
+app.use('/api/emotion', emotionRoutes);
+
+app.get('/api/ai/engagement', (req: Request, res: Response) => {
+  const creatorId = typeof req.query.creatorId === 'string' ? req.query.creatorId : 'demo-creator';
+  const snapshot = buildMockEngagement({
+    creatorId,
+    lastScore: engagementSnapshots[creatorId],
+  });
+  engagementSnapshots[creatorId] = snapshot.engagementScore;
+  res.json(snapshot);
+});
+
+app.get('/api/monetization', (req: Request, res: Response) => {
+  const creatorId = typeof req.query.creatorId === 'string' ? req.query.creatorId : 'demo-creator';
+  const snapshot = buildMockMonetization({
+    creatorId,
+    lastEarnings: earningSnapshots[creatorId],
+  });
+  earningSnapshots[creatorId] = snapshot.sessionEarnings;
+  console.info('[monetization]', creatorId, snapshot);
+  res.json(snapshot);
+});
 
 const port = process.env.PORT || 3001;
 
@@ -95,6 +128,8 @@ interface StatusMessage {
 
 const creatorStatus: Record<string, boolean> = {};
 const callPresence: Record<string, 'available' | 'busy' | 'offline'> = {};
+const engagementSnapshots: Record<string, number> = {};
+const earningSnapshots: Record<string, number> = {};
 
 function broadcastStatus(data: StatusMessage) {
   const payload = JSON.stringify({ type: 'creatorStatus', ...data });
