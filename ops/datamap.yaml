@@ -1,0 +1,49 @@
+service: feelynx
+version: phase7
+processors:
+  - name: Auth Service
+    purposes: [login, kyc, fraud]
+    data_classes:
+      - email
+      - phone
+      - government_id
+    storage:
+      region: eu-central-1
+      retention: 365d
+      encryption: aes256
+    subprocessors:
+      - provider: Auth0
+        contract: 2024-01-01
+        dpia: true
+  - name: Live Streaming
+    purposes: [video, moderation]
+    data_classes:
+      - video_stream
+      - audio
+      - chat_message
+    storage:
+      region: multi
+      retention: 30d
+      encryption: kms
+    subprocessors:
+      - provider: LiveKit
+        contract: 2024-02-15
+        dpia: true
+  - name: Payments & 💎 Ledger
+    purposes: [billing, payouts]
+    data_classes:
+      - card_token
+      - transaction_ledger
+      - payout_bank
+    storage:
+      region: us-east-1
+      retention: 7y
+      encryption: envelope
+    subprocessors:
+      - provider: Stripe
+        contract: 2023-11-01
+        dpia: true
+subject_rights:
+  export: 30d
+  deletion: 30d
+  rectification: 14d

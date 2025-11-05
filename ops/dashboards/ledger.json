@@ -1,0 +1,33 @@
+{
+  "title": "💎 Token Flow",
+  "panels": [
+    {
+      "title": "Tips per Minute",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(token_tip_total[1m]))"
+        }
+      ]
+    },
+    {
+      "title": "Ledger Drift",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "max(ledger_reconcile_diff_percent{service='feelynx-web'})"
+        }
+      ],
+      "thresholds": [
+        {
+          "value": 0.001,
+          "color": "green"
+        },
+        {
+          "value": 0.01,
+          "color": "red"
+        }
+      ]
+    }
+  ]
+}

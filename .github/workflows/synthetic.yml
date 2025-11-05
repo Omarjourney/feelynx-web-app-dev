@@ -1,0 +1,35 @@
+name: Synthetic Journeys
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  run-synthetics:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm ci
+      - name: Execute synthetic script
+        run: node scripts/synthetic-checks.mjs
+        env:
+          SYNTHETIC_WEBHOOK: ${{ secrets.SYNTHETIC_WEBHOOK }}
+          SYNTHETIC_API_BASE: ${{ secrets.SYNTHETIC_API_BASE }}
+          SYNTHETIC_USER: ${{ secrets.SYNTHETIC_USER }}
+          SYNTHETIC_PASSWORD: ${{ secrets.SYNTHETIC_PASSWORD }}
+      - name: Notify failure
+        if: failure()
+        uses: peter-evans/create-issue-from-file@v4
+        with:
+          title: 'Synthetic journey failure'
+          content-filepath: artifacts/synthetic-output.md
+          labels: 'incident,sre'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
